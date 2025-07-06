@@ -1,0 +1,79 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "Magistral Medium",
+  "description": "Trained solely with reinforcement learning on top of Mistral Medium 3, Magistral Medium is a reasoning model that achieves strong performance on complex math and code tasks without relying on distillation from existing reasoning models. The training uses an RLVR framework with modifications to GRPO, enabling improved reasoning ability and multilingual consistency.",
+  "release_date": "2025-06-10",
+  "input_context_size": 128000,
+  "output_context_size": 128000,
+  "license": "Apache 2.0",
+  "multimodal": true,
+  "web_hydrated": false,
+  "knowledge_cutoff": "2025-06-01",
+  "api_ref_link": "https://docs.mistral.ai/api/",
+  "playground_link": "https://chat.mistral.ai/",
+  "paper_link": "https://arxiv.org/pdf/2506.10910",
+  "scorecard_blog_link": "https://mistral.ai/news/magistral",
+  "repo_link": null,
+  "weights_link": null,
+  "param_count": 24000000000,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "AIME 2024",
+      "score": 0.736,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2025-06-12",
+      "source_link": "https://arxiv.org/pdf/2506.10910"
+    },
+    {
+      "dataset_name": "AIME 2025",
+      "score": 0.649,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2025-06-12",
+      "source_link": "https://arxiv.org/pdf/2506.10910"
+    },
+    {
+      "dataset_name": "GPQA",
+      "score": 0.708,
+      "is_self_reported": true,
+      "analysis_method": "Diamond",
+      "date_recorded": "2025-06-12",
+      "source_link": "https://arxiv.org/pdf/2506.10910"
+    },
+    {
+      "dataset_name": "LiveCodeBench",
+      "score": 0.594,
+      "is_self_reported": true,
+      "analysis_method": "v5",
+      "date_recorded": "2025-06-12",
+      "source_link": "https://arxiv.org/pdf/2506.10910"
+    },
+    {
+      "dataset_name": "Aider Polyglot",
+      "score": 0.471,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-06-12",
+      "source_link": "https://arxiv.org/pdf/2506.10910"
+    },
+    {
+      "dataset_name": "LiveCodeBench",
+      "score": 0.503,
+      "is_self_reported": true,
+      "analysis_method": "v6",
+      "date_recorded": "2025-06-12",
+      "source_link": "https://arxiv.org/pdf/2506.10910"
+    },
+    {
+      "dataset_name": "Humanity’s Last Exam",
+      "score": 0.09,
+      "is_self_reported": true,
+      "analysis_method": "text subset",
+      "date_recorded": "2025-06-12",
+      "source_link": "https://arxiv.org/pdf/2506.10910"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "Devstral Small 1.1",
+  "description": "Devstral Small 1.1 (also called devstral-small-2507) is based on the Mistral-Small-3.1 foundation model and contains approximately 24 billion parameters. It supports a 128k token context window, which allows it to handle multi-file code inputs and long prompts typical in software engineering workflows. The model is fine-tuned specifically for structured outputs, including XML and function-calling formats. This makes it compatible with agent frameworks such as OpenHands and suitable for tasks like program navigation, multi-step edits, and code search. It is licensed under Apache 2.0 and available for both research and commercial use.",
+  "release_date": "2025-07-11",
+  "input_context_size": 128000,
+  "output_context_size": 128000,
+  "license": "Apache 2.0",
+  "multimodal": false,
+  "web_hydrated": false,
+  "knowledge_cutoff": null,
+  "api_ref_link": "https://console.mistral.ai",
+  "playground_link": null,
+  "paper_link": null,
+  "scorecard_blog_link": "https://huggingface.co/mistralai/Devstral-Small-2507",
+  "repo_link": null,
+  "weights_link": "https://huggingface.co/mistralai/Devstral-Small-2507/blob/main/model.safetensors.index.json",
+  "param_count": 24000000000,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "SWE-Bench Verified",
+      "score": 0.536,
+      "is_self_reported": true,
+      "analysis_method": "OpenHands scaffold",
+      "date_recorded": "2025-07-11",
+      "source_link": "https://huggingface.co/mistralai/Devstral-Small-2507"
+    }
+  ]
+}

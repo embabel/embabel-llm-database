@@ -1,0 +1,27 @@
+server:
+  port: 8000
+
+spring:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+  application:
+    name: embabel-database-server  
+  output:
+    ansi:
+      enabled: ALWAYS
+  profiles:
+    active: ollama
+
+springdoc:
+  api-docs:
+    path: /api-docs        
+
+logging:
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr([%t]){magenta} %clr(%-5level) %clr(%logger{0}){cyan} %clr(-){faint} %msg%n"          
+
+embabel:
+  models:
+    defaultLlm: llama3.1:8b
+    defaultEmbeddingModel: nomic-embed-text:latest

@@ -1,0 +1,31 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "Devstral Medium",
+  "description": "Devstral Medium builds upon the strengths of Devstral Small and takes performance to the next level with a score of 61.6% on SWE-Bench Verified. Devstral Medium is available through the Mistral public API, and offers exceptional performance at a competitive price point, making it an ideal choice for businesses and developers looking for a high-quality, cost-effective model.",
+  "release_date": "2025-07-10",
+  "input_context_size": 128000,
+  "output_context_size": 128000,
+  "license": "Proprietary",
+  "multimodal": false,
+  "web_hydrated": false,
+  "knowledge_cutoff": null,
+  "api_ref_link": "https://console.mistral.ai",
+  "playground_link": null,
+  "paper_link": null,
+  "scorecard_blog_link": "https://mistral.ai/news/devstral-2507",
+  "repo_link": null,
+  "weights_link": null,
+  "param_count": null,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "SWE-Bench Verified",
+      "score": 0.616,
+      "is_self_reported": true,
+      "analysis_method": "N/A",
+      "date_recorded": "2025-07-10",
+      "source_link": "https://mistral.ai/news/devstral-2507"
+    }
+  ]
+}

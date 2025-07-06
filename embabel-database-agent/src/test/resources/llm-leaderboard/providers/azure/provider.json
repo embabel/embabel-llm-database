@@ -1,0 +1,94 @@
+{
+  "name": "Azure",
+  "website": "https://azure.microsoft.com",
+  "providermodels": [
+    {
+      "model_id": "gpt-4-0613",
+      "price_per_input_token": 0.00003,
+      "price_per_output_token": 0.00006,
+      "throughput": 104,
+      "latency": 0.3,
+      "updated_at": "2024-09-09"
+    },
+    {
+      "model_id": "gpt-4-turbo-2024-04-09",
+      "price_per_input_token": 0.00001,
+      "price_per_output_token": 0.00003,
+      "throughput": 97,
+      "latency": 0.6,
+      "updated_at": "2024-09-09"
+    },
+    {
+      "model_id": "gpt-3.5-turbo-0125",
+      "price_per_input_token": 0.0000005,
+      "price_per_output_token": 0.0000015,
+      "throughput": 90,
+      "latency": 0.8,
+      "updated_at": "2024-09-09"
+    },
+    {
+      "model_id": "gpt-4o-mini-2024-07-18",
+      "price_per_input_token": 0.00000015,
+      "price_per_output_token": 0.0000006,
+      "throughput": 92,
+      "latency": 0.52,
+      "updated_at": "2024-09-09"
+    },
+    {
+      "model_id": "gpt-4o-2024-08-06",
+      "price_per_input_token": 0.0000025,
+      "price_per_output_token": 0.00001,
+      "throughput": 99,
+      "latency": 0.53,
+      "updated_at": "2024-09-09"
+    },
+    {
+      "model_id": "gpt-4o-2024-05-13",
+      "price_per_input_token": 0.0000025,
+      "price_per_output_token": 0.00001,
+      "throughput": 92,
+      "latency": 0.54,
+      "updated_at": "2024-09-09"
+    },
+    {
+      "model_id": "o1-preview",
+      "price_per_input_token": 0.0000165,
+      "price_per_output_token": 0.000066,
+      "throughput": 16,
+      "latency": 0.54,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "o1-2024-12-17",
+      "price_per_input_token": 0.000015,
+      "price_per_output_token": 0.00006,
+      "throughput": 16,
+      "latency": 0.54,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "o1-mini",
+      "price_per_input_token": 0.0000033,
+      "price_per_output_token": 0.0000132,
+      "throughput": 100,
+      "latency": 0.5,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "o3-mini",
+      "price_per_input_token": 0.0000011,
+      "price_per_output_token": 0.0000044,
+      "throughput": 115,
+      "latency": 5.2,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "phi-3.5-mini-instruct",
+      "price_per_input_token": 0.0000001,
+      "price_per_output_token": 0.0000001,
+      "throughput": 23,
+      "latency": 0.52,
+      "updated_at": "2024-09-09"
+    }
+  ]
+}

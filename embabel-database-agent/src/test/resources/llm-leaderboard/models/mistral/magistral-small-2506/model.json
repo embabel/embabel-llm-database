@@ -1,0 +1,55 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "Magistral Small 2506",
+  "description": "Building upon Mistral Small 3.1 (2503), with added reasoning capabilities, undergoing SFT from Magistral Medium traces and RL on top, it's a small, efficient reasoning model with 24B parameters. Magistral Small can be deployed locally, fitting within a single RTX 4090 or a 32GB RAM MacBook once quantized.",
+  "release_date": "2025-06-10",
+  "input_context_size": 128000,
+  "output_context_size": 128000,
+  "license": "Apache 2.0",
+  "multimodal": false,
+  "web_hydrated": false,
+  "knowledge_cutoff": "2025-06-01",
+  "api_ref_link": "https://docs.mistral.ai/api/",
+  "playground_link": "https://chat.mistral.ai/",
+  "paper_link": "https://arxiv.org/pdf/2506.10910",
+  "scorecard_blog_link": "https://mistral.ai/news/magistral",
+  "repo_link": null,
+  "weights_link": "https://huggingface.co/mistralai/Magistral-Small-2506",
+  "param_count": 24000000000,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "AIME 2024",
+      "score": 0.7068,
+      "is_self_reported": true,
+      "analysis_method": "Score",
+      "date_recorded": "2025-06-10",
+      "source_link": "https://huggingface.co/mistralai/Magistral-Small-2506"
+    },
+    {
+      "dataset_name": "AIME 2025",
+      "score": 0.6276,
+      "is_self_reported": true,
+      "analysis_method": "Score",
+      "date_recorded": "2025-06-10",
+      "source_link": "https://huggingface.co/mistralai/Magistral-Small-2506"
+    },
+    {
+      "dataset_name": "GPQA",
+      "score": 0.6818,
+      "is_self_reported": true,
+      "analysis_method": "Diamond",
+      "date_recorded": "2025-06-10",
+      "source_link": "https://huggingface.co/mistralai/Magistral-Small-2506"
+    },
+    {
+      "dataset_name": "LiveCodeBench",
+      "score": 0.513,
+      "is_self_reported": true,
+      "analysis_method": "v5",
+      "date_recorded": "2024-05-29",
+      "source_link": "https://mistral.ai/news/codestral/"
+    }
+  ]
+}

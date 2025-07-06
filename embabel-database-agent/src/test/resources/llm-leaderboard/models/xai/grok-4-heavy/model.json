@@ -1,0 +1,71 @@
+{
+  "canonical_model_id": "grok-4",
+  "fine_tuned_from_model_id": null,
+  "name": "Grok-4 Heavy",
+  "description": "Grok 4 Heavy is the multi-agent version of Grok 4, released alongside the standard model in summer 2025. This system spawns multiple Grok 4 agents in parallel that work independently on problems and then collaborate by comparing their solutions, similar to a study group. The agents share insights and tricks they discover, with the system intelligently combining their work rather than simply using majority voting. Grok 4 Heavy uses approximately 10x more test-time compute than regular Grok 4, enabling it to solve significantly more complex problems. On the Humanities Last Exam, it achieves over 50% accuracy on text-only problems, and it scored a perfect result on the AIME 2025 mathematics competition. The system represents a major advancement in multi-agent AI collaboration and reasoning capabilities.",
+  "release_date": "2025-07-09",
+  "input_context_size": 256000,
+  "output_context_size": 8000,
+  "license": "Proprietary",
+  "multimodal": true,
+  "web_hydrated": true,
+  "knowledge_cutoff": "2024-12-31",
+  "api_ref_link": "https://x.ai/api",
+  "playground_link": null,
+  "paper_link": null,
+  "scorecard_blog_link": null,
+  "repo_link": null,
+  "weights_link": null,
+  "param_count": null,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "Humanities Last Exam",
+      "score": 0.5,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "AIME 2025",
+      "score": 1.0,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "GPQA",
+      "score": 0.889,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "HMMT25",
+      "score": 0.967,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "USAMO25",
+      "score": 0.619,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "LiveCodeBench",
+      "score": 0.794,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    }
+  ]
+}

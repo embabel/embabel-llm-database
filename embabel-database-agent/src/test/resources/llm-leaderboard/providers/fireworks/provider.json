@@ -1,0 +1,118 @@
+{
+  "name": "Fireworks",
+  "website": "https://fireworks.ai/",
+  "providermodels": [
+    {
+      "model_id": "llama-3.1-405b-instruct",
+      "price_per_input_token": 0.000003,
+      "price_per_output_token": 0.000003,
+      "throughput": 78,
+      "latency": 0.5,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "llama-3.1-70b-instruct",
+      "price_per_input_token": 0.0000009,
+      "price_per_output_token": 0.0000009,
+      "throughput": 32,
+      "latency": 0.5,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "llama-3.1-8b-instruct",
+      "price_per_input_token": 0.0000002,
+      "price_per_output_token": 0.0000002,
+      "throughput": 292,
+      "latency": 0.5,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "llama-3.2-90b-instruct",
+      "price_per_input_token": 0.0000009,
+      "price_per_output_token": 0.0000009,
+      "throughput": 50,
+      "latency": 0.5,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "llama-3.2-11b-instruct",
+      "price_per_input_token": 0.0000002,
+      "price_per_output_token": 0.0000002,
+      "throughput": 125,
+      "latency": 0.2,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "qwen-2.5-coder-32b-instruct",
+      "price_per_input_token": 0.0000009,
+      "price_per_output_token": 0.0000009,
+      "throughput": 110,
+      "latency": 0.26,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "qwen-2.5-72b-instruct",
+      "price_per_input_token": 0.0000009,
+      "price_per_output_token": 0.0000009,
+      "throughput": 59,
+      "latency": 0.37,
+      "updated_at": "2024-11-24"
+    },
+    {
+      "model_id": "qwq-32b-preview",
+      "price_per_input_token": 0.0000009,
+      "price_per_output_token": 0.0000009,
+      "throughput": 99.15,
+      "latency": 0.53,
+      "updated_at": "2024-11-28"
+    },
+    {
+      "model_id": "llama-3.3-70b-instruct",
+      "price_per_input_token": 0.0000009,
+      "price_per_output_token": 0.0000009,
+      "throughput": 197,
+      "latency": 0.65,
+      "updated_at": "2024-12-18"
+    },
+    {
+      "model_id": "deepseek-r1",
+      "price_per_input_token": 0.000008,
+      "price_per_output_token": 0.000008,
+      "throughput": 2.1,
+      "latency": 0.3,
+      "updated_at": "2025-01-24"
+    },
+    {
+      "model_id": "llama-4-maverick",
+      "price_per_input_token": 0.00000022,
+      "price_per_output_token": 0.00000088,
+      "throughput": 63.03,
+      "latency": 0.62,
+      "updated_at": "2025-04-05"
+    },
+    {
+      "model_id": "llama-4-scout",
+      "price_per_input_token": 0.00000015,
+      "price_per_output_token": 0.0000006,
+      "throughput": 116.1,
+      "latency": 0.53,
+      "updated_at": "2025-04-05"
+    },
+    {
+      "model_id": "qwen3-235b-a22b",
+      "price_per_input_token": 0.0000001,
+      "price_per_output_token": 0.0000001,
+      "throughput": 68.17,
+      "latency": 0.78,
+      "updated_at": "2025-04-29"
+    },
+    {
+      "model_id": "qwen3-30b-a3b",
+      "price_per_input_token": 0.0000009,
+      "price_per_output_token": 0.0000009,
+      "throughput": 122.4,
+      "latency": 0.66,
+      "updated_at": "2025-05-23"
+    }
+  ]
+}

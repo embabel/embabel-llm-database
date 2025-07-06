@@ -1,0 +1,135 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "Gemini 2.5 Pro Preview 06-05",
+  "description": "The latest preview version of Google's most advanced reasoning Gemini model, capable of solving complex problems. Built for the agentic era with enhanced reasoning capabilities, multimodal understanding (text, image, video, audio), and a 1M token context window. Features thinking preview, code execution, grounding with Google Search, system instructions, function calling, and controlled generation. Supports up to 3,000 images per prompt, 45-60 minutes of video, and 8.4 hours of audio.",
+  "release_date": "2025-06-05",
+  "input_context_size": 1048576,
+  "output_context_size": 65535,
+  "license": "Proprietary",
+  "multimodal": true,
+  "web_hydrated": true,
+  "knowledge_cutoff": "2025-01-31",
+  "api_ref_link": "https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-pro",
+  "playground_link": "https://aistudio.google.com",
+  "paper_link": null,
+  "scorecard_blog_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/",
+  "repo_link": null,
+  "weights_link": null,
+  "param_count": null,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "Humanity's Last Exam",
+      "score": 0.216,
+      "is_self_reported": true,
+      "analysis_method": "No tools",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "GPQA",
+      "score": 0.864,
+      "is_self_reported": true,
+      "analysis_method": "Single attempt Diamond",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "AIME 2025",
+      "score": 0.88,
+      "is_self_reported": true,
+      "analysis_method": "Single attempt",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "LiveCodeBench",
+      "score": 0.69,
+      "is_self_reported": true,
+      "analysis_method": "Single attempt (1/1/2025-5/1/2025)",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "Aider-Polyglot",
+      "score": 0.822,
+      "is_self_reported": true,
+      "analysis_method": "Diff-fenced",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "SWE-Bench Verified",
+      "score": 0.672,
+      "is_self_reported": true,
+      "analysis_method": "Multiple attempts",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "SimpleQA",
+      "score": 0.54,
+      "is_self_reported": true,
+      "analysis_method": "Factuality",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "FACTS Grounding",
+      "score": 0.878,
+      "is_self_reported": true,
+      "analysis_method": "Factuality",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "MMMU",
+      "score": 0.82,
+      "is_self_reported": true,
+      "analysis_method": "Single attempt",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "Vibe-Eval",
+      "score": 0.672,
+      "is_self_reported": true,
+      "analysis_method": "Image understanding",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "VideoMMMU",
+      "score": 0.836,
+      "is_self_reported": true,
+      "analysis_method": "Video understanding",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "MRCR v2 (8-needle)",
+      "score": 0.58,
+      "is_self_reported": true,
+      "analysis_method": "128k average",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "MRCR v2 (8-needle)",
+      "score": 0.164,
+      "is_self_reported": true,
+      "analysis_method": "1M pointwise",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    },
+    {
+      "dataset_name": "Global-MMLU-Lite",
+      "score": 0.892,
+      "is_self_reported": true,
+      "analysis_method": "Multilingual performance",
+      "date_recorded": "2025-06-05",
+      "source_link": "https://blog.google/products/gemini/gemini-2-5-pro-latest-preview/"
+    }
+  ]
+}
