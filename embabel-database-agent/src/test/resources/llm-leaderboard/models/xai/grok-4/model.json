@@ -1,0 +1,79 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "Grok-4",
+  "description": "Grok 4, announced by xAI in summer 2025, represents a major leap in AI capabilities, described as 'the smartest AI in the world.' Built on version 6 of xAI's foundation model, it uses 100x more training compute than Grok 2 and 10x more reinforcement learning compute than Grok 3. The model achieves PhD-level performance across all academic disciplines simultaneously, scoring perfect on standardized tests like the SAT and near-perfect on graduate exams like the GRE. Unlike Grok 3, tool usage is built into the training process rather than relying on generalization. Trained using 200,000 GPUs, Grok 4 excels at complex reasoning, mathematical problem-solving, and coding tasks, though it has acknowledged weaknesses in multimodal capabilities that are being addressed in the next version.",
+  "release_date": "2025-07-09",
+  "input_context_size": 256000,
+  "output_context_size": 8000,
+  "license": "Proprietary",
+  "multimodal": true,
+  "web_hydrated": true,
+  "knowledge_cutoff": "2024-12-31",
+  "api_ref_link": "https://x.ai/api",
+  "playground_link": null,
+  "paper_link": null,
+  "scorecard_blog_link": null,
+  "repo_link": null,
+  "weights_link": null,
+  "param_count": null,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "Humanities Last Exam",
+      "score": 0.4,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "GPQA",
+      "score": 0.875,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "HMMT25",
+      "score": 0.9,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "AIME 2025",
+      "score": 0.984,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "USAMO25",
+      "score": 0.375,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "LiveCodeBench",
+      "score": 0.793,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    },
+    {
+      "dataset_name": "ARC-AGI v2",
+      "score": 0.159,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-07-01",
+      "source_link": "https://x.com/xai/status/1943158495588815072"
+    }
+  ]
+}

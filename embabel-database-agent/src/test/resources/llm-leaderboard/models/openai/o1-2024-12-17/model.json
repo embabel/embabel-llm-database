@@ -1,0 +1,176 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "o1",
+  "description": "A research preview model focused on mathematical and logical reasoning capabilities, demonstrating improved performance on tasks requiring step-by-step reasoning, mathematical problem-solving, and code generation. The model shows enhanced capabilities in formal reasoning while maintaining strong general capabilities.",
+  "release_date": "2024-12-17",
+  "input_context_size": 200000,
+  "output_context_size": 100000,
+  "license": "Proprietary",
+  "multimodal": false,
+  "web_hydrated": false,
+  "knowledge_cutoff": "2024-01",
+  "api_ref_link": "https://platform.openai.com/docs/models",
+  "playground_link": null,
+  "paper_link": "https://cdn.openai.com/o1-system-card-20240917.pdf",
+  "scorecard_blog_link": "https://openai.com/index/learning-to-reason-with-llms",
+  "repo_link": "https://openai.com/index/o1-and-new-tools-for-developers/",
+  "weights_link": null,
+  "param_count": null,
+  "training_tokens": null,
+  "qualitative_metrics": [
+    {
+      "dataset_name": "MATH",
+      "score": 0.964,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/learning-to-reason-with-llms/"
+    },
+    {
+      "dataset_name": "MMLU",
+      "score": 0.918,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/learning-to-reason-with-llms/"
+    },
+    {
+      "dataset_name": "GSM8K",
+      "score": 0.971,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/learning-to-reason-with-llms/"
+    },
+    {
+      "dataset_name": "HumanEval",
+      "score": 0.881,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/learning-to-reason-with-llms/"
+    },
+    {
+      "dataset_name": "AIME 2024",
+      "score": 0.743,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2024-11-20",
+      "source_link": "https://openai.com/index/gpt-4-1/"
+    },
+
+    {
+      "dataset_name": "GPQA",
+      "score": 0.78,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-02-25",
+      "source_link": "https://openai.com/index/openai-o3-mini/"
+    },
+    {
+      "dataset_name": "MMMU",
+      "score": 0.776,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-11-20",
+      "source_link": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+      "dataset_name": "MathVista",
+      "score": 0.718,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-11-20",
+      "source_link": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+      "dataset_name": "GPQA Biology",
+      "score": 0.692,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/learning-to-reason-with-llms/"
+    },
+    {
+      "dataset_name": "GPQA Chemistry",
+      "score": 0.647,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/learning-to-reason-with-llms/"
+    },
+    {
+      "dataset_name": "GPQA Physics",
+      "score": 0.928,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/learning-to-reason-with-llms/"
+    },
+    {
+      "dataset_name": "SWE-Bench Verified",
+      "score": 0.41,
+      "is_self_reported": true,
+      "analysis_method": "verified",
+      "date_recorded": "2024-11-20",
+      "source_link": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+      "dataset_name": "LiveBench",
+      "score": 0.67,
+      "is_self_reported": true,
+      "analysis_method": "coding",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/openai-o3-mini//"
+    },
+    {
+      "dataset_name": "MGSM",
+      "score": 0.893,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/o1-and-new-tools-for-developers/"
+    },
+    {
+      "dataset_name": "SimpleQA",
+      "score": 0.47,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2025-03-04",
+      "source_link": "https://openai.com/index/introducing-gpt-4-5/"
+    },
+    {
+      "dataset_name": "TAU-bench Retail",
+      "score": 0.708,
+      "is_self_reported": true,
+      "analysis_method": "agents",
+      "date_recorded": "2024-11-20",
+      "source_link": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+      "dataset_name": "TAU-bench Airline",
+      "score": 0.5,
+      "is_self_reported": true,
+      "analysis_method": "agents",
+      "date_recorded": "2024-11-20",
+      "source_link": "https://openai.com/index/gpt-4-1/"
+    },
+    {
+      "dataset_name": "FrontierMath",
+      "score": 0.055,
+      "is_self_reported": true,
+      "analysis_method": "pass@1",
+      "date_recorded": "2024-03-13",
+      "source_link": "https://openai.com/index/o1-and-new-tools-for-developers/"
+    },
+    {
+      "dataset_name": "MMMLU",
+      "score": 0.877,
+      "is_self_reported": true,
+      "analysis_method": "accuracy",
+      "date_recorded": "2024-11-20",
+      "source_link": "https://openai.com/index/gpt-4-1/"
+    }
+  ]
+}

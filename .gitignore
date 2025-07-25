@@ -1,0 +1,9 @@
+target
+.vscode
+
+.devcontainer
+.github/dependabot.yml
+
+*.log
+
+data

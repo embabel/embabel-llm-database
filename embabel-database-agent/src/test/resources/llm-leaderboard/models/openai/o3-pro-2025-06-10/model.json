@@ -1,0 +1,22 @@
+{
+  "canonical_model_id": null,
+  "fine_tuned_from_model_id": null,
+  "name": "o3-pro",
+  "description": "Version of o3 with more compute for better responses. The o3-pro model uses more compute to think harder and provide consistently better answers. Designed to tackle tough problems with advanced reasoning capabilities.",
+  "release_date": "2025-06-10",
+  "input_context_size": 200000,
+  "output_context_size": 100000,
+  "license": "Proprietary",
+  "multimodal": true,
+  "web_hydrated": false,
+  "knowledge_cutoff": "2024-05-31",
+  "api_ref_link": "https://platform.openai.com/docs/models/o3-pro",
+  "playground_link": null,
+  "paper_link": null,
+  "scorecard_blog_link": null,
+  "repo_link": null,
+  "weights_link": null,
+  "param_count": null,
+  "training_tokens": null,
+  "qualitative_metrics": []
+}

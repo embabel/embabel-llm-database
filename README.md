@@ -20,9 +20,39 @@
 
 ## Overview
 
+Embabel Database is REST-compliant database based on a simple repository structure.  Default implementation includes an in-memory database with a JSON local file persistence.
+
+The Database is loaded from the Project [Llm LeaderBoard](https://github.com/JonathanChavezTamales/llm-leaderboard/) Project with a dedicated [Agent](./embabel-database-agent/) to load and maintain on a periodic basis.
+
 
 ## Modules
 
+### Embabel Database Core
+
+[Embabel Database Core](./embabel-database-core/) comprises of the core repository definition including models and initial In-Memory implementation
+
+### Embabel Database Agent
+
+[Embabel Database Agent](./embabel-database-agent/) comprises of the repository maintenance agent implemented in Java.  This agent is responsible for retrieveing and updating the repositories from the [Llm LeaderBoard](https://github.com/JonathanChavezTamales/llm-leaderboard/) using a Git and parsing process.  
+
+### Embabel Database Server
+
+[Embabel Database Server](./embabel-database-server/) is a Spring Rest standlone server that supports running the repository and exposing it via REST endpoints.
+
+`GET /api/v1/models` returns an array of JSON objects representing a `ModelMetadata` object
+`GET /api/v1/models/search/findByName?name={model name}` returns a list of matching `ModelMetadata` including providers and costs for each matching model
+`GET /api/v1/models/lastUpdate` returns a timestamp for when the repository was last refreshed
+
+Repository maintenance is via an Agent approach.  The server provides an MCP Server compliant toolset as well as a direct, manual mechanism to trigger the Agent.  The Agent will validate if the repository needs refreshing.
+`POST /api/v1/agents/{agentName}` manually triggers the repository maintenance agent  (e.g. `POST /api/v1/agents/A1ModelRepositoryAgent`)
+
+## Testing
+
+[Testing](./TESTING.md)
+
+## Docker
+
+[Docker](./DOCKER.md)
 
 ## License
 
