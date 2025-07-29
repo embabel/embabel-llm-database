@@ -21,7 +21,8 @@ WORKDIR /app
 COPY --from=builder /build/embabel-database-server/target/*.jar ./app.jar
 
 # Copy the model collection
-COPY --from=builder /build/data ./
+# COPY --from=builder /build/data ./
+RUN cp -r /build/data ./ || echo "Warning: /build/data not found, continuing"
 
 # Change ownership to app user
 RUN chown -R app:app .

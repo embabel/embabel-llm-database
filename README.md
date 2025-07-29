@@ -10,7 +10,7 @@
 ![SonarQube](https://img.shields.io/badge/SonarQube-black?style=for-the-badge&logo=sonarqube&logoColor=4E9BCD)
 ![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
 
-<img align="left" src="https://github.com/embabel/agent-api/blob/main/images/315px-Meister_der_Weltenchronik_001.jpg?raw=true" width="180">
+<img align="left" src="./embabel-database-core/images/315px-Meister_der_Weltenchronik_001.jpg?raw=true" width="180">
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 
