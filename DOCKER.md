@@ -12,7 +12,7 @@
 ### Running
 `docker run --name embabel-llm-database-server -p 8000:8000 -e SPRING_AI_OLLAMA_BASE-URL=[your ollama server url] -d embabel-database-server:latest`
 
-### Docker compose
+### Ollama Stub Docker Container
 - Runs a self-contained Ollama Stub that provides `llama3.1:8b` model
-- `docker compose up -d`
+- `docker run --name ollama-stub -p 11434:11434 -d embabel-database-server-ollama-stub:latest`
 
