@@ -15,6 +15,7 @@
         <dependency>
             <groupId>com.embabel.common</groupId>
             <artifactId>embabel-common-ai</artifactId>
+            <version>0.1.0</version>
         </dependency>
 
         <dependency>
