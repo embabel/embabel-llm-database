@@ -31,7 +31,7 @@ import com.embabel.database.agent.util.AWSBedrockParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;a
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrock.BedrockClient;
 

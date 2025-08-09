@@ -29,14 +29,14 @@
             <dependency>
                 <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-dependencies</artifactId>
-                <version>${project.version}</version>
+                <version>${project.parent.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-test-dependencies</artifactId>
-                <version>${project.version}</version>
+                <version>${project.parent.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -57,12 +57,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency> -->
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -116,7 +110,7 @@
 
     <repositories>
         <repository>
-            <id>embabel-snapshots</id>
+            <id>embabel-releases</id>
             <url>https://repo.embabel.com/artifactory/libs-release</url>
             <snapshots>
                 <enabled>false</enabled>
