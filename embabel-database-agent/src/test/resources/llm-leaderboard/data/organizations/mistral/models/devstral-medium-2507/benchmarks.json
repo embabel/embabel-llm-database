@@ -1,0 +1,20 @@
+[
+  {
+    "model_benchmark_id": 1352,
+    "benchmark_id": "swe-bench-verified",
+    "model_id": "devstral-medium-2507",
+    "score": 0.616,
+    "normalized_score": 0.616,
+    "is_self_reported": true,
+    "self_reported_source_link": "https://mistral.ai/news/devstral-2507",
+    "verified_by_llmstats": false,
+    "analysis_method": "N/A",
+    "verification_provider_id": null,
+    "verification_hardware": null,
+    "verification_date": null,
+    "verification_notes": null,
+    "created_at": "2025-07-19T19:56:13.845635+00:00",
+    "updated_at": "2025-07-19T19:56:13.845635+00:00",
+    "benchmark_name": "SWE-Bench Verified"
+  }
+]

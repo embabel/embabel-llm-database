@@ -46,12 +46,12 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
     private static final String JSON_SUFFIX = ".json";
     private static final String MODEL_ID = "model_id";
     private static final String MODEL_PATH = "models";
-    private static final String NAME = "name";
-    private static final String PARAM_COUNT = "param_count";
-    private static final String PRICE_PER_INPUT_TOKEN = "price_per_input_token";
-    private static final String PRICE_PER_OUTPUT_TOKEN = "price_per_output_token";
+    private static final String NAME = "model_name";
+    private static final String PARAM_COUNT = "max_input_tokens";
+    private static final String PRICE_PER_INPUT_TOKEN = "input_cents_per_million_tokens";
+    private static final String PRICE_PER_OUTPUT_TOKEN = "output_cents_per_million_tokens";
     private static final String PROVIDER_MODELS = "providermodels";
-    private static final String PROVIDER_PATH = "providers";
+    private static final String PROVIDER_PATH = "data/providers";
     private static final String UPDATED_AT = "updated_at";
 
     ObjectMapper objectMapper;
@@ -66,27 +66,27 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
         List<ModelMetadata> listModelMetadata = new ArrayList<>();
         //convert to the list map
         try {
-            Map<String,Object> providerModels = objectMapper.readValue(json, new TypeReference<Map<String,Object>>(){});
+            List<Map<String,Object>> providerModelList = objectMapper.readValue(json, new TypeReference<List<Map<String,Object>>>(){});
             //get the primary components
-            String providerName = providerModels.get(NAME).toString();
-            //loop through the model
-            List<Map<String,Object>> models = (List<Map<String, Object>>) providerModels.get(PROVIDER_MODELS);
-            for (Map<String,Object> model : models) {
-                String modelName = model.get(MODEL_ID).toString();
+            for (Map<String,Object> providerModel : providerModelList) {
+                String providerName = providerModel.get(NAME).toString();
+                String modelName = providerModel.get(MODEL_ID).toString();
                 //date parse
-                LocalDate knowledgeCutoffDate = null;
-                if (model.get(UPDATED_AT) != null && model.get(UPDATED_AT).toString().length() > 0) {
-                    knowledgeCutoffDate = parseLocalDate(model.get(UPDATED_AT).toString());
-                } //end if
-                double pricePerInput = model.get(PRICE_PER_INPUT_TOKEN) != null ? (double) model.get(PRICE_PER_INPUT_TOKEN) : 0.0;
-                double pricePerOutput = model.get(PRICE_PER_OUTPUT_TOKEN) != null ? (double) model.get(PRICE_PER_OUTPUT_TOKEN) : 0.0;
+                LocalDate knowledgeCutoffDate = LocalDate.of(1970, 1, 1); //TODO need to fix updated at
+                // if (providerModels.get(UPDATED_AT) != null && providerModels.get(UPDATED_AT).toString().length() > 0) {
+                //     knowledgeCutoffDate = parseLocalDate(providerModels.get(UPDATED_AT).toString());
+                // } //end if
+                double pricePerInput = providerModel.get(PRICE_PER_INPUT_TOKEN) != null ? Double.parseDouble(providerModel.get(PRICE_PER_INPUT_TOKEN).toString()) : 0.0;
+                double pricePerOutput = providerModel.get(PRICE_PER_OUTPUT_TOKEN) != null ? Double.parseDouble(providerModel.get(PRICE_PER_OUTPUT_TOKEN).toString()) : 0.0;
                 //bulid the pricingModel
                 PricingModel pricingModel = new PerTokenPricingModel(pricePerInput, pricePerOutput);
+                //tokens
+                Long paramCount = providerModel.get(PARAM_COUNT) != null ? Long.parseLong(providerModel.get(PARAM_COUNT).toString()) : 0l;
                 //build the metadata
-                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel);
+                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,paramCount);
                 //add
                 listModelMetadata.add(modelMetadata);
-            } //end for            
+            } //end loop                       
         } catch (Exception e) {
             logger.error(e);
         }
@@ -119,43 +119,15 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
             } //end if
             //init empty model list
             List<ModelMetadata> models = new ArrayList<>();
-            // Map<String,String> providerDictionary = new HashMap<>();
             //parse the providers        
             for (Path providerModelPath : providerModels) {
                 //now we have the json file location
                 String contents = new String(Files.readAllBytes(providerModelPath));
                 //pass and parse
                 models.addAll(parse(contents)); //add
-            } //end for                
-            //check if we have any models
-            if (models.isEmpty()) {
-                logger.warn("unable to parse models from json path");
-                return completeModels; //exit out
-            } //end if
-            //init
-            List<Path> sourceModels = null; 
-            Path modelPath = path.resolve(MODEL_PATH);
-            sourceModels = getPaths(modelPath);
-            //then parse the model data to match
-            if (sourceModels == null) {
-                //don't continue
-                logger.warn("No jsons in the location " + path.toString());
-                return completeModels;
-            } //end if
-            //now we have a list of paths which includes the MODEL NAME and MODEL SOURCE (NOT PROVIDER)
-            for (Path sourceModelPath : sourceModels) {
-                String name = getModelName(sourceModelPath);
-                //retrieve the model
-                for (ModelMetadata model : models) { //these are only the models that have providers
-                    if (model.getName().equals(name)) {
-                        //name matches, update with the parameters
-                        //new model
-                        ModelMetadata modelMetadata = updateModel(sourceModelPath,model);
-                        //add back
-                        completeModels.add(modelMetadata);
-                    }//end if
-                } //end if
-            } //end for
+            } //end for        
+            //add
+            completeModels.addAll(models);
         }
         catch (IOException e) {
             logger.error(e);
@@ -164,21 +136,10 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
         return completeModels;
     }
 
-    /**
-     * support function
-     * @param jsonLocation
-     * @param existingModel
-     * @return
-     * @throws IOException
-     */
-    private ModelMetadata updateModel(Path jsonLocation,ModelMetadata existingModel) throws IOException {
-        //cast model
-        LlmModelMetadata model = (LlmModelMetadata) existingModel;
-        InputStream inputStream = Files.newInputStream(jsonLocation);
-        Map<String,Object> modelData = objectMapper.readValue(inputStream,new TypeReference<Map<String,Object>>(){});
-        Long paramCount = modelData.get(PARAM_COUNT) != null ? (Long) modelData.get(PARAM_COUNT) : 0l;
-        //new model
-        return LlmModelMetadata.Companion.create(model.getName(),model.getProvider(),model.getKnowledgeCutoffDate(),model.getPricingModel(),paramCount);
+    @Override
+    public List<ModelMetadata> parse(List<?> list) {
+        logger.error("Not implemented for " + this.getClass().getName());
+        return null;
     }
 
     /**
@@ -188,22 +149,9 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
         try (Stream<Path> walk = Files.walk(basePath)) {
             return walk.filter(Files::isRegularFile)
                 .filter(p -> p.getFileName().toString().endsWith(JSON_SUFFIX))
+                .filter(p -> p.getFileName().toString().contains(MODEL_PATH))
                 .collect(Collectors.toList());        
         }
-    }
-
-    /**
-     * support function
-     * @param path
-     * @return
-     */
-    private String getModelName(Path path) {
-        String pathString = path.toString();
-        int lastSlash = pathString.lastIndexOf('/');
-        //now get the next to last
-        int previousSlash = pathString.lastIndexOf('/',lastSlash -1);
-        //extract
-        return pathString.substring(previousSlash + 1,lastSlash);
     }
 
     /**

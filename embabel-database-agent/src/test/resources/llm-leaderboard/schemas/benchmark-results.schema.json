@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ModelBenchmark",
+  "description": "Schema for model performance scores on benchmarks",
+  "type": "object",
+  "properties": {
+    "model_benchmark_id": {
+      "type": "integer",
+      "description": "Unique identifier for this model-benchmark result",
+      "minimum": 1
+    },
+    "benchmark_id": {
+      "type": "string",
+      "description": "ID of the benchmark"
+    },
+    "model_id": {
+      "type": "string",
+      "description": "ID of the model"
+    },
+    "score": {
+      "type": "number",
+      "description": "Raw score achieved on the benchmark",
+      "minimum": 0
+    },
+    "normalized_score": {
+      "type": ["number", "null"],
+      "description": "Score normalized to 0-1 range for cross-benchmark comparison",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "is_self_reported": {
+      "type": "boolean",
+      "description": "Whether the score was self-reported by the model creator",
+      "default": true
+    },
+    "self_reported_source_link": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to the source of self-reported scores"
+    },
+    "verified_by_llmstats": {
+      "type": "boolean",
+      "description": "Whether the score has been independently verified by llm-stats",
+      "default": false
+    },
+    "analysis_method": {
+      "type": ["string", "null"],
+      "description": "Method used for evaluation (e.g., '0-shot', '5-shot', 'CoT')",
+      "examples": [
+        "0-shot",
+        "5-shot",
+        "few-shot",
+        "chain-of-thought",
+        "zero-shot CoT"
+      ]
+    },
+    "verification_provider_id": {
+      "type": ["string", "null"],
+      "description": "Provider used for independent verification"
+    },
+    "verification_hardware": {
+      "type": ["string", "null"],
+      "description": "Hardware used for verification",
+      "examples": ["H100 on Modal", "A100 on AWS", "4xA100 on GCP"]
+    },
+    "verification_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Date when the score was independently verified"
+    },
+    "verification_notes": {
+      "type": ["string", "null"],
+      "description": "Additional notes about the verification process"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was last updated"
+    },
+    "benchmark_name": {
+      "type": "string",
+      "description": "Display name of the benchmark (denormalized for convenience)"
+    }
+  },
+  "required": [
+    "model_benchmark_id",
+    "benchmark_id",
+    "model_id",
+    "score",
+    "is_self_reported",
+    "verified_by_llmstats",
+    "created_at",
+    "updated_at",
+    "benchmark_name"
+  ],
+  "additionalProperties": false
+}

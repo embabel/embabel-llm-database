@@ -6,4 +6,4 @@ target
 
 *.log
 
-data
+embabel-database-agent/data

@@ -1,0 +1,16 @@
+{
+  "benchmark_id": "mm-mind2web",
+  "name": "MM-Mind2Web",
+  "parent_benchmark_id": null,
+  "category": "general",
+  "modality": "text",
+  "multilingual": false,
+  "max_score": 1.0,
+  "language": "en",
+  "description": "MM-Mind2Web benchmark",
+  "paper_link": null,
+  "implementation_link": null,
+  "verified": false,
+  "created_at": "2025-07-19T19:56:12.753488+00:00",
+  "updated_at": "2025-07-19T19:56:12.753488+00:00"
+}

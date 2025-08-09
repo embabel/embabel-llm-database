@@ -17,12 +17,14 @@ package com.embabel.database.agent.util;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,8 +38,9 @@ public class LlmLeaderboardParserTest {
     @Test
     void testConvertJsontoModelMetadata() throws Exception {
         String json;
+        String json_path = "json/data.providers.anthropic.models.json";
         //load from test resources
-        try (InputStream is = getClass().getClassLoader().getResourceAsStream("json/anthropic.provider.json")) {
+        try (InputStream is = getClass().getClassLoader().getResourceAsStream(json_path)) {
             if (is == null) {
                 throw new IllegalArgumentException("test resource not found");
             }//end if
@@ -70,4 +73,8 @@ public class LlmLeaderboardParserTest {
         assertTrue(models.size() > 50);// more than 50 in the list
     }
 
+    @Test
+    void testParseList() throws Exception {
+        assertNull(new LlmLeaderboardParser(null).parse(Collections.emptyList()));
+    }
 }

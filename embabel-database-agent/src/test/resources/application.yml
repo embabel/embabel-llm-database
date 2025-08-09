@@ -2,3 +2,10 @@ embabel:
   models:
     defaultLlm: llama3.1:8b
     defaultEmbeddingModel: nomic-embed-text:latest  
+
+spring:
+  ai:
+    model:
+      chat: none
+  application:
+    name: embabel-llm-database-agent
