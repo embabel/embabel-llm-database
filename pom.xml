@@ -15,6 +15,7 @@
     <description>Common dependencies shared by child modules.</description>
 
     <properties>
+        <embabel.version>0.1.0</embabel.version>
         <mockk.version>1.13.3</mockk.version>
     </properties>
 
@@ -29,14 +30,14 @@
             <dependency>
                 <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-dependencies</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${embabel.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-test-dependencies</artifactId>
-                <version>${project.parent.version}</version>
+                <version>${embabel.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
