@@ -26,6 +26,7 @@ import com.embabel.agent.config.annotation.LocalModels
 import com.embabel.database.agent.AiModelRepositoryAgent
 import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService
+import com.embabel.database.agent.service.ModelMetadataService
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataValidationService
 import com.embabel.database.agent.util.LlmLeaderboardParser
@@ -58,6 +59,11 @@ class EmbabelDatabaseServer {
     @Bean
     fun modelMetadataDiscoveryService(modelMetadataParser: ModelMetadataParser): ModelMetadataDiscoveryService {
         return LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser)
+    }
+
+    @Bean
+    fun modelMetadataService(): ModelMetadataService {
+        return ModelMetadataService()
     }
 
     @Bean

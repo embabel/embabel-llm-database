@@ -7,3 +7,4 @@ target
 *.log
 
 embabel-database-agent/data
+embabel-database-server/data
