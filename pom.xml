@@ -25,8 +25,25 @@
         <module>embabel-database-server</module>
     </modules>
 
+    <scm>
+        <url>https://github.com/embabel/embabel-llm-database</url>
+        <connection>scm:git:https://github.com/embabel/embabel-llm-database.git</connection>
+        <developerConnection>scm:git:https://github.com/embabel/embabel-llm-database.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>    
+
+    <!-- Embabel Common BOM -->
     <dependencyManagement>
         <dependencies>
+            <!-- Embabel Agent BOM -->
+            <dependency>
+                <groupId>com.embabel.agent</groupId>
+                <artifactId>embabel-agent-dependencies</artifactId>
+                <version>${embabel.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Embabel Common BOM -->
             <dependency>
                 <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-dependencies</artifactId>
@@ -34,6 +51,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Embabel Common BOM -->
             <dependency>
                 <groupId>com.embabel.common</groupId>
                 <artifactId>embabel-common-test-dependencies</artifactId>
@@ -62,6 +80,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -95,6 +114,10 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>        
+            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
@@ -115,6 +138,16 @@
             <url>https://repo.embabel.com/artifactory/libs-release</url>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>embabel-snapshots</id>
+            <url>https://repo.embabel.com/artifactory/libs-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>

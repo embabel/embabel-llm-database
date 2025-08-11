@@ -13,7 +13,6 @@
     <description>Embabel Database Server</description>
 
     <dependencies>
-
         <dependency>
             <groupId>com.embabel.database</groupId>
             <artifactId>embabel-database-core</artifactId>
@@ -34,7 +33,6 @@
         <dependency>
             <groupId>com.embabel.agent</groupId>
             <artifactId>embabel-agent-starter</artifactId>
-            <version>0.1.0</version>
         </dependency>
 
         <dependency>
