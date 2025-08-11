@@ -11,11 +11,11 @@
     <packaging>jar</packaging>
     <name>Embabel Database Core</name>
     <description>Embabel Database Core framework</description>
+
     <dependencies>
         <dependency>
             <groupId>com.embabel.common</groupId>
             <artifactId>embabel-common-ai</artifactId>
-            <version>0.1.0</version>
         </dependency>
 
         <dependency>
@@ -46,14 +46,12 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.13</version>
                 <executions>
-                    <!-- Prepares the JaCoCo agent before tests -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
-                    </execution>
-                    <!-- Generates the code coverage report after tests -->
+                    </execution>                    
                     <execution>
                         <id>report</id>
                         <phase>test</phase>

@@ -12,6 +12,13 @@
     <name>Embabel Database Agent</name>
     <description>Embabel Database Population</description>
 
+     <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <jgit.version>7.3.0.202506031305-r</jgit.version>
+    </properties>
+
+
     <!-- ================ AWS Bedrock Support ================ -->
 
     <dependencyManagement>
@@ -36,19 +43,16 @@
         <dependency>
             <groupId>com.embabel.common</groupId>
             <artifactId>embabel-common-ai</artifactId>
-            <version>0.1.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.embabel.agent</groupId>
             <artifactId>embabel-agent-api</artifactId>
-            <version>0.1.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.embabel.agent</groupId>
             <artifactId>embabel-agent-autoconfigure</artifactId>
-            <version>0.1.0</version>
         </dependency>        
 
         <dependency>
@@ -66,7 +70,7 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>7.3.0.202506031305-r</version>
+            <version>${jgit.version}</version>
         </dependency>     
 
         <!-- ================ AWS Bedrock ================ -->
