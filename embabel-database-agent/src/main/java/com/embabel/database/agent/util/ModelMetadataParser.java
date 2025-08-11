@@ -37,4 +37,11 @@ public interface ModelMetadataParser {
      */
     List<ModelMetadata> parse(Path path);
 
+    /**
+     * override to parse from one list structure to another
+     * @param path
+     * @return
+     */
+    List<ModelMetadata> parse(List<?> list);    
+
 }

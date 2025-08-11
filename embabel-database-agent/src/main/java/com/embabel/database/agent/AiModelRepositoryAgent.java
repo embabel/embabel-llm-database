@@ -29,6 +29,7 @@ import com.embabel.agent.api.annotation.Condition;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
+import com.embabel.database.agent.service.ModelMetadataService;
 import com.embabel.database.agent.service.ModelMetadataValidationService;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,8 +47,11 @@ public class AiModelRepositoryAgent {
     @Autowired
     AiModelRepository aiModelRepository;
 
+    // @Autowired
+    // ModelMetadataDiscoveryService modelMetadataDiscoveryService;
+
     @Autowired
-    ModelMetadataDiscoveryService modelMetadataDiscoveryService;
+    ModelMetadataService modelMetadataService;
 
     @Autowired
     ModelMetadataValidationService modelMetadataValidationService;
@@ -72,7 +76,7 @@ public class AiModelRepositoryAgent {
     public ListModelMetadata discoverModels() {
         logger.info("invoking discoverModels");
         //retrieves models
-        List<ModelMetadata> models = modelMetadataDiscoveryService.retrieveModelMetadata();
+        List<ModelMetadata> models = modelMetadataService.retrieveModelMetadata();
         //build and return
         return new ListModelMetadata(models);
     }

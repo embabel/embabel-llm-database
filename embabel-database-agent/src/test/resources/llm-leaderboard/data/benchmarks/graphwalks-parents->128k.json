@@ -1,0 +1,16 @@
+{
+  "benchmark_id": "graphwalks-parents->128k",
+  "name": "Graphwalks parents >128k",
+  "parent_benchmark_id": null,
+  "category": "general",
+  "modality": "text",
+  "multilingual": false,
+  "max_score": 1.0,
+  "language": "en",
+  "description": "Graphwalks parents >128k benchmark",
+  "paper_link": null,
+  "implementation_link": null,
+  "verified": false,
+  "created_at": "2025-07-19T19:56:15.316836+00:00",
+  "updated_at": "2025-07-19T19:56:15.316836+00:00"
+}

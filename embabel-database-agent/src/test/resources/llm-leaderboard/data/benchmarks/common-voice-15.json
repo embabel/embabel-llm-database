@@ -1,0 +1,16 @@
+{
+  "benchmark_id": "common-voice-15",
+  "name": "Common Voice 15",
+  "parent_benchmark_id": null,
+  "category": "general",
+  "modality": "audio",
+  "multilingual": false,
+  "max_score": 100.0,
+  "language": "en",
+  "description": "Common Voice 15 benchmark",
+  "paper_link": null,
+  "implementation_link": null,
+  "verified": false,
+  "created_at": "2025-07-19T19:56:14.830793+00:00",
+  "updated_at": "2025-07-19T19:56:14.830793+00:00"
+}

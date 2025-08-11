@@ -1,0 +1,16 @@
+{
+  "benchmark_id": "mbpp-pass@1",
+  "name": "MBPP pass@1",
+  "parent_benchmark_id": null,
+  "category": "code",
+  "modality": "text",
+  "multilingual": false,
+  "max_score": 1.0,
+  "language": "en",
+  "description": "MBPP pass@1 benchmark",
+  "paper_link": null,
+  "implementation_link": null,
+  "verified": false,
+  "created_at": "2025-07-19T19:56:15.138778+00:00",
+  "updated_at": "2025-07-19T19:56:15.138778+00:00"
+}

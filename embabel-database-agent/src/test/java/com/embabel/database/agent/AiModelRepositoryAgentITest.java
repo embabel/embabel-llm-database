@@ -31,6 +31,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +51,7 @@ import com.embabel.agent.core.ProcessOptions;
 import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService;
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
+import com.embabel.database.agent.service.ModelMetadataService;
 import com.embabel.database.agent.service.ModelMetadataValidationService;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
@@ -58,6 +60,12 @@ import com.embabel.database.core.repository.InMemoryAiModelRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.bedrock.BedrockClient;
+
 
 @SpringBootTest(classes={AiModelRepositoryAgentITest.class,AiModelRepositoryAgentITest.TestConfig.class})
 @ActiveProfiles("ollama")
@@ -168,6 +176,11 @@ public class AiModelRepositoryAgentITest {
         @Bean
         public ModelMetadataDiscoveryService modelMetadataDiscoveryService(ModelMetadataParser modelMetadataParser) {
             return new LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser);
+        }
+
+        @Bean
+        public ModelMetadataService modelMetadataService() {
+            return new ModelMetadataService();
         }
 
         @Bean

@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Benchmark",
+  "description": "Schema for AI/ML evaluation benchmark definitions",
+  "type": "object",
+  "properties": {
+    "benchmark_id": {
+      "type": "string",
+      "description": "Unique identifier for the benchmark",
+      "examples": [
+        "mmlu",
+        "humaneval",
+        "arc-c",
+        "gsm8k",
+        "mbpp-pass@1",
+        "humanity's-last-exam"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name of the benchmark",
+      "examples": ["MMLU", "HumanEval", "ARC-Challenge", "GSM8K"]
+    },
+    "parent_benchmark_id": {
+      "type": ["string", "null"],
+      "description": "ID of parent benchmark if this is a subset or variant"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category of tasks the benchmark evaluates",
+      "enum": [
+        "general",
+        "code",
+        "math",
+        "reasoning",
+        "language",
+        "multimodal",
+        "safety",
+        "long_context",
+        "roleplay",
+        "agents",
+        "factuality",
+        "vision",
+        "audio",
+        "video",
+        "text-to-image",
+        "image-to-text",
+        "text-to-speech",
+        "speech-to-text",
+        "text-to-video",
+        "video-to-text"
+      ]
+    },
+    "modality": {
+      "type": "string",
+      "description": "Primary modality of the benchmark",
+      "enum": ["text", "image", "audio", "video", "multimodal"]
+    },
+    "multilingual": {
+      "type": "boolean",
+      "description": "Whether the benchmark tests multiple languages",
+      "default": false
+    },
+    "max_score": {
+      "type": "number",
+      "description": "Maximum possible score on the benchmark",
+      "minimum": 0,
+      "default": 1.0,
+      "examples": [1.0, 100.0]
+    },
+    "language": {
+      "type": "string",
+      "description": "Primary language of the benchmark (ISO 639-1 code)",
+      "default": "en",
+      "examples": ["en", "zh", "es", "fr"]
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "Detailed description of what the benchmark measures"
+    },
+    "paper_link": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to the research paper introducing the benchmark"
+    },
+    "implementation_link": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to the official implementation or dataset"
+    },
+    "verified": {
+      "type": "boolean",
+      "description": "Whether the benchmark has been verified by llm-stats maintainers",
+      "default": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was last updated"
+    }
+  },
+  "required": [
+    "benchmark_id",
+    "name",
+    "category",
+    "modality",
+    "multilingual",
+    "max_score",
+    "language",
+    "verified",
+    "created_at",
+    "updated_at"
+  ],
+  "additionalProperties": false
+}

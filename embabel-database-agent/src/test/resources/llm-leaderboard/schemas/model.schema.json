@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Model",
+  "description": "Schema for AI/ML model metadata",
+  "type": "object",
+  "properties": {
+    "model_id": {
+      "type": "string",
+      "description": "Unique identifier for the model",
+      "examples": ["gpt-4", "claude-3-opus", "llama-3.1-405b"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name of the model",
+      "examples": ["GPT-4", "Claude 3 Opus", "Llama 3.1 405B"]
+    },
+    "organization_id": {
+      "type": "string",
+      "description": "ID of the organization that created the model"
+    },
+    "model_family_id": {
+      "type": ["string", "null"],
+      "description": "ID of the model family this model belongs to",
+      "examples": ["gpt-4", "claude-3", "llama-3-1"]
+    },
+    "fine_tuned_from_model_id": {
+      "type": ["string", "null"],
+      "description": "ID of the base model this was fine-tuned from"
+    },
+    "description": {
+      "type": ["string", "null"],
+      "description": "Detailed description of the model's capabilities and use cases"
+    },
+    "release_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Date when the model was released (YYYY-MM-DD)",
+      "examples": ["2024-11-20", "2023-03-14"]
+    },
+    "announcement_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Date when the model was first announced (YYYY-MM-DD)"
+    },
+    "license_id": {
+      "type": ["string", "null"],
+      "description": "ID of the license governing the model's use"
+    },
+    "multimodal": {
+      "type": "boolean",
+      "description": "Whether the model supports multiple input/output modalities",
+      "default": false
+    },
+    "knowledge_cutoff": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Date up to which the model has training data (YYYY-MM-DD)"
+    },
+    "param_count": {
+      "type": ["number", "null"],
+      "description": "Number of parameters in the model (in billions)",
+      "minimum": 0,
+      "examples": [175, 405, 1.8]
+    },
+    "training_tokens": {
+      "type": ["number", "null"],
+      "description": "Number of tokens the model was trained on (in trillions)",
+      "minimum": 0
+    },
+    "available_in_zeroeval": {
+      "type": "boolean",
+      "description": "Whether the model is available for evaluation in ZeroEval",
+      "default": true
+    },
+    "source_api_ref": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to the official API documentation"
+    },
+    "source_playground": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to an interactive playground or demo"
+    },
+    "source_paper": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to the research paper or technical report"
+    },
+    "source_scorecard_blog_link": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to scorecard or evaluation blog post"
+    },
+    "source_repo_link": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to the model's code repository"
+    },
+    "source_weights_link": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "URL to download model weights"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was created"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the record was last updated"
+    }
+  },
+  "required": [
+    "model_id",
+    "name",
+    "organization_id",
+    "multimodal",
+    "available_in_zeroeval",
+    "created_at",
+    "updated_at"
+  ],
+  "additionalProperties": false
+}

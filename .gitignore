@@ -6,4 +6,6 @@ target
 
 *.log
 
-data
+embabel-database-agent/data
+embabel-database-core/data
+embabel-database-server/data

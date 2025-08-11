@@ -1,0 +1,24 @@
+# java engine
+FROM eclipse-temurin:21-noble
+
+# get the wiremock service
+RUN wget https://repo1.maven.org/maven2/org/wiremock/wiremock-standalone/3.13.1/wiremock-standalone-3.13.1.jar
+
+# setup the mappings
+RUN mkdir mappings
+
+# write the stubbing file
+RUN echo '\
+{\
+    "request": {\
+        "method": "GET",\
+        "url": "/api/tags"\
+    },\
+    "response": {\
+        "status": 200,\
+        "body": "{\"models\":[{\"name\":\"llama3.1:8b\",\"model\":\"llama3.1:8b\",\"modified_at\":\"2025-07-12T18:55:41.604224865Z\",\"size\":4920753328,\"digest\":\"46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e\",\"details\":{\"parent_model\":\"\",\"format\":\"gguf\",\"family\":\"llama\",\"families\":[\"llama\"],\"parameter_size\":\"8.0B\",\"quantization_level\":\"Q4_K_M\"}}]}"\
+    }\
+}' > ./mappings/get-api-tags.json
+
+# start the stub server
+CMD java -jar wiremock-standalone-3.13.1.jar --port 11434
