@@ -15,11 +15,35 @@
  */
 package com.embabel.database.server.config
 
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.context.annotation.Profile
+import org.springframework.scheduling.TaskScheduler
+import org.springframework.scheduling.annotation.SchedulingConfigurer
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
+import org.springframework.scheduling.config.ScheduledTaskRegistrar
+import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor
+
 
 @Profile("scheduled")
 @Configuration
-@EnableScheduling
-class AgentSchedulerConfig
+class AgentSchedulerConfig : SchedulingConfigurer {
+
+    @Bean
+    fun taskScheduler(): TaskScheduler {
+        val scheduler = ThreadPoolTaskScheduler()
+        scheduler.setPoolSize(10)  // customize pool size as needed
+        scheduler.setThreadNamePrefix("scheduled-task-")
+        scheduler.initialize()
+        return scheduler
+    }
+
+    @Bean
+    fun scheduledAnnotationBeanPostProcessor(): ScheduledAnnotationBeanPostProcessor {
+        return ScheduledAnnotationBeanPostProcessor()
+    }
+
+    override fun configureTasks(taskRegistrar: ScheduledTaskRegistrar) {
+        taskRegistrar.setTaskScheduler(taskScheduler())
+    }
+}
