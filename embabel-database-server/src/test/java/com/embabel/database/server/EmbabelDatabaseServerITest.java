@@ -164,9 +164,28 @@ public class EmbabelDatabaseServerITest {
             logger.info(agent.get("name"));
         } //end for
 
-        mockMvc.perform(post("/api/v1/agents/{agentName}","AiModelRepositoryAgent"))
-            .andExpect(status().isNoContent());
-        //wait
-        Thread.sleep(500);//500ms
+        String processId = mockMvc.perform(post("/api/v1/agents/{agentName}","AiModelRepositoryAgent"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        //invoke this endpoint until the load is over --> "/api/v1/process/$id"
+        while (true) {
+            String reply = mockMvc.perform(get("/api/v1/process/{processId}",processId))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+            //convert to a map
+            Map<String,Object> replyMap = objectMapper.readValue(reply,new TypeReference<Map<String,Object>>(){});
+            //get the id
+            String status = replyMap.get("status").toString();
+            if (!status.equalsIgnoreCase("RUNNING")) {
+                break; //we're done
+            }
+            logger.info("id response: " + reply);
+            //wait
+            Thread.sleep(1000);// 1 second
+        } //end while
     }
 }

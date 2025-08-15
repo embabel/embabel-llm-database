@@ -32,9 +32,11 @@ import io.mockk.mockk
 import java.io.File
 import java.time.LocalDate
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.model.ChatResponse
@@ -44,7 +46,7 @@ import org.springframework.ai.embedding.EmbeddingModel
 //time conversion
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InMemoryAiModelRepositoryTest {
 
     private lateinit var repository: InMemoryAiModelRepository
@@ -52,9 +54,29 @@ class InMemoryAiModelRepositoryTest {
     private val model2 = LlmModelMetadata("modelB", "providerY")
     private val model3 = LlmModelMetadata("modelA", "providerY")
 
+    val dataDirectory = File("./data")
+
     @BeforeEach
     fun setUp() {
         repository = InMemoryAiModelRepository(listOf(model1, model2))
+    }
+
+    @AfterAll
+    fun cleanUp() {
+       if (dataDirectory.exists()) {
+            deleteDirectoryRecursively(dataDirectory)
+        }
+    }
+
+    fun deleteDirectoryRecursively(directory: File) {
+        directory.listFiles()?.forEach { file ->
+            if (file.isDirectory) {
+                deleteDirectoryRecursively(file)
+            } else {
+                file.delete()
+            }
+        }
+        directory.delete()
     }
 
     @Test

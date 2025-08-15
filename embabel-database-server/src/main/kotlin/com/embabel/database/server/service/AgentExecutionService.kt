@@ -28,11 +28,19 @@ class AgentExecutionService(
     private val agentFactory: AgentPlatform
 ) {
 
-    @Async
-    fun runAgentProcessAsync(agentName: String) {
+    fun createProcess(agentName: String) : AgentProcess {
         val agent = agentFactory.agents().find { it.name == agentName } ?: throw IllegalArgumentException("Agent with name $agentName not found")
         val processOptions = ProcessOptions.DEFAULT
         val agentProcess = agentFactory.createAgentProcess(agent, processOptions, emptyMap<String, Any>())
+        return agentProcess
+    }
+
+
+    @Async
+    fun runAgentProcessAsync(agentProcess: AgentProcess) {
+        // val agent = agentFactory.agents().find { it.name == agentName } ?: throw IllegalArgumentException("Agent with name $agentName not found")
+        // val processOptions = ProcessOptions.DEFAULT
+        // val agentProcess = agentFactory.createAgentProcess(agent, processOptions, emptyMap<String, Any>())
         agentProcess.run()
     }
 

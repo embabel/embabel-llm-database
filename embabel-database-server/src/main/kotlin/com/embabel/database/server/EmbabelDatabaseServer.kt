@@ -33,6 +33,7 @@ import com.embabel.database.agent.util.LlmLeaderboardParser
 import com.embabel.database.agent.util.ModelMetadataParser
 import com.embabel.database.core.repository.AiModelRepository
 import com.embabel.database.core.repository.InMemoryAiModelRepository
+import com.embabel.database.core.repository.util.InMemoryAiModelRepositoryLoader
 import com.fasterxml.jackson.databind.ObjectMapper
 
 @EnableAgents
@@ -69,6 +70,11 @@ class EmbabelDatabaseServer {
     @Bean
     fun modelMetadataValidationService(aiModelRepository: AiModelRepository): ModelMetadataValidationService {
         return AiRepositoryModelMetadataValidationService(aiModelRepository)
+    }
+
+    @Bean
+    fun modelLoader(): InMemoryAiModelRepositoryLoader {
+        return InMemoryAiModelRepositoryLoader()
     }
 }
 
