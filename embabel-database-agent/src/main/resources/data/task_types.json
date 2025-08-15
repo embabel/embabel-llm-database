@@ -1,0 +1,101 @@
+[
+  {
+    "Classification": "image-to-text",
+    "Text Input": false,
+    "Audio Input": false,
+    "Video Input": false,
+    "Image Input": true,
+    "Text Output": true,
+    "Audio Output": false,
+    "Video Output": false,
+    "Image Output": false
+  },
+  {
+    "Classification": "image-text-to-text",
+    "Text Input": true,
+    "Audio Input": false,
+    "Video Input": false,
+    "Image Input": true,
+    "Text Output": true,
+    "Audio Output": false,
+    "Video Output": false,
+    "Image Output": false
+  },
+  {
+    "Classification": "text-to-image",
+    "Text Input": true,
+    "Audio Input": false,
+    "Video Input": false,
+    "Image Input": false,
+    "Text Output": false,
+    "Audio Output": false,
+    "Video Output": false,
+    "Image Output": true
+  },
+  {
+    "Classification": "text-to-video",
+    "Text Input": true,
+    "Audio Input": false,
+    "Video Input": false,
+    "Image Input": false,
+    "Text Output": false,
+    "Audio Output": false,
+    "Video Output": true,
+    "Image Output": false
+  },
+  {
+    "Classification": "video-text-to-text",
+    "Text Input": true,
+    "Audio Input": false,
+    "Video Input": true,
+    "Image Input": false,
+    "Text Output": true,
+    "Audio Output": false,
+    "Video Output": false,
+    "Image Output": false
+  },
+  {
+    "Classification": "audio-to-text",
+    "Text Input": false,
+    "Audio Input": true,
+    "Video Input": false,
+    "Image Input": false,
+    "Text Output": true,
+    "Audio Output": false,
+    "Video Output": false,
+    "Image Output": false
+  },
+  {
+    "Classification": "text-to-audio",
+    "Text Input": true,
+    "Audio Input": false,
+    "Video Input": false,
+    "Image Input": false,
+    "Text Output": false,
+    "Audio Output": true,
+    "Video Output": false,
+    "Image Output": false
+  },
+  {
+    "Classification": "audio-to-audio",
+    "Text Input": true,
+    "Audio Input": true,
+    "Video Input": false,
+    "Image Input": false,
+    "Text Output": false,
+    "Audio Output": true,
+    "Video Output": false,
+    "Image Output": false
+  },
+  {
+    "Classification": "imate-text-to-video",
+    "Text Input": true,
+    "Audio Input": false,
+    "Video Input": false,
+    "Image Input": true,
+    "Text Output": false,
+    "Audio Output": false,
+    "Video Output": true,
+    "Image Output": false
+  }
+]

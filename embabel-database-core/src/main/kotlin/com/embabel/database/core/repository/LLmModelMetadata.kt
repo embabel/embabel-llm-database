@@ -21,8 +21,7 @@ import com.embabel.common.ai.model.PricingModel;
 
 import java.time.LocalDate
 
-
-
+//TODO add category
 data class LlmModelMetadata (
     override val name: String,
     override val provider: String,
