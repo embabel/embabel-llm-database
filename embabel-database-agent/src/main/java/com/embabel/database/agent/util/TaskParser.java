@@ -29,26 +29,45 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * interface for parsing the categories into a single string
  */
-public interface CategoryParser {
+public interface TaskParser {
 
-    static final Log logger = LogFactory.getLog(CategoryParser.class);
+    static final Log logger = LogFactory.getLog(TaskParser.class);
+
+    public static final int MATCH_COUNT = 8;
     
-    public static final String RESOURCE_LOCATION = "classpath:/resources/data/task_types.json";
+    public static final String INPUT_TEXT = "inputText";
+    public static final String INPUT_AUDIO = "inputAudio";
+    public static final String INPUT_VIDEO = "inputVideo";
+    public static final String INPUT_IMAGE = "inputImage";
+    public static final String OUTPUT_TEXT = "outputText";
+    public static final String OUTPUT_AUDIO = "outputAudio";
+    public static final String OUTPUT_VIDEO = "outputVideo";
+    public static final String OUTPUT_IMAGE = "outputImage";    
 
-    String getCategory(Map<String,String> attributes);
+    public static final String[] KEYS = {INPUT_TEXT,INPUT_AUDIO,INPUT_VIDEO,INPUT_IMAGE,OUTPUT_TEXT,OUTPUT_AUDIO,OUTPUT_VIDEO,OUTPUT_IMAGE};
 
-    default List<Map<String,Boolean>> getCategories(ObjectMapper objectMapper,String resourceLocation) {
-        List<Map<String,Boolean>> categories = new ArrayList<>();
+    public static final String RESOURCE_LOCATION = "/data/task_types.json";
+
+    String getTask(Map<String,Object> attributes);
+
+    /**
+     * reusable helper
+     * @param objectMapper
+     * @param resourceLocation
+     * @return
+     */
+    default List<Map<String,Object>> getTasks(ObjectMapper objectMapper,String resourceLocation) {
+        List<Map<String,Object>> tasks = new ArrayList<>();
         //load from the classpath
         try (InputStream input = this.getClass().getResourceAsStream(resourceLocation)) {
             if (input == null) {
                 throw new IllegalArgumentException("couldn't load task types");
             }
-            categories = objectMapper.readValue(input, new TypeReference<List<Map<String,Boolean>>>(){});
+            tasks = objectMapper.readValue(input, new TypeReference<List<Map<String,Object>>>(){});
         } catch (Exception e) {
             logger.error("error retrieveing categories",e);
         }
-        
-        return categories;
+        //return
+        return tasks;
     }
 }

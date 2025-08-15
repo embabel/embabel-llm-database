@@ -61,7 +61,7 @@ public class AiModelRepositoryControllerITest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l);
+        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,"task");
         //save
         aiModelRepository.save(singleModel);
         //try the mock again

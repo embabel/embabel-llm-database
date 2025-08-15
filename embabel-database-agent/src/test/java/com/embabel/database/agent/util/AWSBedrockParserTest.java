@@ -25,8 +25,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.embabel.common.ai.model.ModelMetadata;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import software.amazon.awssdk.services.bedrock.model.FoundationModelSummary;
 
@@ -41,7 +43,12 @@ public class AWSBedrockParserTest {
         //add to a list
         List<FoundationModelSummary> foundationModelSummaryList = Collections.singletonList(foundationModelSummary);
         //invoke
-        List<ModelMetadata> results = new AWSBedrockParser().parse(foundationModelSummaryList);
+        ObjectMapper objectMapper = new ObjectMapper();
+        TaskParser taskParser = new AWSBedrockTaskParser();
+        ReflectionTestUtils.setField(taskParser, "objectMapper", objectMapper);
+        AWSBedrockParser parser = new AWSBedrockParser();
+        ReflectionTestUtils.setField(parser, "taskParser", taskParser);
+        List<ModelMetadata> results = parser.parse(foundationModelSummaryList);
         //check
         assertNotNull(results);
         assertFalse(results.isEmpty());

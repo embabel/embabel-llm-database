@@ -15,23 +15,34 @@
  */
 package com.embabel.database.agent.util;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class LlmLeaderboardCategoryParserTest {
+public class AWSBedrockTaskParserTest {
     
 
     @Test
-    public void testGetCategories() {
+    void testGetCategory() throws Exception {
+        Map<String,Object> map = new HashMap<>();
+        map.put(AWSBedrockTaskParser.INPUT_MODALITY_KEY,Collections.singletonList("TEXT"));
+        map.put(AWSBedrockTaskParser.OUTPUT_MODALITY_KEY,Collections.singletonList("TEXT"));
+        //setup
         ObjectMapper objectMapper = new ObjectMapper();
-        LlmLeaderboardCategoryParser parser = new LlmLeaderboardCategoryParser();
-        List<Map<String,Boolean>> list = parser.getCategories(objectMapper, CategoryParser.RESOURCE_LOCATION);
-        assertNotNull(list);
+        AWSBedrockTaskParser parser = new AWSBedrockTaskParser();
+        ReflectionTestUtils.setField(parser, "objectMapper", objectMapper);
+        String expectedCategory = "text-to-text";
+        //get category
+        String result = parser.getTask(map);
+        //validate
+        assertEquals(expectedCategory, result);
+
     }
 }

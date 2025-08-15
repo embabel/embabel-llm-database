@@ -102,6 +102,12 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
         models.clear()
     }
 
+    override fun findByTask(task: String): List<ModelMetadata>? {
+        val results = models.filterIsInstance<LlmModelMetadata>()
+                            .filter { it.task == task }
+        return if (results.isEmpty()) null else results
+    }
+
     //serialize the current list to json
     fun flushToFile() {
         // Create and configure the ObjectMapper

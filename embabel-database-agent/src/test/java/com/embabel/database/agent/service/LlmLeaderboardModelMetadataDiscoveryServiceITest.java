@@ -28,6 +28,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import com.embabel.common.ai.model.ModelMetadata;
+import com.embabel.database.agent.util.TaskParser;
+import com.embabel.database.agent.util.LlmLeaderboardTaskParser;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,13 +56,18 @@ public class LlmLeaderboardModelMetadataDiscoveryServiceITest {
         }
 
         @Bean
-        public ModelMetadataParser modelMetadataParser(ObjectMapper objectMapper) {
-            return new LlmLeaderboardParser(objectMapper);
+        public ModelMetadataParser modelMetadataParser(ObjectMapper objectMapper,TaskParser categoryParser) {
+            return new LlmLeaderboardParser(objectMapper,categoryParser);
         }
 
         @Bean
         public ModelMetadataDiscoveryService modelMetadataDiscoveryService(ModelMetadataParser modelMetadataParser) {
             return new LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser);
+        }
+
+        @Bean
+        public TaskParser categoryParser() {
+            return new LlmLeaderboardTaskParser();
         }
     }
 }
