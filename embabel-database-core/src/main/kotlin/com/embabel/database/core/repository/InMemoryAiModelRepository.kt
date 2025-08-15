@@ -29,6 +29,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+import org.slf4j.LoggerFactory
+
+
 /**
  * An in-memory implementation of the [AiModelRepository].
  *
@@ -43,6 +46,8 @@ import java.time.format.DateTimeFormatter
  * @param allModels The complete list of AiModel instances to be managed by this repository.
  */
 class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : AiModelRepository {
+
+    private val logger = LoggerFactory.getLogger(InMemoryAiModelRepository::class.java)
 
     companion object {
         private const val MODEL_FILE: String = "models.json"
@@ -134,6 +139,7 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
         // Check if the file exists before reading
         if (!file.exists()) {
             // handle non-existence
+            logger.warn("No model file to load from")
             return
         } //end if
         val jsonString = file.readText(Charsets.UTF_8)

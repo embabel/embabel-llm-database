@@ -1,0 +1,25 @@
+# This workflow will build a Java/Kotlin project with Maven
+
+name: Build Offline Dataset
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Install
+        run: mvn clean Install
+      - name: Build and trigger data pull
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -U -B test -Dtest=com.embabel.database.server.EmbableDatabaseServerITest -Daws.region=us-east-1 -pl embabel-database-server

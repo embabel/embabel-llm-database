@@ -34,10 +34,12 @@ class DirectAgentController {
     lateinit var agentExecutionService: AgentExecutionService
 
     @PostMapping("/{agentName}")
-    fun runAgent(@PathVariable agentName: String): ResponseEntity<Void> {
+    fun runAgent(@PathVariable agentName: String): ResponseEntity<String> {
+        //create the process
+        val agentProcess = agentExecutionService.createProcess(agentName)
         //execute
-        agentExecutionService.runAgentProcessAsync(agentName)
+        agentExecutionService.runAgentProcessAsync(agentProcess)
         //return
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+        return ResponseEntity.ok(agentProcess.id)
     }
 }

@@ -46,11 +46,12 @@ public class AgentExecutionServiceTest {
         //setup
         AgentExecutionService agentExecutionService = new AgentExecutionService(agentPlatform);
         //run
-        agentExecutionService.runAgentProcessAsync(agentName);
+        AgentProcess createdAgentProcess = agentExecutionService.createProcess(agentName);
+        agentExecutionService.runAgentProcessAsync(createdAgentProcess);
         //validate
         verify(agentProcess,times(1)).run();
         //validate for exception 
-        assertThrows(IllegalArgumentException.class, () -> {agentExecutionService.runAgentProcessAsync(otherName);});
+        assertThrows(IllegalArgumentException.class, () -> {agentExecutionService.createProcess(otherName);});
     }
 
 }

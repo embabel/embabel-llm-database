@@ -1,1 +1,0 @@
-[{"name":"modelA","provider":"providerX","knowledgeCutoffDate":null,"pricingModel":null,"size":null,"type":"LLM"},{"name":"modelB","provider":"providerY","knowledgeCutoffDate":null,"pricingModel":null,"size":null,"type":"LLM"},{"name":"modelA","provider":"providerY","knowledgeCutoffDate":null,"pricingModel":null,"size":null,"type":"LLM"}]
