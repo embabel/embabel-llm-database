@@ -26,7 +26,8 @@ class AgentSchedulingService(
     private val agentName: String = "AiModelRepositoryAgent"
 ) {
 
-    @Scheduled(fixedRateString = "\${embabel.agent.scheduling.fixed-rate-ms:86400000}") //Default is 24hrs in milliseconds
+    //initial delay 30 seconds to allow for startup
+    @Scheduled(initialDelayString = "\${embabel.agent.scheduling.initial-delay-ms:30000}", fixedRateString = "\${embabel.agent.scheduling.fixed-rate-ms:86400000}") //Default is 24hrs in milliseconds
     fun runAgent() {
         agentExecutionService.runAgentProcessAsync(agentName)
     }
