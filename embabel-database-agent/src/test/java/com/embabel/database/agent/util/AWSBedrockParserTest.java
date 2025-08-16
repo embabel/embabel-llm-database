@@ -47,7 +47,7 @@ public class AWSBedrockParserTest {
         TaskParser taskParser = new AWSBedrockTaskParser();
         ReflectionTestUtils.setField(taskParser, "objectMapper", objectMapper);
         AWSBedrockParser parser = new AWSBedrockParser();
-        ReflectionTestUtils.setField(parser, "taskParser", taskParser);
+        ReflectionTestUtils.setField(parser, "awsBedrockTaskParser", taskParser);
         List<ModelMetadata> results = parser.parse(foundationModelSummaryList);
         //check
         assertNotNull(results);

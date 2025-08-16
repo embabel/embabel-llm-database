@@ -77,4 +77,15 @@ class AiModelRepositoryController {
     fun getByTask(@RequestParam("task") task: String): List<ModelMetadata>? {
         return aiModelRepository.findByTask(task) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"Models not found")
     }
+
+    @GetMapping("/count")
+    fun getCount(): Map<String,Int> {
+        val count = aiModelRepository.count()
+        return mapOf("count" to count)
+    }
+
+    @GetMapping("/search/findByNameContains")
+    fun getNameContains(@RequestParam("contains") name: String): List<ModelMetadata>? {
+        return aiModelRepository.findByNameContains(name) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
+    }
 }

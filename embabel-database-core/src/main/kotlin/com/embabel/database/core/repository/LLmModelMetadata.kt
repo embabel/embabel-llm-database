@@ -21,14 +21,14 @@ import com.embabel.common.ai.model.PricingModel;
 
 import java.time.LocalDate
 
-//TODO add category
 data class LlmModelMetadata (
     override val name: String,
     override val provider: String,
     override val knowledgeCutoffDate: LocalDate? = null,
     override val pricingModel: PricingModel? = null,
     val size: Long? = null,
-    val task: String? = null
+    val task: String? = null,
+    val source: String? = null
 ) : LlmMetadata  {
 
     override val type: ModelType
@@ -58,8 +58,9 @@ data class LlmModelMetadata (
             knowledgeCutoffDate: LocalDate? = null,
             pricingModel: PricingModel? = null,
             size: Long? = null,
-            task: String? = null
-        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, task)
+            task: String? = null,
+            source: String? = null
+        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, task, source)
 
         @JvmStatic
         @JvmOverloads
@@ -69,8 +70,9 @@ data class LlmModelMetadata (
             knowledgeCutoffDate: LocalDate? = null,
             pricingModel: PricingModel? = null,
             size: Long? = null,
-            task: String? = null
-        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, task)
+            task: String? = null,
+            source: String? = null
+        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, task, source)
     }
 
 }

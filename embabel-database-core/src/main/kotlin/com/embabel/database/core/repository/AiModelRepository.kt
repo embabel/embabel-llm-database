@@ -102,6 +102,13 @@ interface AiModelRepository {
     fun findByNameAndProvider(name: String,provider: String): ModelMetadata?
 
     /**
+     * function to do a "contains" search
+     * @param name
+     * @return A list of results if found
+     */
+    fun findByNameContains(name: String): List<ModelMetadata>?
+
+    /**
      * simple function to clean up
      */
     fun deleteAll()
@@ -113,4 +120,12 @@ interface AiModelRepository {
      * @return List of ModelMetadata or `null`
      */
     fun findByTask(task: String): List<ModelMetadata>?
+
+
+    /**
+     * return the size of the model repository
+     *
+     * @return Int of the list size
+     */
+    fun count(): Int
 }
