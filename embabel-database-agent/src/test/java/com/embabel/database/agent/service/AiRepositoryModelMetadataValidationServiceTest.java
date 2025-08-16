@@ -38,7 +38,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l);
+        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,"task");
         //setup the repo
         AiModelRepository aiModelRepository = new InMemoryAiModelRepository();
         //save
@@ -50,7 +50,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
         //add existing
         newModels.add(singleModel);
         //add a new one
-        LlmModelMetadata newModel = new LlmModelMetadata(modelName + "-1", providerName, dateStamp, null, 1l);
+        LlmModelMetadata newModel = new LlmModelMetadata(modelName + "-1", providerName, dateStamp, null, 1l,"task");
         newModels.add(newModel);
         //process
         ModelMetadataValidationService modelMetadataValidationService = new AiRepositoryModelMetadataValidationService(aiModelRepository);
@@ -65,7 +65,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
     void testInverse() {
         LocalDate dateStamp = LocalDate.now();
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata("model-0", "provider-0", dateStamp, null, 1l);
+        LlmModelMetadata singleModel = new LlmModelMetadata("model-0", "provider-0", dateStamp, null, 1l,"task");
         //setup the repo
         AiModelRepository aiModelRepository = new InMemoryAiModelRepository();
         //save

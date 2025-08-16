@@ -1,0 +1,112 @@
+[
+  {
+    "Classification": "image-to-text",
+    "inputText": false,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": true,
+    "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "image-text-to-text",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": true,
+    "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "text-to-image",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": false,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": true
+  },
+  {
+    "Classification": "text-to-video",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": false,
+    "outputAudio": false,
+    "outputVideo": true,
+    "outputImage": false
+  },
+  {
+    "Classification": "video-text-to-text",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": true,
+    "inputImage": false,
+    "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "audio-to-text",
+    "inputText": false,
+    "inputAudio": true,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "text-to-audio",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": false,
+    "outputAudio": true,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "audio-to-audio",
+    "inputText": true,
+    "inputAudio": true,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": false,
+    "outputAudio": true,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "image-text-to-video",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": true,
+    "outputText": false,
+    "outputAudio": false,
+    "outputVideo": true,
+    "outputImage": false
+  },
+  {
+    "Classification": "text-to-text",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": false
+  }
+]

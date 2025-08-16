@@ -27,9 +27,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.embabel.common.ai.model.ModelMetadata;
+import com.embabel.database.agent.util.AWSBedrockTaskParser;
 import com.embabel.database.agent.util.AWSBedrockParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrock.BedrockClient;
@@ -47,7 +50,11 @@ public class AWSBedrockModelMetadataDiscoveryServiceTest {
         String modelName = "model";
         String providerName = "provider";                
         //setup dependencies
+        AWSBedrockTaskParser taskParser = new AWSBedrockTaskParser();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ReflectionTestUtils.setField(taskParser, "objectMapper", objectMapper);
         AWSBedrockParser awsBedrockParser = new AWSBedrockParser();
+        ReflectionTestUtils.setField(awsBedrockParser, "taskParser", taskParser);
         Region region = Region.US_EAST_1;
         //stub out components
         BedrockClient bedrockClient = mock(BedrockClient.class);

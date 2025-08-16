@@ -17,7 +17,9 @@ package com.embabel.database.server.config
 
 import com.embabel.common.ai.model.ModelMetadata
 import com.embabel.database.agent.util.AWSBedrockParser
+import com.embabel.database.agent.util.AWSBedrockTaskParser
 import com.embabel.database.agent.util.ModelMetadataParser
+import com.embabel.database.agent.util.TaskParser
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -54,5 +56,10 @@ class AWSBedrockConfig {
                 .credentialsProvider(StaticCredentialsProvider.create(awsBasicCredentials))
                 .region(region)
                 .build();
+    }
+
+    @Bean
+    fun awsBedrockTaskParser(): TaskParser {
+        return AWSBedrockTaskParser()
     }
 }

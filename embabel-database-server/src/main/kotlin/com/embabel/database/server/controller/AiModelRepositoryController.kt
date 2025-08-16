@@ -73,4 +73,8 @@ class AiModelRepositoryController {
         return aiModelRepository.lastUpdated()
     }
 
+    @GetMapping("/search/findByTask")
+    fun getByTask(@RequestParam("task") task: String): List<ModelMetadata>? {
+        return aiModelRepository.findByTask(task) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"Models not found")
+    }
 }

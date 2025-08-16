@@ -28,12 +28,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.embabel.common.ai.model.ModelMetadata;
+import com.embabel.database.core.repository.LlmModelMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class LlmLeaderboardParserTest {
+
+    private static Log logger = LogFactory.getLog(LlmLeaderboardParserTest.class);
 
     @Test
     void testConvertJsontoModelMetadata() throws Exception {
@@ -50,7 +56,9 @@ public class LlmLeaderboardParserTest {
         }
 
         ObjectMapper objectMapper =new ObjectMapper();
-        ModelMetadataParser parser = new LlmLeaderboardParser(objectMapper);
+        TaskParser categoryParser = new LlmLeaderboardTaskParser();
+        ReflectionTestUtils.setField(categoryParser, "objectMapper", objectMapper);        
+        ModelMetadataParser parser = new LlmLeaderboardParser(objectMapper,categoryParser);
         List<ModelMetadata> models = parser.parse(json);
         
         assertNotNull(models);
@@ -65,16 +73,25 @@ public class LlmLeaderboardParserTest {
 
         //send to the method to parse
         ObjectMapper objectMapper =new ObjectMapper();
-        ModelMetadataParser parser = new LlmLeaderboardParser(objectMapper);
+        TaskParser categoryParser = new LlmLeaderboardTaskParser();
+        ReflectionTestUtils.setField(categoryParser, "objectMapper", objectMapper);
+        ModelMetadataParser parser = new LlmLeaderboardParser(objectMapper,categoryParser);
         List<ModelMetadata> models = parser.parse(tempDir);        
 
         assertNotNull(models);
         assertFalse(models.isEmpty());  
         assertTrue(models.size() > 50);// more than 50 in the list
+        //validate that tasks is set
+        for (ModelMetadata model : models) {
+            //cast 
+            LlmModelMetadata llmModelMetadata = (LlmModelMetadata) model;
+            //check
+            assertNotNull(llmModelMetadata.getTask());
+        }// end for
     }
 
     @Test
     void testParseList() throws Exception {
-        assertNull(new LlmLeaderboardParser(null).parse(Collections.emptyList()));
+        assertNull(new LlmLeaderboardParser(null,null).parse(Collections.emptyList()));
     }
 }

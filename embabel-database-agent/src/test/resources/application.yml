@@ -9,3 +9,6 @@ spring:
       chat: none
   application:
     name: embabel-llm-database-agent
+
+aws:
+  region: us-east-1

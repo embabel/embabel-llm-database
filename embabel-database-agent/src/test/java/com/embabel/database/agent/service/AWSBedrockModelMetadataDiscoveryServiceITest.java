@@ -18,6 +18,9 @@ package com.embabel.database.agent.service;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +31,13 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.database.agent.util.AWSBedrockParser;
+import com.embabel.database.agent.util.AWSBedrockTaskParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
+import com.embabel.database.agent.util.TaskParser;
+import com.embabel.database.core.repository.LlmModelMetadata;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.annotation.PostConstruct;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -50,6 +58,8 @@ import software.amazon.awssdk.services.bedrock.BedrockClient;
 @SpringBootTest(classes={AWSBedrockModelMetadataDiscoveryServiceITest.class,AWSBedrockModelMetadataDiscoveryServiceITest.TestConfig.class})
 @ActiveProfiles("aws")
 public class AWSBedrockModelMetadataDiscoveryServiceITest {
+
+    private static final Log logger = LogFactory.getLog(AWSBedrockModelMetadataDiscoveryServiceITest.class);
 
     @Autowired
     AWSBedrockModelMetadataDiscoveryService awsBedrockModelMetadataDiscoveryService;
@@ -91,8 +101,19 @@ public class AWSBedrockModelMetadataDiscoveryServiceITest {
         }
 
         @Bean
+        public TaskParser awsBedrockTaskParser() {
+            return new AWSBedrockTaskParser();
+        }        
+
+        @Bean
         public AWSBedrockModelMetadataDiscoveryService awsBedrockModelMetadataDiscoveryService(ModelMetadataParser modelMetadataParser, BedrockClient bedrockClient, Region region) {
             return new AWSBedrockModelMetadataDiscoveryService(modelMetadataParser, bedrockClient, region);
         }
+
+        @Bean
+        public ObjectMapper objectMapper() {
+            return new ObjectMapper();
+        }
+
     }
 }

@@ -29,7 +29,9 @@ import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoverySe
 import com.embabel.database.agent.service.ModelMetadataService
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataValidationService
+import com.embabel.database.agent.util.TaskParser
 import com.embabel.database.agent.util.LlmLeaderboardParser
+import com.embabel.database.agent.util.LlmLeaderboardTaskParser
 import com.embabel.database.agent.util.ModelMetadataParser
 import com.embabel.database.core.repository.AiModelRepository
 import com.embabel.database.core.repository.InMemoryAiModelRepository
@@ -53,8 +55,8 @@ class EmbabelDatabaseServer {
     }
 
     @Bean
-    fun modelMetadataParser(objectMapper: ObjectMapper): ModelMetadataParser {
-        return LlmLeaderboardParser(objectMapper)
+    fun modelMetadataParser(objectMapper: ObjectMapper, taskParser: TaskParser): ModelMetadataParser {
+        return LlmLeaderboardParser(objectMapper, taskParser)
     }
 
     @Bean
@@ -75,6 +77,11 @@ class EmbabelDatabaseServer {
     @Bean
     fun modelLoader(): InMemoryAiModelRepositoryLoader {
         return InMemoryAiModelRepositoryLoader()
+    }
+
+    @Bean
+    fun LlmLeaderboardTaskParser(): TaskParser {
+        return LlmLeaderboardTaskParser()
     }
 }
 
