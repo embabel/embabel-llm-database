@@ -38,7 +38,7 @@ public class AWSBedrockParser implements ModelMetadataParser {
     private static Log logger = LogFactory.getLog(AWSBedrockParser.class);
 
     @Autowired
-    TaskParser taskParser;
+    TaskParser awsBedrockTaskParser;
     
     @Override
     public List<ModelMetadata> parse(String json) {
@@ -72,9 +72,9 @@ public class AWSBedrockParser implements ModelMetadataParser {
             attributeMap.put(AWSBedrockTaskParser.INPUT_MODALITY_KEY,model.inputModalitiesAsStrings());
             attributeMap.put(AWSBedrockTaskParser.OUTPUT_MODALITY_KEY,model.outputModalitiesAsStrings());
             //task
-            String task = taskParser.getTask(attributeMap);
+            String task = awsBedrockTaskParser.getTask(attributeMap);
             //build the metadata
-            ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,0l,task);
+            ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,0l,task,this.getClass().getSimpleName());
             //add
             listModelMetadata.add(modelMetadata);
         }

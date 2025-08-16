@@ -26,3 +26,8 @@ embabel:
     defaultLlm: llama3.1:8b
     defaultEmbeddingModel: nomic-embed-text:latest
 
+aws:
+  region: us-east-1
+  accesKeyId: your-key-here
+  secretAccessKey: your-secret-key-here
+

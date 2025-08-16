@@ -15,7 +15,11 @@
  */
 package com.embabel.database.server.config
 
+import jakarta.annotation.PostConstruct
+
 import com.embabel.common.ai.model.ModelMetadata
+import com.embabel.database.agent.service.AWSBedrockModelMetadataDiscoveryService
+import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.util.AWSBedrockParser
 import com.embabel.database.agent.util.AWSBedrockTaskParser
 import com.embabel.database.agent.util.ModelMetadataParser
@@ -35,21 +39,19 @@ import software.amazon.awssdk.services.bedrock.BedrockClient
 @Configuration
 class AWSBedrockConfig {
 
-    @Bean
-    fun awsModelMetadataParser(): ModelMetadataParser {
-        return AWSBedrockParser()
-    }
-
+    //AWS region
     @Bean
     fun region(@Value("\${aws.region}")region: String):Region  {
         return Region.of(region);
     }
 
+    //AWS credentials
     @Bean
     fun awsBasicCredentials(@Value("\${aws.accessKeyId}") awsAccessKey: String,@Value("\${aws.secretAccessKey}") awsSecretAccessKey: String): AwsBasicCredentials {
         return AwsBasicCredentials.create(awsAccessKey, awsSecretAccessKey);
     }
 
+    //AWS Bedrock client
     @Bean
     fun bedrockClient(awsBasicCredentials: AwsBasicCredentials, region: Region): BedrockClient {
         return BedrockClient.builder()
@@ -58,8 +60,32 @@ class AWSBedrockConfig {
                 .build();
     }
 
+    //AWS task Parser
     @Bean
     fun awsBedrockTaskParser(): TaskParser {
         return AWSBedrockTaskParser()
     }
+
+    //AWS model parser
+    @Bean
+    fun awsModelMetadataParser(): ModelMetadataParser {
+        return AWSBedrockParser()
+    }
+
+    //AWS discovery service
+    @Bean
+    fun awsModelMetadataDiscoveryService(awsModelMetadataParser: ModelMetadataParser, bedrockClient: BedrockClient, region: Region): ModelMetadataDiscoveryService {
+        return AWSBedrockModelMetadataDiscoveryService(awsModelMetadataParser,bedrockClient,region)
+    }
+
+    @Value("\${aws.region}")
+    private lateinit var regionString: String
+
+
+    @PostConstruct
+    fun init() {
+        // set a system property to fix region discovery error
+        System.setProperty("aws.region",regionString)
+    }
+
 }

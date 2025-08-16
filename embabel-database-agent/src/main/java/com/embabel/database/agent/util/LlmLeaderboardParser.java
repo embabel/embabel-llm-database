@@ -88,7 +88,7 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
                 //task
                 String task = taskParser.getTask(providerModel);
                 //build the metadata
-                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,paramCount,task);
+                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,paramCount,task,this.getClass().getSimpleName());
                 //add
                 listModelMetadata.add(modelMetadata);
             } //end loop                       

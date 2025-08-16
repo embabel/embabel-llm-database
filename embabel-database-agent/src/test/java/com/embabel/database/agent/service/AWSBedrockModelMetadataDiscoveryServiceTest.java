@@ -54,7 +54,7 @@ public class AWSBedrockModelMetadataDiscoveryServiceTest {
         ObjectMapper objectMapper = new ObjectMapper();
         ReflectionTestUtils.setField(taskParser, "objectMapper", objectMapper);
         AWSBedrockParser awsBedrockParser = new AWSBedrockParser();
-        ReflectionTestUtils.setField(awsBedrockParser, "taskParser", taskParser);
+        ReflectionTestUtils.setField(awsBedrockParser, "awsBedrockTaskParser", taskParser);
         Region region = Region.US_EAST_1;
         //stub out components
         BedrockClient bedrockClient = mock(BedrockClient.class);
