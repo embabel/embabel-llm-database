@@ -33,6 +33,17 @@
     "outputImage": true
   },
   {
+    "Classification": "text-to-image-text",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": true
+  },
+  {
     "Classification": "text-to-video",
     "inputText": true,
     "inputAudio": false,
@@ -105,6 +116,28 @@
     "inputVideo": false,
     "inputImage": false,
     "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "audio-video-image-text-to-text",
+    "inputText": true,
+    "inputAudio": true,
+    "inputVideo": true,
+    "inputImage": true,
+    "outputText": true,
+    "outputAudio": false,
+    "outputVideo": false,
+    "outputImage": false
+  },
+  {
+    "Classification": "text-to-embedding",
+    "inputText": true,
+    "inputAudio": false,
+    "inputVideo": false,
+    "inputImage": false,
+    "outputText": false,
     "outputAudio": false,
     "outputVideo": false,
     "outputImage": false
