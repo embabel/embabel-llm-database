@@ -22,68 +22,13 @@ import org.springframework.scheduling.annotation.EnableAsync
 
 import com.embabel.agent.config.annotation.EnableAgents
 import com.embabel.agent.config.annotation.EnableAgentMcpServer
-import com.embabel.agent.config.annotation.LocalModels
-import com.embabel.database.agent.AiModelRepositoryAgent
-import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService
-import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService
-import com.embabel.database.agent.service.ModelMetadataService
-import com.embabel.database.agent.service.ModelMetadataDiscoveryService
-import com.embabel.database.agent.service.ModelMetadataValidationService
-import com.embabel.database.agent.util.TaskParser
-import com.embabel.database.agent.util.LlmLeaderboardParser
-import com.embabel.database.agent.util.LlmLeaderboardTaskParser
-import com.embabel.database.agent.util.ModelMetadataParser
-import com.embabel.database.core.repository.AiModelRepository
-import com.embabel.database.core.repository.InMemoryAiModelRepository
-import com.embabel.database.core.repository.util.InMemoryAiModelRepositoryLoader
 import com.fasterxml.jackson.databind.ObjectMapper
 
 @EnableAgents
 @EnableAgentMcpServer
 @EnableAsync
 @SpringBootApplication
-class EmbabelDatabaseServer {
-
-    @Bean
-    fun aiModelRepository(): AiModelRepository {
-        return InMemoryAiModelRepository()
-    }
-
-    @Bean
-    fun aiModelRepositoryAgent(): AiModelRepositoryAgent {
-        return AiModelRepositoryAgent()
-    }
-
-    @Bean
-    fun modelMetadataParser(objectMapper: ObjectMapper, taskParser: TaskParser): ModelMetadataParser {
-        return LlmLeaderboardParser(objectMapper, taskParser)
-    }
-
-    @Bean
-    fun modelMetadataDiscoveryService(modelMetadataParser: ModelMetadataParser): ModelMetadataDiscoveryService {
-        return LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser)
-    }
-
-    @Bean
-    fun modelMetadataService(): ModelMetadataService {
-        return ModelMetadataService()
-    }
-
-    @Bean
-    fun modelMetadataValidationService(aiModelRepository: AiModelRepository): ModelMetadataValidationService {
-        return AiRepositoryModelMetadataValidationService(aiModelRepository)
-    }
-
-    @Bean
-    fun modelLoader(): InMemoryAiModelRepositoryLoader {
-        return InMemoryAiModelRepositoryLoader()
-    }
-
-    @Bean
-    fun LlmLeaderboardTaskParser(): TaskParser {
-        return LlmLeaderboardTaskParser()
-    }
-}
+class EmbabelDatabaseServer
 
 fun main(args: Array<String>) {
     runApplication<EmbabelDatabaseServer>(*args)
