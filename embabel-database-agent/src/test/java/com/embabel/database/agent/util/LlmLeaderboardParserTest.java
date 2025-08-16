@@ -55,7 +55,7 @@ public class LlmLeaderboardParserTest {
             }
         }
 
-        ObjectMapper objectMapper =new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         TaskParser categoryParser = new LlmLeaderboardTaskParser();
         ReflectionTestUtils.setField(categoryParser, "objectMapper", objectMapper);        
         ModelMetadataParser parser = new LlmLeaderboardParser(objectMapper,categoryParser);
