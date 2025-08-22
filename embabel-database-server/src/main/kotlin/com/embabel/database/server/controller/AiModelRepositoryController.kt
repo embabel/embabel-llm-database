@@ -73,11 +73,6 @@ class AiModelRepositoryController {
         return aiModelRepository.lastUpdated()
     }
 
-    @GetMapping("/search/findByTask")
-    fun getByTask(@RequestParam("task") task: String): List<ModelMetadata>? {
-        return aiModelRepository.findByTask(task) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"Models not found")
-    }
-
     @GetMapping("/count")
     fun getCount(): Map<String,Int> {
         val count = aiModelRepository.count()
@@ -87,5 +82,13 @@ class AiModelRepositoryController {
     @GetMapping("/search/findByNameContains")
     fun getNameContains(@RequestParam("contains") name: String): List<ModelMetadata>? {
         return aiModelRepository.findByNameContains(name) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
+    }
+
+    @GetMapping("/search/findByTags")
+    fun getByTags(@RequestParam("tags") tags: List<String>?): List<ModelMetadata>? {
+        if (tags.isNullOrEmpty()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST,"No tags passed")
+        } //end if
+        return aiModelRepository.findByTags(*tags.toTypedArray()) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
     }
 }

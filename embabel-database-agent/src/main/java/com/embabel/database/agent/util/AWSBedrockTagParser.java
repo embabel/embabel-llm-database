@@ -39,7 +39,7 @@ public class AWSBedrockTagParser implements TagParser {
     static final String[] INPUTS = {INPUT_TEXT_VALUE,INPUT_IMAGE_VALUE,INPUT_EMBEDDING_VALUE};
     static final String[] OUTPUTS = {OUTPUT_TEXT_VALUE,OUTPUT_IMAGE_VALUE,OUTPUT_EMBEDDING_VALUE};
 
-    private List<Map<String,Object>> tasks;
+    private List<Map<String,Object>> tags;
 
     @Autowired    
     ObjectMapper objectMapper;
@@ -48,8 +48,8 @@ public class AWSBedrockTagParser implements TagParser {
     public List<String> getTags(Map<String, Object> attributes) {
         String modelCategory = null;
         //load the categories
-        if (tasks == null || tasks.isEmpty()) {
-            tasks = this.getTasks(objectMapper, RESOURCE_LOCATION);
+        if (tags == null || tags.isEmpty()) {
+            tags = this.getTasks(objectMapper, RESOURCE_LOCATION);
         } //end if
         //map contains 2 keys "inputModalities" and "outputModalities"
         //values of which correspond to either inputText, inputImage, outputText, outputImage (true)
@@ -81,7 +81,7 @@ public class AWSBedrockTagParser implements TagParser {
             }//end if
         } //end for
         //now loop and check
-        for (Map<String,Object> task : tasks) {
+        for (Map<String,Object> task : tags) {
             int matchedCount = 0;
             //check
             for (String key : matches.keySet()) {
@@ -92,7 +92,7 @@ public class AWSBedrockTagParser implements TagParser {
             } //end for
             if (matchedCount == MATCH_COUNT) {
                 //have a winner
-                modelCategory = task.get("Classification").toString();
+                modelCategory = task.get(TAG_LABEL).toString();
                 break;        
             } //end if
         } //end for

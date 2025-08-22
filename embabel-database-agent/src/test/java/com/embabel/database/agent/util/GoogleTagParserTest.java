@@ -26,7 +26,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GoogleTaskParserTest {
+public class GoogleTagParserTest {
     
 
     @Test

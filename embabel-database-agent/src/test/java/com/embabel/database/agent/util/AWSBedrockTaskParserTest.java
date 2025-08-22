@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AWSBedrockTaskParserTest {
     
 
-    // @Test
+    @Test
     void testGetCategory() throws Exception {
         Map<String,Object> map = new HashMap<>();
         map.put(AWSBedrockTagParser.INPUT_MODALITY_KEY,Collections.singletonList("TEXT"));
