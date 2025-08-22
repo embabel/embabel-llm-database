@@ -247,4 +247,32 @@ class InMemoryAiModelRepositoryTest {
         //check
         assertFalse(repository.findAll().isEmpty())
     }
+
+
+    @Test
+    fun testTags() {
+        val model = LlmModelMetadata(
+            name = "test-model",
+            provider = "test-provider",
+            knowledgeCutoffDate = LocalDate.of(2025, 1, 1),
+            size = 12345L,
+            tags = listOf("nlp", "chatbot"), // 2 tags!
+            source = "unit-test"
+        )
+        //instantiate
+        var repository = InMemoryAiModelRepository()
+        //save
+        repository.save(model)
+        //retrieve
+        var results = repository.findByTags("nlp")
+        assertNotNull(results)
+        assertTrue(results!!.any { it is LlmModelMetadata && it.name == "test-model"})
+        //try missing tag
+        results = repository.findByTags("other-tag")
+        assertNull(results)
+        //try multiple
+        results = repository.findByTags("nlp","chatbot")
+        assertNotNull(results)
+        assertTrue(results!!.any { it is LlmModelMetadata && it.name == "test-model"})
+    }
 }

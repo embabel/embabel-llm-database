@@ -48,8 +48,9 @@ public class GoogleParserTest {
         //setup the injection parts
         ObjectMapper objectMapper = new ObjectMapper();
         GoogleParser googleParser = new GoogleParser();
-        GoogleTaskParser googleTaskParser = new GoogleTaskParser();
+        GoogleTagParser googleTaskParser = new GoogleTagParser();
         ReflectionTestUtils.setField(googleParser, "objectMapper", objectMapper);
+        ReflectionTestUtils.setField(googleTaskParser, "objectMapper", objectMapper);
         ReflectionTestUtils.setField(googleParser, "googleTaskParser", googleTaskParser);
         //execute
         List<ModelMetadata> models = googleParser.parse(json);

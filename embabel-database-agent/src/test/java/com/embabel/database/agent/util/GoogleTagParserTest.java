@@ -17,6 +17,7 @@ package com.embabel.database.agent.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GoogleTaskParserTest {
+public class GoogleTagParserTest {
     
 
     @Test
@@ -51,13 +52,13 @@ public class GoogleTaskParserTest {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String,Object> map = objectMapper.readValue(model_json,new TypeReference<Map<String,Object>>(){});
         //setup parser
-        GoogleTaskParser googleTaskParser = new GoogleTaskParser();
+        GoogleTagParser googleTaskParser = new GoogleTagParser();
         ReflectionTestUtils.setField(googleTaskParser, "objectMapper", objectMapper);
         String expectedCategory = "audio-video-image-text-to-text";
         //invoke
-        String result = googleTaskParser.getTask(map);
+        List<String> result = googleTaskParser.getTags(map);
         //validate
-        assertEquals(expectedCategory,result);
+        assertEquals(expectedCategory,result.get(0));
     }
 
     @Test
@@ -77,13 +78,13 @@ public class GoogleTaskParserTest {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String,Object> map = objectMapper.readValue(model_json,new TypeReference<Map<String,Object>>(){});
         //setup parser
-        GoogleTaskParser googleTaskParser = new GoogleTaskParser();
+        GoogleTagParser googleTaskParser = new GoogleTagParser();
         ReflectionTestUtils.setField(googleTaskParser, "objectMapper", objectMapper);
         String expectedCategory = "text-to-embedding";
         //invoke
-        String result = googleTaskParser.getTask(map);
+        List<String> result = googleTaskParser.getTags(map);
         //validate
-        assertEquals(expectedCategory,result);
+        assertEquals(expectedCategory,result.get(0));
     }  
     
     @Test
@@ -108,13 +109,13 @@ public class GoogleTaskParserTest {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String,Object> map = objectMapper.readValue(model_json,new TypeReference<Map<String,Object>>(){});
         //setup parser
-        GoogleTaskParser googleTaskParser = new GoogleTaskParser();
+        GoogleTagParser googleTaskParser = new GoogleTagParser();
         ReflectionTestUtils.setField(googleTaskParser, "objectMapper", objectMapper);
         String expectedCategory = "text-to-image-text";
         //invoke
-        String result = googleTaskParser.getTask(map);
+        List<String> result = googleTaskParser.getTags(map);
         //validate
-        assertEquals(expectedCategory,result);
+        assertEquals(expectedCategory,result.get(0));
     }      
 
 }

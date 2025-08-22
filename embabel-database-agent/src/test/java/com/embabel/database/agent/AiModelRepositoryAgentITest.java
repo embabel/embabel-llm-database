@@ -53,8 +53,8 @@ import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoverySe
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataService;
 import com.embabel.database.agent.service.ModelMetadataValidationService;
-import com.embabel.database.agent.util.TaskParser;
-import com.embabel.database.agent.util.LlmLeaderboardTaskParser;
+import com.embabel.database.agent.util.TagParser;
+import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
 import com.embabel.database.core.repository.AiModelRepository;
@@ -171,7 +171,7 @@ public class AiModelRepositoryAgentITest {
         }
 
         @Bean
-        public ModelMetadataParser modelMetadataParser(ObjectMapper objectMapper,TaskParser categoryParser) {
+        public ModelMetadataParser modelMetadataParser(ObjectMapper objectMapper,TagParser categoryParser) {
             return new LlmLeaderboardParser(objectMapper,categoryParser);
         }
 
@@ -191,8 +191,8 @@ public class AiModelRepositoryAgentITest {
         }
 
         @Bean
-        public TaskParser llmLeaderboardCategoryParser() {
-            return new LlmLeaderboardTaskParser();
+        public TagParser llmLeaderboardCategoryParser() {
+            return new LlmLeaderboardTagParser();
         }
 
     }

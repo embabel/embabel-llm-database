@@ -21,9 +21,9 @@ import com.embabel.common.ai.model.ModelMetadata
 import com.embabel.database.agent.service.AWSBedrockModelMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.util.AWSBedrockParser
-import com.embabel.database.agent.util.AWSBedrockTaskParser
+import com.embabel.database.agent.util.AWSBedrockTagParser
 import com.embabel.database.agent.util.ModelMetadataParser
-import com.embabel.database.agent.util.TaskParser
+import com.embabel.database.agent.util.TagParser
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -62,8 +62,8 @@ class AWSBedrockConfig {
 
     //AWS task Parser
     @Bean
-    fun awsBedrockTaskParser(): TaskParser {
-        return AWSBedrockTaskParser()
+    fun awsBedrockTaskParser(): TagParser {
+        return AWSBedrockTagParser()
     }
 
     //AWS model parser

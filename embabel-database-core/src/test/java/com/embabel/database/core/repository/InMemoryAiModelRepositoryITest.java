@@ -36,6 +36,7 @@ import static org.mockito.Mockito.mock;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest(classes={InMemoryAiModelRepositoryITest.class,InMemoryAiModelRepositoryITest.TestConfig.class})
@@ -53,7 +54,7 @@ public class InMemoryAiModelRepositoryITest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,"task","test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
         //save
         aiModelRepository.save(singleModel);
         //check

@@ -18,9 +18,9 @@ package com.embabel.database.server.config
 import com.embabel.database.agent.service.GoogleMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.util.GoogleParser
-import com.embabel.database.agent.util.GoogleTaskParser
+import com.embabel.database.agent.util.GoogleTagParser
 import com.embabel.database.agent.util.ModelMetadataParser
-import com.embabel.database.agent.util.TaskParser
+import com.embabel.database.agent.util.TagParser
 
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -35,8 +35,8 @@ class GoogleConfig {
 
     //Google Task Parser
     @Bean
-    fun googleTaskParser(): TaskParser {
-        return GoogleTaskParser()
+    fun googleTaskParser(): TagParser {
+        return GoogleTagParser()
     }
 
     //Google Model parser

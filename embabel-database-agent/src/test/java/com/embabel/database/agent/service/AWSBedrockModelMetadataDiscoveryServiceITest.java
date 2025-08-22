@@ -31,9 +31,9 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.database.agent.util.AWSBedrockParser;
-import com.embabel.database.agent.util.AWSBedrockTaskParser;
+import com.embabel.database.agent.util.AWSBedrockTagParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
-import com.embabel.database.agent.util.TaskParser;
+import com.embabel.database.agent.util.TagParser;
 import com.embabel.database.core.repository.LlmModelMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -101,8 +101,8 @@ public class AWSBedrockModelMetadataDiscoveryServiceITest {
         }
 
         @Bean
-        public TaskParser awsBedrockTaskParser() {
-            return new AWSBedrockTaskParser();
+        public TagParser awsBedrockTaskParser() {
+            return new AWSBedrockTagParser();
         }        
 
         @Bean

@@ -15,6 +15,7 @@
  */
 package com.embabel.database.agent.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class GoogleTaskParser implements TaskParser {
+public class GoogleTagParser implements TagParser {
 
     private List<Map<String,Object>> tasks;
 
@@ -31,7 +32,7 @@ public class GoogleTaskParser implements TaskParser {
     ObjectMapper objectMapper;
 
     @Override
-    public String getTask(Map<String, Object> attributes) {
+    public List<String> getTags(Map<String, Object> attributes) {
         //init
         String modelTask = null;
         //load up the options
@@ -52,12 +53,12 @@ public class GoogleTaskParser implements TaskParser {
         // for (String method : methods) {
         if (attributes.get("name").toString().contains("embedding")) {
             //embedding model
-            return "text-to-embedding"; //TODO make a bit more elegant and flexible
+            return Collections.singletonList("text-to-embedding"); //TODO make a bit more elegant and flexible
         } else if (attributes.get("name").toString().contains("image")) {
             //return image
-            return "text-to-image-text"; //TODO make a bit more flexible
+            return Collections.singletonList("text-to-image-text"); //TODO make a bit more flexible
         } else {
-            return "audio-video-image-text-to-text"; //TODO make a bit more flexible        
+            return Collections.singletonList("audio-video-image-text-to-text"); //TODO make a bit more flexible        
         } //end if
     }
     
