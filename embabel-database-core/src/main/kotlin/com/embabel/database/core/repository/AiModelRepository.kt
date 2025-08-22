@@ -114,12 +114,12 @@ interface AiModelRepository {
     fun deleteAll()
 
     /**
-     * enable searching on task type
+     * enable searching on tag type
      *
      * @param task The name of the task (e.g., "text-to-text").
      * @return List of ModelMetadata or `null`
      */
-    fun findByTask(task: String): List<ModelMetadata>?
+    fun findByTags(vararg tags: String): List<ModelMetadata>?
 
 
     /**

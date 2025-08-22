@@ -102,9 +102,9 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
         models.clear()
     }
 
-    override fun findByTask(task: String): List<ModelMetadata>? {
+    override fun findByTags(vararg tags: String): List<ModelMetadata>? {
         val results = models.filterIsInstance<LlmModelMetadata>()
-                            .filter { it.task == task }
+                            .filter { model -> model.tags?.any { it in tags } == true }
         return if (results.isEmpty()) null else results
     }
 
