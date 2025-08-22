@@ -15,6 +15,7 @@
  */
 package com.embabel.database.agent.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AWSBedrockTaskParser implements TaskParser {
+public class AWSBedrockTagParser implements TagParser {
 
     public static final String INPUT_MODALITY_KEY = "inputModalities";
     public static final String OUTPUT_MODALITY_KEY = "outputModalities";
@@ -44,7 +45,7 @@ public class AWSBedrockTaskParser implements TaskParser {
     ObjectMapper objectMapper;
 
     @Override
-    public String getTask(Map<String, Object> attributes) {
+    public List<String> getTags(Map<String, Object> attributes) {
         String modelCategory = null;
         //load the categories
         if (tasks == null || tasks.isEmpty()) {
@@ -95,7 +96,7 @@ public class AWSBedrockTaskParser implements TaskParser {
                 break;        
             } //end if
         } //end for
-        return modelCategory;
+        return Collections.singletonList(modelCategory);
     }
     
     String getKey(String value,boolean input) {

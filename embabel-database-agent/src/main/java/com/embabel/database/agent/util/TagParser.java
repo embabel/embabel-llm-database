@@ -29,12 +29,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * interface for parsing the categories into a single string
  */
-public interface TaskParser {
+public interface TagParser {
 
-    static final Log logger = LogFactory.getLog(TaskParser.class);
+    static final Log logger = LogFactory.getLog(TagParser.class);
 
     public static final int MATCH_COUNT = 8;
     
+    public static final String INPUT = "input";
+    public static final String OUTPUT = "output";
+    public static final String TAG_LABEL = "tag";
     public static final String INPUT_TEXT = "inputText";
     public static final String INPUT_AUDIO = "inputAudio";
     public static final String INPUT_VIDEO = "inputVideo";
@@ -45,10 +48,12 @@ public interface TaskParser {
     public static final String OUTPUT_IMAGE = "outputImage";    
 
     public static final String[] KEYS = {INPUT_TEXT,INPUT_AUDIO,INPUT_VIDEO,INPUT_IMAGE,OUTPUT_TEXT,OUTPUT_AUDIO,OUTPUT_VIDEO,OUTPUT_IMAGE};
+    public static final String[] INPUTS = {INPUT_TEXT,INPUT_AUDIO,INPUT_VIDEO,INPUT_IMAGE};
+    public static final String[] OUTPUTS = {OUTPUT_TEXT,OUTPUT_AUDIO,OUTPUT_VIDEO,OUTPUT_IMAGE};
 
-    public static final String RESOURCE_LOCATION = "/data/task_types.json";
+    public static final String RESOURCE_LOCATION = "/data/tag_types.json";
 
-    String getTask(Map<String,Object> attributes);
+    List<String> getTags(Map<String,Object> attributes);
 
     /**
      * reusable helper

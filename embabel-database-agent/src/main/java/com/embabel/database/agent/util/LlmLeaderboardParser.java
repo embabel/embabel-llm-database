@@ -56,9 +56,9 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
 
     ObjectMapper objectMapper;
 
-    TaskParser taskParser;
+    TagParser taskParser;
 
-    public LlmLeaderboardParser(ObjectMapper objectMapper,TaskParser taskParser) {
+    public LlmLeaderboardParser(ObjectMapper objectMapper,TagParser taskParser) {
         this.objectMapper = objectMapper;
         this.taskParser = taskParser;
     }
@@ -86,9 +86,9 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
                 //tokens
                 Long paramCount = providerModel.get(PARAM_COUNT) != null ? Long.parseLong(providerModel.get(PARAM_COUNT).toString()) : 0l;
                 //task
-                String task = taskParser.getTask(providerModel);
+                List<String> tags = taskParser.getTags(providerModel);
                 //build the metadata
-                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,paramCount,task,this.getClass().getSimpleName());
+                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,paramCount,tags,this.getClass().getSimpleName());
                 //add
                 listModelMetadata.add(modelMetadata);
             } //end loop                       

@@ -56,7 +56,7 @@ public class LlmLeaderboardParserTest {
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        TaskParser categoryParser = new LlmLeaderboardTaskParser();
+        TagParser categoryParser = new LlmLeaderboardTagParser();
         ReflectionTestUtils.setField(categoryParser, "objectMapper", objectMapper);        
         ModelMetadataParser parser = new LlmLeaderboardParser(objectMapper,categoryParser);
         List<ModelMetadata> models = parser.parse(json);
@@ -73,7 +73,7 @@ public class LlmLeaderboardParserTest {
 
         //send to the method to parse
         ObjectMapper objectMapper =new ObjectMapper();
-        TaskParser categoryParser = new LlmLeaderboardTaskParser();
+        TagParser categoryParser = new LlmLeaderboardTagParser();
         ReflectionTestUtils.setField(categoryParser, "objectMapper", objectMapper);
         ModelMetadataParser parser = new LlmLeaderboardParser(objectMapper,categoryParser);
         List<ModelMetadata> models = parser.parse(tempDir);        
@@ -86,7 +86,7 @@ public class LlmLeaderboardParserTest {
             //cast 
             LlmModelMetadata llmModelMetadata = (LlmModelMetadata) model;
             //check
-            assertNotNull(llmModelMetadata.getTask());
+            assertNotNull(llmModelMetadata.getTags());
         }// end for
     }
 

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.embabel.common.ai.model.ModelMetadata;
-import com.embabel.database.agent.util.AWSBedrockTaskParser;
+import com.embabel.database.agent.util.AWSBedrockTagParser;
 import com.embabel.database.agent.util.AWSBedrockParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,7 +50,7 @@ public class AWSBedrockModelMetadataDiscoveryServiceTest {
         String modelName = "model";
         String providerName = "provider";                
         //setup dependencies
-        AWSBedrockTaskParser taskParser = new AWSBedrockTaskParser();
+        AWSBedrockTagParser taskParser = new AWSBedrockTagParser();
         ObjectMapper objectMapper = new ObjectMapper();
         ReflectionTestUtils.setField(taskParser, "objectMapper", objectMapper);
         AWSBedrockParser awsBedrockParser = new AWSBedrockParser();

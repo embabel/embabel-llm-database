@@ -1,6 +1,6 @@
 [
   {
-    "Classification": "image-to-text",
+    "tag": "image-to-text",
     "inputText": false,
     "inputAudio": false,
     "inputVideo": false,
@@ -11,7 +11,7 @@
     "outputImage": false
   },
   {
-    "Classification": "image-text-to-text",
+    "tag": "image-text-to-text",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,
@@ -22,7 +22,7 @@
     "outputImage": false
   },
   {
-    "Classification": "text-to-image",
+    "tag": "text-to-image",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,
@@ -33,7 +33,7 @@
     "outputImage": true
   },
   {
-    "Classification": "text-to-image-text",
+    "tag": "text-to-image-text",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,
@@ -44,7 +44,7 @@
     "outputImage": true
   },
   {
-    "Classification": "text-to-video",
+    "tag": "text-to-video",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,
@@ -55,7 +55,7 @@
     "outputImage": false
   },
   {
-    "Classification": "video-text-to-text",
+    "tag": "video-text-to-text",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": true,
@@ -66,7 +66,7 @@
     "outputImage": false
   },
   {
-    "Classification": "audio-to-text",
+    "tag": "audio-to-text",
     "inputText": false,
     "inputAudio": true,
     "inputVideo": false,
@@ -77,7 +77,7 @@
     "outputImage": false
   },
   {
-    "Classification": "text-to-audio",
+    "tag": "text-to-audio",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,
@@ -88,7 +88,7 @@
     "outputImage": false
   },
   {
-    "Classification": "audio-to-audio",
+    "tag": "audio-to-audio",
     "inputText": true,
     "inputAudio": true,
     "inputVideo": false,
@@ -99,7 +99,7 @@
     "outputImage": false
   },
   {
-    "Classification": "image-text-to-video",
+    "tag": "image-text-to-video",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,
@@ -110,7 +110,7 @@
     "outputImage": false
   },
   {
-    "Classification": "text-to-text",
+    "tag": "text-to-text",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,
@@ -121,7 +121,7 @@
     "outputImage": false
   },
   {
-    "Classification": "audio-video-image-text-to-text",
+    "tag": "audio-video-image-text-to-text",
     "inputText": true,
     "inputAudio": true,
     "inputVideo": true,
@@ -132,7 +132,7 @@
     "outputImage": false
   },
   {
-    "Classification": "text-to-embedding",
+    "tag": "text-to-embedding",
     "inputText": true,
     "inputAudio": false,
     "inputVideo": false,

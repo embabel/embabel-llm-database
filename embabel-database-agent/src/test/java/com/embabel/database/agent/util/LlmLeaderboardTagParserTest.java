@@ -18,23 +18,29 @@ package com.embabel.database.agent.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class LlmLeaderboardTaskParserTest {
+public class LlmLeaderboardTagParserTest {
+
+    private static Log logger = LogFactory.getLog(LlmLeaderboardTagParserTest.class);
     
     @Test
     public void testGetCategories() {
         ObjectMapper objectMapper = new ObjectMapper();
-        LlmLeaderboardTaskParser parser = new LlmLeaderboardTaskParser();
-        List<Map<String,Object>> list = parser.getTasks(objectMapper, TaskParser.RESOURCE_LOCATION);
+        LlmLeaderboardTagParser parser = new LlmLeaderboardTagParser();
+        List<Map<String,Object>> list = parser.getTasks(objectMapper, TagParser.RESOURCE_LOCATION);
         assertNotNull(list);
         assertFalse(list.isEmpty());
     }
@@ -77,13 +83,54 @@ public class LlmLeaderboardTaskParserTest {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String,Object> map = objectMapper.readValue(model_json,new TypeReference<Map<String,Object>>(){});
         //setup the object
-        LlmLeaderboardTaskParser parser = new LlmLeaderboardTaskParser();
+        LlmLeaderboardTagParser parser = new LlmLeaderboardTagParser();
         ReflectionTestUtils.setField(parser, "objectMapper", objectMapper);
-        String expectedCategory = "text-to-text";
+        String expectedCategory = "text-to-text"; 
         //get category
-        String result = parser.getTask(map);
+        List<String> results = parser.getTags(map);
         //validate
-        assertEquals(expectedCategory, result);
-
+        assertTrue(results.size() == 5); //expect a mixture of results, all ending in "to-text"
+        //udpate to do image-text-to-text and text-to-text
+        model_json = "{\n" + //
+                        "    \"model_provider_id\": 398,\n" + //
+                        "    \"model_id\": \"claude-3-5-haiku-20241022\",\n" + //
+                        "    \"provider_id\": \"anthropic\",\n" + //
+                        "    \"deprecated_at\": null,\n" + //
+                        "    \"input_cents_per_million_tokens\": 100,\n" + //
+                        "    \"output_cents_per_million_tokens\": 500,\n" + //
+                        "    \"quantization\": null,\n" + //
+                        "    \"max_input_tokens\": 200000,\n" + //
+                        "    \"max_output_tokens\": 200000,\n" + //
+                        "    \"throughput\": 100.0,\n" + //
+                        "    \"latency\": 0.3,\n" + //
+                        "    \"feature_web_search\": false,\n" + //
+                        "    \"feature_function_calling\": true,\n" + //
+                        "    \"feature_structured_output\": true,\n" + //
+                        "    \"feature_code_execution\": false,\n" + //
+                        "    \"feature_batch_inference\": true,\n" + //
+                        "    \"feature_finetuning\": false,\n" + //
+                        "    \"input_modality_text\": true,\n" + //
+                        "    \"input_modality_image\": true,\n" + //
+                        "    \"input_modality_audio\": false,\n" + //
+                        "    \"input_modality_video\": false,\n" + //
+                        "    \"output_modality_text\": true,\n" + //
+                        "    \"output_modality_image\": false,\n" + //
+                        "    \"output_modality_audio\": false,\n" + //
+                        "    \"output_modality_video\": false,\n" + //
+                        "    \"created_at\": \"2025-07-19T19:49:17.073101+00:00\",\n" + //
+                        "    \"updated_at\": \"2025-07-19T19:49:17.073101+00:00\",\n" + //
+                        "    \"provider_model_id_used\": \"claude-3-5-haiku-20241022\",\n" + //
+                        "    \"model_name\": \"Claude 3.5 Haiku\",\n" + //
+                        "    \"organization_id\": \"anthropic\"\n" + //
+                        "  }";
+        map = objectMapper.readValue(model_json,new TypeReference<Map<String,Object>>(){});
+        results = parser.getTags(map);
+        logger.info(results);
+        //validate
+        assertTrue(results.size() == 6); //expect 3 results
+        assertTrue(results.contains(expectedCategory));                        
+        assertTrue(results.contains("image-text-to-text"));     
+        assertTrue(results.contains("image-to-text"));
+        assertFalse(results.contains("audio-to-text"));
     }
 }
