@@ -32,9 +32,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public interface TagParser {
 
     static final Log logger = LogFactory.getLog(TagParser.class);
-
+   
     public static final int MATCH_COUNT = 8;
-    
+
     public static final String INPUT = "input";
     public static final String OUTPUT = "output";
     public static final String TAG_LABEL = "tag";
@@ -74,5 +74,87 @@ public interface TagParser {
         }
         //return
         return tasks;
+    }
+
+    /**
+     * reusable function to search for exact matches
+     * 
+     * @param category
+     * @param matches
+     * @return
+     */
+    default String getExactMatchTag(Map<String,Object> category,Map<String,Object> matches) {
+        int matchedCount = 0;
+        //check
+        for (String key : matches.keySet()) {
+            //go through the matches key and check
+            if (category.get(key).toString().equalsIgnoreCase(matches.get(key).toString())) {
+                matchedCount++;
+            } //end if
+        } //end for       
+        if (matchedCount == MATCH_COUNT) {
+            //have a winner
+            return category.get(TAG_LABEL).toString();
+        }
+        return null;
+    }
+
+    /**
+     * reusable function to look for near matches
+     * @param tags
+     * @param matches
+     * @param category
+     * @return
+     */
+    default List<String> getAlternatives(List<String> tags,Map<String,Object> matches,Map<String,Object> category) {
+        //this is where an input and an output are true but not ALL of the inputs and outpus match
+        //inputs determine tag, not outputs (restrictions on what can be uploaded)
+        //process inputs to limit the options
+        int inputCounts = 0;
+        int outputCounts = 0;
+        //limitations of the tag are what can be uploaded, and the expected outputs
+        //an image-text-to-text can just also be text-to-text and image-to-text, but it can't be text-to-image
+        int trueOutputs = 0;
+        int trueInputs = 0;
+        boolean noMatch = false;
+        //need to check how output matches
+        for (Map.Entry<String, Object> entry : category.entrySet()) {
+            String key = entry.getKey().toLowerCase();
+            Object value = entry.getValue();
+            Object matchValue = matches.get(entry.getKey());
+
+            // Normalize values once
+            boolean isTrue = Boolean.parseBoolean(String.valueOf(value));
+            boolean matchIsTrue = matchValue != null && Boolean.parseBoolean(String.valueOf(matchValue));
+
+            if (key.contains(OUTPUT)) {
+                if (isTrue && matchIsTrue) {
+                    trueOutputs++;
+                } else if (isTrue && (matchValue == null || matchIsTrue)) {
+                    noMatch = true;
+                }
+            } else if (key.contains(INPUT) && isTrue && matchIsTrue) {
+                trueInputs++;
+            } //end if
+        }
+        if (noMatch) return tags;
+        //check inputs
+        for (String input : INPUTS) {
+            Object mv = matches.get(input);
+            inputCounts += mv != null && mv.toString().equalsIgnoreCase("true") ? 1 : 0;
+        } //end for
+        //check 
+        if (inputCounts == 0) return tags;
+        //check the outputs
+        for (String output : OUTPUTS) {
+            Object mv = matches.get(output);
+            outputCounts += mv != null && mv.toString().equalsIgnoreCase("true") ? 1 : 0;
+        }
+        if (outputCounts == 0) return tags;
+        //match counts
+        if (trueInputs >= 1 && trueOutputs >= 1) {
+            tags.add(String.valueOf(category.get(TAG_LABEL)));
+        }        
+        return tags;        
     }
 }

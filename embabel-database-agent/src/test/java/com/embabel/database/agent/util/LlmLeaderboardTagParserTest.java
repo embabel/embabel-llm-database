@@ -15,12 +15,9 @@
  */
 package com.embabel.database.agent.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import java.util.List;
 import java.util.Map;
 
@@ -125,7 +122,7 @@ public class LlmLeaderboardTagParserTest {
                         "  }";
         map = objectMapper.readValue(model_json,new TypeReference<Map<String,Object>>(){});
         results = parser.getTags(map);
-        logger.info(results);
+        logger.debug(results);
         //validate
         assertTrue(results.size() == 6); //expect 3 results
         assertTrue(results.contains(expectedCategory));                        

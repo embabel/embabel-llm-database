@@ -83,88 +83,12 @@ public class LlmLeaderboardTagParser implements TagParser {
             if (exactMatch != null) {
                 tags.add(exactMatch);
             } else {
-                //now we have "sub" tags
-                //this is where an input and an output are true but not ALL of the inputs and outpus match
-                //inputs determine tag, not outputs (restrictions on what can be uploaded)
-                //process inputs to limit the options
-                int inputCounts = 0;
-                int outputCounts = 0;
-                //limitations of the tag are what can be uploaded, and the expected outputs
-                //an image-text-to-text can just also be text-to-text and image-to-text, but it can't be text-to-image
-                int trueOutputs = 0;
-                int trueInputs = 0;
-                boolean noMatch = false;
-                //need to check how output matches
-                for (Map.Entry<String, Object> entry : category.entrySet()) {
-                    String key = entry.getKey().toLowerCase();
-                    Object value = entry.getValue();
-                    Object matchValue = matches.get(entry.getKey());
-
-                    // Normalize values once
-                    boolean isTrue = Boolean.parseBoolean(String.valueOf(value));
-                    boolean matchIsTrue = matchValue != null && Boolean.parseBoolean(String.valueOf(matchValue));
-
-                    if (key.contains(OUTPUT)) {
-                        if (isTrue && matchIsTrue) {
-                            trueOutputs++;
-                        } else if (isTrue && (matchValue == null || matchIsTrue)) {
-                            noMatch = true;
-                        }
-                    } else if (key.contains(INPUT) && isTrue && matchIsTrue) {
-                        trueInputs++;
-                    } //end if
-                }
-                if (noMatch) {
-                    continue; //done here
-                }
-
-                for (String input : INPUTS) {
-                    //check if there are ANY matches
-                    if (matches.get(input).toString().equalsIgnoreCase(Boolean.TRUE.toString().toLowerCase())) {
-                        inputCounts++;
-                    } //end if
-                }//end for
-                //check 
-                if (inputCounts <= 0) {
-                    //no matches, skip
-                    continue;
-                } //end if
-                //check the outputs
-                for (String output : OUTPUTS) {
-                    //check if there are ANY matches
-                    if (matches.get(output).toString().equalsIgnoreCase(Boolean.TRUE.toString().toLowerCase())) {
-                        outputCounts++;
-                    } //end if
-                }//end for 
-                if (outputCounts <= 0) {
-                    //no matches, skip
-                    continue;
-                }//end if
-                //match counts
-                if (trueInputs >= 1 && trueOutputs >= 1) {
-                    //can use this tone
-                    tags.add(category.get(TAG_LABEL).toString());
-                } //end if
+                //now we have "sub" tags                             
+                tags = getAlternatives(tags, matches, category);
             } //end if
         } //end for
         //return
         return tags;
-    }
-
-    String getExactMatchTag(Map<String,Object> category,Map<String,Object> matches) {
-        int matchedCount = 0;
-        //check
-        for (String key : matches.keySet()) {
-            //go through the matches key and check
-            if (category.get(key).toString().equalsIgnoreCase(matches.get(key).toString())) {
-                matchedCount++;
-            } //end if
-        } //end for       
-        if (matchedCount == MATCH_COUNT) {
-            //have a winner
-            return category.get(TAG_LABEL).toString();
-        }
-        return null;
     }
     
     void loadMap() {
