@@ -44,7 +44,7 @@ public class AWSBedrockParserTest {
         List<FoundationModelSummary> foundationModelSummaryList = Collections.singletonList(foundationModelSummary);
         //invoke
         ObjectMapper objectMapper = new ObjectMapper();
-        TaskParser taskParser = new AWSBedrockTaskParser();
+        TagParser taskParser = new AWSBedrockTagParser();
         ReflectionTestUtils.setField(taskParser, "objectMapper", objectMapper);
         AWSBedrockParser parser = new AWSBedrockParser();
         ReflectionTestUtils.setField(parser, "awsBedrockTaskParser", taskParser);

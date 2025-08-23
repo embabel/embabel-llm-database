@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,"task","test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
         //setup the repo
         AiModelRepository aiModelRepository = new InMemoryAiModelRepository();
         //save
@@ -50,7 +51,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
         //add existing
         newModels.add(singleModel);
         //add a new one
-        LlmModelMetadata newModel = new LlmModelMetadata(modelName + "-1", providerName, dateStamp, null, 1l,"task","test");
+        LlmModelMetadata newModel = new LlmModelMetadata(modelName + "-1", providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
         newModels.add(newModel);
         //process
         ModelMetadataValidationService modelMetadataValidationService = new AiRepositoryModelMetadataValidationService(aiModelRepository);
@@ -65,7 +66,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
     void testInverse() {
         LocalDate dateStamp = LocalDate.now();
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata("model-0", "provider-0", dateStamp, null, 1l,"task","test");
+        LlmModelMetadata singleModel = new LlmModelMetadata("model-0", "provider-0", dateStamp, null, 1l,Collections.singletonList("task"),"test");
         //setup the repo
         AiModelRepository aiModelRepository = new InMemoryAiModelRepository();
         //save

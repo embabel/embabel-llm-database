@@ -27,7 +27,7 @@ data class LlmModelMetadata (
     override val knowledgeCutoffDate: LocalDate? = null,
     override val pricingModel: PricingModel? = null,
     val size: Long? = null,
-    val task: String? = null,
+    val tags: List<String>? = null,
     val source: String? = null
 ) : LlmMetadata  {
 
@@ -42,6 +42,19 @@ data class LlmModelMetadata (
         // Compare by knowledgeCutoffDate (nulls last, latest first)
         val dateCompare = compareValuesBy(this, other, { it.knowledgeCutoffDate?.toEpochDay()?.unaryMinus() ?: Long.MIN_VALUE })
         if (dateCompare != 0) return dateCompare
+
+        // Compare by tags (nulls last, lexicographically by elements)
+        val tagsCompare = compareValuesBy(this, other,
+            { it.tags?.size ?: Int.MIN_VALUE } // first compare number of tags
+        )
+        if (tagsCompare != 0) return tagsCompare
+
+        if (this.tags != null && other.tags != null) {
+            val iterCompare = this.tags.zip(other.tags).map { (a, b) -> a.compareTo(b) }
+            for (cmp in iterCompare) {
+                if (cmp != 0) return cmp
+            }
+        }
 
         // Compare by name (alphabetically)
         val nameCompare = this.name.compareTo(other.name)
@@ -58,9 +71,9 @@ data class LlmModelMetadata (
             knowledgeCutoffDate: LocalDate? = null,
             pricingModel: PricingModel? = null,
             size: Long? = null,
-            task: String? = null,
+            tags: List<String>? = null,
             source: String? = null
-        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, task, source)
+        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
 
         @JvmStatic
         @JvmOverloads
@@ -70,9 +83,9 @@ data class LlmModelMetadata (
             knowledgeCutoffDate: LocalDate? = null,
             pricingModel: PricingModel? = null,
             size: Long? = null,
-            task: String? = null,
+            tags: List<String>? = null,
             source: String? = null
-        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, task, source)
+        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
     }
 
 }

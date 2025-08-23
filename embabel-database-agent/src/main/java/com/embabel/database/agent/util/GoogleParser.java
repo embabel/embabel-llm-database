@@ -39,7 +39,7 @@ public class GoogleParser implements ModelMetadataParser {
     private static final String MODEL_LIST_KEY = "models";
 
     @Autowired
-    TaskParser googleTaskParser;
+    TagParser googleTaskParser;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -66,9 +66,9 @@ public class GoogleParser implements ModelMetadataParser {
                 //tokens
                 Long paramCount = model.get("inputTokenLimit") != null ? Long.parseLong(model.get("inputTokenLimit").toString()) : 0l;
                 //get the task
-                String task = googleTaskParser.getTask(model);
+                List<String> tags = googleTaskParser.getTags(model);
                 //build the metadatamodel
-                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,0l,task,this.getClass().getSimpleName());
+                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,0l,tags,this.getClass().getSimpleName());
                 //add
                 listModelMetadata.add(modelMetadata);
             } //end for

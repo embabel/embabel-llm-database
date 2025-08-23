@@ -25,9 +25,9 @@ import com.embabel.database.agent.service.ModelMetadataService
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataValidationService
 import com.embabel.database.agent.util.LlmLeaderboardParser
-import com.embabel.database.agent.util.LlmLeaderboardTaskParser
+import com.embabel.database.agent.util.LlmLeaderboardTagParser
 import com.embabel.database.agent.util.ModelMetadataParser
-import com.embabel.database.agent.util.TaskParser
+import com.embabel.database.agent.util.TagParser
 import com.embabel.database.core.repository.AiModelRepository
 import com.embabel.database.core.repository.InMemoryAiModelRepository
 import com.embabel.database.core.repository.util.InMemoryAiModelRepositoryLoader
@@ -50,13 +50,13 @@ class DefaultConfig {
 
     //task parser
     @Bean
-    fun taskParser(): TaskParser {
-        return LlmLeaderboardTaskParser()
+    fun taskParser(): TagParser {
+        return LlmLeaderboardTagParser()
     }
 
     //model parser
     @Bean
-    fun modelMetadataParser(objectMapper: ObjectMapper, taskParser: TaskParser): ModelMetadataParser {
+    fun modelMetadataParser(objectMapper: ObjectMapper, taskParser: TagParser): ModelMetadataParser {
         return LlmLeaderboardParser(objectMapper, taskParser)
     }
 

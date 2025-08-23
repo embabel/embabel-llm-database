@@ -15,6 +15,7 @@
  */
 package com.embabel.database.agent.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class LlmLeaderboardTaskParser implements TaskParser {
+public class LlmLeaderboardTagParser implements TagParser {
 
-    static final Log logger = LogFactory.getLog(LlmLeaderboardTaskParser.class);
+    static final Log logger = LogFactory.getLog(LlmLeaderboardTagParser.class);
 
     private static final String INPUT_TEXT_ATTRIBUTE = "input_modality_text";
     private static final String INPUT_IMAGE_ATTRIBUTE = "input_modality_image";
@@ -48,9 +49,9 @@ public class LlmLeaderboardTaskParser implements TaskParser {
     ObjectMapper objectMapper;
 
     @Override
-    public String getTask(Map<String, Object> attributes) {
+    public List<String> getTags(Map<String, Object> attributes) {
         //structure is a series of input true/false and output true/false
-        String modelCategory = null;
+        List<String> tags = new ArrayList<>();
         //load the categories
         if (tasks == null || tasks.isEmpty()) {
             tasks = this.getTasks(objectMapper, RESOURCE_LOCATION);
@@ -66,30 +67,28 @@ public class LlmLeaderboardTaskParser implements TaskParser {
                 throw new IllegalArgumentException("missing attribute " + attribute);
             } //end if
             //get the value
-            if (attributes.get(attribute).toString().equals("true")) {
+            if (attributes.get(attribute).toString().equals(Boolean.TRUE.toString().toLowerCase())) {
                 matches.put(attributeMap.get(attribute),true);
             } else {
                 matches.put(attributeMap.get(attribute),false);
             } //end if            
         } //end for
-        // now we have a map of matches, time to check which one
+
+        // now we have a map of matches, time to check which ones it maps too
+        // have a single set of true/falses that could map to a number of different model tasks
+        // can map the "inputs" and "outputs" separately to get either side of the tag and present multiple combinations
         for (Map<String,Object> category : tasks) {
-            int matchedCount = 0;
-            //check
-            for (String key : matches.keySet()) {
-                //go through the matches key and check
-                if (category.get(key).toString().equalsIgnoreCase(matches.get(key).toString())) {
-                    matchedCount++;
-                } //end if
-            } //end for
-            if (matchedCount == MATCH_COUNT) {
-                //have a winner
-                modelCategory = category.get("Classification").toString();
-                break;        
+            //get the exact match
+            String exactMatch = getExactMatchTag(category, matches);
+            if (exactMatch != null) {
+                tags.add(exactMatch);
+            } else {
+                //now we have "sub" tags                             
+                tags = getAlternatives(tags, matches, category);
             } //end if
         } //end for
-
-        return modelCategory;
+        //return
+        return tags;
     }
     
     void loadMap() {

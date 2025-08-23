@@ -43,9 +43,10 @@ The Database is loaded from the Project [Llm LeaderBoard](https://github.com/Jon
 `GET /api/v1/models/search/findByName?name={model name}` returns a list of matching `ModelMetadata` including providers and costs for each matching model
 `GET /api/v1/models/search/findByNameContains?name={model name}` returns a list of matching `ModelMetadata` where the name contians the 'name' passed
 `GET /api/v1/models/search/findByNameAndProvider?name={model name}&provider={provider name}` returns a list of matching `ModelMetadata` 
-`GET /api/v1/models/search/findByTask?task={task name}` returns a list of matching `ModelMetadata` 
+`GET /api/v1/models/search/findByTags?tags={tag name}` returns a list of matching `ModelMetadata` 
 `GET /api/v1/models/count` returns the number of models in the repository
 `GET /api/v1/models/lastUpdate` returns a timestamp for when the repository was last refreshed
+`GET /api/v1/tags` returns a list of tag objects that models are mapped to
 
 Repository maintenance is via an Agent approach.  The server provides an MCP Server compliant toolset as well as a direct, manual mechanism to trigger the Agent.  The Agent will validate if the repository needs refreshing.
 `POST /api/v1/agents/{agentName}` manually triggers the repository maintenance agent  (e.g. `POST /api/v1/agents/A1ModelRepositoryAgent`)

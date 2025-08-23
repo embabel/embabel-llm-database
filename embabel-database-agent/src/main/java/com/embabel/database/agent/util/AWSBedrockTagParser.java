@@ -15,15 +15,20 @@
  */
 package com.embabel.database.agent.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AWSBedrockTaskParser implements TaskParser {
+public class AWSBedrockTagParser implements TagParser {
+
+    static final Log logger = LogFactory.getLog(AWSBedrockTagParser.class);
 
     public static final String INPUT_MODALITY_KEY = "inputModalities";
     public static final String OUTPUT_MODALITY_KEY = "outputModalities";
@@ -35,8 +40,8 @@ public class AWSBedrockTaskParser implements TaskParser {
     private static final String OUTPUT_IMAGE_VALUE = "IMAGE";
     private static final String OUTPUT_EMBEDDING_VALUE = "EMBEDDING";    
 
-    static final String[] INPUTS = {INPUT_TEXT_VALUE,INPUT_IMAGE_VALUE,INPUT_EMBEDDING_VALUE};
-    static final String[] OUTPUTS = {OUTPUT_TEXT_VALUE,OUTPUT_IMAGE_VALUE,OUTPUT_EMBEDDING_VALUE};
+    static final String[] BEDROCK_INPUTS = {INPUT_TEXT_VALUE,INPUT_IMAGE_VALUE,INPUT_EMBEDDING_VALUE};
+    static final String[] BEDROCK_OUTPUTS = {OUTPUT_TEXT_VALUE,OUTPUT_IMAGE_VALUE,OUTPUT_EMBEDDING_VALUE};
 
     private List<Map<String,Object>> tasks;
 
@@ -44,18 +49,20 @@ public class AWSBedrockTaskParser implements TaskParser {
     ObjectMapper objectMapper;
 
     @Override
-    public String getTask(Map<String, Object> attributes) {
-        String modelCategory = null;
+    public List<String> getTags(Map<String, Object> attributes) {
+        List<String> tags = new ArrayList<>();
         //load the categories
         if (tasks == null || tasks.isEmpty()) {
             tasks = this.getTasks(objectMapper, RESOURCE_LOCATION);
         } //end if
         //map contains 2 keys "inputModalities" and "outputModalities"
         //values of which correspond to either inputText, inputImage, outputText, outputImage (true)
+        //presence of the string is equivalent of "true"
         Map<String,Object> matches = new HashMap<>();
         List<String> inputValues = (List<String>) attributes.get(INPUT_MODALITY_KEY);
         List<String> outputValues = (List<String>) attributes.get(OUTPUT_MODALITY_KEY);
-        for (String value : INPUTS) {
+        //build a match map        
+        for (String value : BEDROCK_INPUTS) {
             //loop
             for (String inputValue : inputValues) {
                 if (inputValue.equalsIgnoreCase(value)) {
@@ -64,7 +71,7 @@ public class AWSBedrockTaskParser implements TaskParser {
                 } //end if
             } //end if
         } //end for
-        for (String value : OUTPUTS) {
+        for (String value : BEDROCK_OUTPUTS) {
             //loop
             for (String outputValue : outputValues) {
                 if (outputValue.equalsIgnoreCase(value)) {
@@ -80,24 +87,18 @@ public class AWSBedrockTaskParser implements TaskParser {
             }//end if
         } //end for
         //now loop and check
-        for (Map<String,Object> task : tasks) {
-            int matchedCount = 0;
-            //check
-            for (String key : matches.keySet()) {
-                //go through the matches key and check
-                if (task.get(key).toString().equalsIgnoreCase(matches.get(key).toString())) {
-                    matchedCount++;
-                } //end if
-            } //end for
-            if (matchedCount == MATCH_COUNT) {
-                //have a winner
-                modelCategory = task.get("Classification").toString();
-                break;        
-            } //end if
-        } //end for
-        return modelCategory;
+        for (Map<String,Object> category : tasks) {
+            String exactMatch = getExactMatchTag(category, matches);
+            if (exactMatch != null) {
+                tags.add(exactMatch);
+            } else {
+                //now we have "sub" tags                             
+                tags = getAlternatives(tags, matches, category);
+            }//end if
+        } //end for      
+        return tags;  
     }
-    
+
     String getKey(String value,boolean input) {
         if (input) {
             if (value.equalsIgnoreCase(INPUT_IMAGE_VALUE)) {

@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 @SpringBootTest(classes={AiModelRepositoryControllerITest.class,AiModelRepositoryControllerITest.TestConfig.class})
 public class AiModelRepositoryControllerITest {
@@ -61,7 +62,7 @@ public class AiModelRepositoryControllerITest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,"task","test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
         //save
         aiModelRepository.save(singleModel);
         //try the mock again
