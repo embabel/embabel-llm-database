@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { Section, SectionCard } from "@blueprintjs/core";
+
 import SearchByName from "../forms/SearchByName";
 
+import Model from "../data/Model";
 import ResultsTable from "../data/ResultsTable";
+
 
 function Search() {
 
     const [data, setData] = useState([]);
+    const [model, setModel] = useState();
 
     useEffect(() => {
         async function fetchModels() {
@@ -22,14 +26,38 @@ function Search() {
         fetchModels();
     },[]);
 
+    const handleRowSelection = (region) => {
+        var idx = region[0]['rows'][0];
+        var modelId = data[idx]['modelId'];
+        //retrieve model
+        fetch('/api/v1/models/' + modelId)
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Model not found (404) ' + modelId);
+                    } else {
+                        throw new Error('Http error, status = ' + response.status);
+                    }//end if
+                }
+                return response.json()})
+            .then(model => setModel(model))
+            .catch(error => {
+                console.error("failed to retrieve model: " + modelId,error);
+            });
+
+    }
+
     return (
         <>
-            <Section style={{ height: '100vh', display: 'grid', placeItems: 'center', gridTemplateRows: '20% 1fr' }}>
+            <Section style={{ height: '100vh', display: 'grid', placeItems: 'center', gridTemplateRows: '20% 40% 40%' }}>
                 <SectionCard style={{ display: 'flex'}}>
                     <SearchByName/>
                 </SectionCard>
-                <SectionCard style={{ overflowY: 'auto', padding: '1rem', height: 'calc(80vh - 1rem)', width: '90vw'}}>
-                    <ResultsTable data={data}/>
+                <SectionCard style={{ overflowY: 'auto', padding: '1rem', height: '100%', width: '90%'}}>
+                    <ResultsTable data={data} selectionCallback={handleRowSelection} />
+                </SectionCard>
+                <SectionCard style={{ height: '100%', width: '90%'}}>
+                    <Model model={model}/>
                 </SectionCard>
             </Section>
         </>

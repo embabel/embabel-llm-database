@@ -1,5 +1,5 @@
 
-import { Classes } from "@blueprintjs/core";
+import { Classes, Tag } from "@blueprintjs/core";
 import { Cell, ColumnHeaderCell, Column, Table } from "@blueprintjs/table";
 
 function renderColumnHeader(index) {
@@ -17,6 +17,20 @@ function renderName(name) {
     )
 }
 
+/*
+        return (
+            <Cell style={{ textAlign: "start" }}>
+                    {Array.isArray(cellData) ? (cellData.map((value, idx) => {
+                        <Tag key={idx} style={{ marginRight: 4 }}>
+                            tag {value}
+                        </Tag>
+                    })
+                    ) : (
+                        <Tag>{cellData}</Tag>
+                    )}
+            </Cell>);
+*/
+
 function renderCell(rowIndex, columnIndex, data) {
     //use the column index to get the right column
     var columnName = "";
@@ -30,23 +44,39 @@ function renderCell(rowIndex, columnIndex, data) {
         const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
         let displayValue;
         displayValue = cellData.toLocaleString();
-        return <Cell style={{ textAlign: "end" }}>{displayValue}</Cell>;    
+        return (
+            <Cell style={{ textAlign: "end" }}>{displayValue}</Cell>);    
     } else {
         columnName = "tags";
         // process tags a little differently
         const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
-        let displayValue;
-        displayValue = cellData.join(', ');
-        return <Cell style={{ textAlign: "start" }}>{displayValue}</Cell>;    
+        return (
+            <Cell style={{ textAlign: "start" }}>
+                {Array.isArray(cellData) ? (cellData.map((value, idx) => (
+                    <span>
+                        <Tag key={idx}>{value}</Tag>&nbsp;
+                    </span>
+                ))
+                ) : (
+                    <Tag>{cellData}</Tag>
+                )}
+            </Cell>);
     } //end if
     const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
-    return <Cell style={{ textAlign: "start" }}>{cellData}</Cell>;
+    return (<Cell style={{ textAlign: "start" }}>{cellData}</Cell>);
 }
 
-function ResultsTable({ data }) {
+function ResultsTable({ data, selectionCallback }) {
+
+    const handleSelection = (region) => {
+        if (selectionCallback) {
+            //invoke selection callback
+            selectionCallback(region);
+        }
+    }
 
     return (
-        <Table numRows={data.length} enableColumnResizing={true} columnWidths={[200,200,100,600]} style={{ height: '100vh', width: '90vw'}}>
+        <Table numRows={data.length} onSelection={handleSelection} enableMultipleSelection={false} enableColumnResizing={true} columnWidths={[200,200,100,600]} style={{ height: '100vh', width: '90vw'}}>
             <Column cellRenderer={(rowIndex) => renderCell(rowIndex,0,data)} columnHeaderCellRenderer={renderColumnHeader}/>
             <Column cellRenderer={(rowIndex) => renderCell(rowIndex,1,data)} columnHeaderCellRenderer={renderColumnHeader}/>
             <Column cellRenderer={(rowIndex) => renderCell(rowIndex,2,data)} columnHeaderCellRenderer={renderColumnHeader}/>

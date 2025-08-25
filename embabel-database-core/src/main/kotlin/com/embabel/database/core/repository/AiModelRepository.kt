@@ -128,4 +128,12 @@ interface AiModelRepository {
      * @return Int of the list size
      */
     fun count(): Int
+
+
+    /**
+     * get a model by the model Id
+     * @param modelId
+     * @return the model
+     */
+    fun get(modelId: String): ModelMetadata?
 }

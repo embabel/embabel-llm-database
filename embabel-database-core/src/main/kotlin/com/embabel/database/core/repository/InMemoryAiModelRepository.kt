@@ -116,6 +116,10 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
         return models.filter { it.name.contains(name,ignoreCase = true) }
     }
 
+    override fun get(modelId: String): ModelMetadata? {
+        return models.find { it.modelId == modelId }
+    }
+
     //serialize the current list to json
     fun flushToFile() {
         // Create and configure the ObjectMapper
