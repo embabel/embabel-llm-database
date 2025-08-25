@@ -1,4 +1,9 @@
-[
+import { defineMock } from 'vite-plugin-mock-dev-server'
+
+export default defineMock({
+    url: '/api/v1/models',
+    method: 'GET',
+    body: () => [
     {
         "name": "command-r-plus-04-2024",
         "provider": "Command R+",
@@ -5165,4 +5170,5 @@
         "source": "LlmLeaderboardParser",
         "type": "LLM"
     }
-]
+],
+});
