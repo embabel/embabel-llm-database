@@ -135,5 +135,5 @@ interface AiModelRepository {
      * @param modelId
      * @return the model
      */
-    fun get(modelId: String): ModelMetadata?
+    fun findById(modelId: String): ModelMetadata?
 }

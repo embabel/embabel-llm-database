@@ -93,13 +93,8 @@ class AiModelRepositoryController {
         return aiModelRepository.findByTags(*tags.toTypedArray()) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
     }
 
-     @GetMapping("/models/{modelId}")
-    fun getById(@PathVariable modelId: String): ResponseEntity<ModelMetadata> {
-        val model = aiModelRepository.getById(modelId)
-        return if (model != null) {
-            ResponseEntity.ok(model)
-        } else {
-            ResponseEntity.notFound().build()
-        }
+    @GetMapping("/{modelId}")
+    fun getById(@PathVariable modelId: String): ModelMetadata? {
+        return aiModelRepository.findById(modelId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No model found for ID")
     }
 }

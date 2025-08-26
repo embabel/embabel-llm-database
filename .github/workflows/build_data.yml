@@ -22,4 +22,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -U -B test -Dtest=com.embabel.database.server.EmbableDatabaseServerITest -Daws.region=us-east-1 -pl embabel-database-server
+        run: mvn -U -B test -Dtest=com.embabel.database.server.EmbabelDatabaseServerITest -Daws.region=us-east-1 -pl embabel-database-server

@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class AiModelRepositoryAgentTest {
 
@@ -50,7 +51,7 @@ public class AiModelRepositoryAgentTest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
         //setup the repo
         AiModelRepository aiModelRepository = mock(AiModelRepository.class);
         when(aiModelRepository.lastUpdated()).thenReturn(matchTime);
@@ -94,7 +95,7 @@ public class AiModelRepositoryAgentTest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
         List<ModelMetadata> models = new ArrayList<>();
         models.add(singleModel);
         //set the trigger

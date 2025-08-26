@@ -116,8 +116,9 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
         return models.filter { it.name.contains(name,ignoreCase = true) }
     }
 
-    override fun get(modelId: String): ModelMetadata? {
-        return models.find { it.modelId == modelId }
+    override fun findById(modelId: String): ModelMetadata? {
+        return models.filterIsInstance<LlmModelMetadata>()
+            .find { it.modelId == modelId }
     }
 
     //serialize the current list to json
