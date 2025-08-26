@@ -1,13 +1,13 @@
 import { defineMock } from 'vite-plugin-mock-dev-server'
 
 export default defineMock({
-    url: '/api/v1/models/some-model-id-001',
+    url: '/api/v1/models/d2a19cdb-b29f-4752-9000-b4ebd318177f',
     method: 'GET',
     body: () => {
         return {
-            "modelId": "some-id",
-            "name": "command-r-plus-04-2024",
-            "provider": "Command R+",
+            "modelId": "d2a19cdb-b29f-4752-9000-b4ebd318177f",
+            "name": "Command R+",
+            "provider": "cohere",
             "knowledgeCutoffDate": [
                 1970,
                 1,

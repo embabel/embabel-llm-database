@@ -25,10 +25,15 @@ function Model({ model }) {
                             <tr>
                                 <td className="emphasis-tag">Tags:</td>
                                 <td>{model.tags.map((value, idx) => (
-                                    <span>
-                                        <Tag key={idx}>{value}</Tag>&nbsp;
+                                    <span key={idx}>
+                                        <Tag>{value}</Tag>&nbsp;
                                     </span>
                                 ))}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan="3">
+                                    <hr/>
+                                </td>
                             </tr>
                             <tr>
                                 <td className="emphasis-tag" colSpan="3">

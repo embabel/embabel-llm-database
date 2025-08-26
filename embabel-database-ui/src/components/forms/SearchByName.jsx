@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button,ControlGroup,InputGroup } from "@blueprintjs/core";
-import { Search } from "@blueprintjs/icons";
+import { Search, Reset } from "@blueprintjs/icons";
 
 
-function SearchByName({ onSearch }) {
+function SearchByName({ onSearch, onReset }) {
 
     const [value, setValue] = useState("");
 
@@ -19,11 +19,18 @@ function SearchByName({ onSearch }) {
         }
     }
 
+    const handleReset = () => {
+        if (onReset) {
+            onReset();
+        } //end if
+    }
+
     return (
         <>
             <ControlGroup>
                 <InputGroup type="text" placeholder="Search by name..." inputSize={50} onChange={(e) => setValue(e.target.value)} onKeyDown={handleKeyDown}/>
                 <Button onClick={handleSearch}><Search/></Button>
+                { (onReset) ? (<Button onClick={handleReset}><Reset/></Button>) : (<></>) }                                
             </ControlGroup>
         </>
     );

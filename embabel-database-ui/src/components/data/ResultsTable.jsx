@@ -4,7 +4,8 @@ import { Cell, ColumnHeaderCell, Column, Table } from "@blueprintjs/table";
 
 function renderColumnHeader(index) {
     const name = ["Name","Provider","Tokens","Tags"][index];
-    return <ColumnHeaderCell name={name} index={index} nameRenderer={renderName}/>;
+    const keyVal = name + "-" + index
+    return <ColumnHeaderCell key={keyVal} name={name} index={index} nameRenderer={renderName}/>;
 }
 
 function renderName(name) {
@@ -17,21 +18,9 @@ function renderName(name) {
     )
 }
 
-/*
-        return (
-            <Cell style={{ textAlign: "start" }}>
-                    {Array.isArray(cellData) ? (cellData.map((value, idx) => {
-                        <Tag key={idx} style={{ marginRight: 4 }}>
-                            tag {value}
-                        </Tag>
-                    })
-                    ) : (
-                        <Tag>{cellData}</Tag>
-                    )}
-            </Cell>);
-*/
 
 function renderCell(rowIndex, columnIndex, data) {
+    const cellKey = data[rowIndex]["modelId"] + "-" + columnIndex
     //use the column index to get the right column
     var columnName = "";
     if (columnIndex === 0) {
@@ -45,16 +34,16 @@ function renderCell(rowIndex, columnIndex, data) {
         let displayValue;
         displayValue = cellData.toLocaleString();
         return (
-            <Cell style={{ textAlign: "end" }}>{displayValue}</Cell>);    
+            <Cell key={cellKey} style={{ textAlign: "end" }}>{displayValue}</Cell>);    
     } else {
         columnName = "tags";
         // process tags a little differently
         const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
         return (
-            <Cell style={{ textAlign: "start" }}>
+            <Cell key={cellKey} style={{ textAlign: "start" }}>
                 {Array.isArray(cellData) ? (cellData.map((value, idx) => (
-                    <span>
-                        <Tag key={idx}>{value}</Tag>&nbsp;
+                    <span key={idx}>
+                        <Tag>{value}</Tag>&nbsp;
                     </span>
                 ))
                 ) : (
@@ -62,8 +51,9 @@ function renderCell(rowIndex, columnIndex, data) {
                 )}
             </Cell>);
     } //end if
+    //use the column name
     const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
-    return (<Cell style={{ textAlign: "start" }}>{cellData}</Cell>);
+    return (<Cell key={cellKey} style={{ textAlign: "start" }}>{cellData}</Cell>);
 }
 
 function ResultsTable({ data, selectionCallback }) {
@@ -77,10 +67,10 @@ function ResultsTable({ data, selectionCallback }) {
 
     return (
         <Table numRows={data.length} onSelection={handleSelection} enableMultipleSelection={false} enableColumnResizing={true} columnWidths={[200,200,100,600]} style={{ height: '100vh', width: '90vw'}}>
-            <Column cellRenderer={(rowIndex) => renderCell(rowIndex,0,data)} columnHeaderCellRenderer={renderColumnHeader}/>
-            <Column cellRenderer={(rowIndex) => renderCell(rowIndex,1,data)} columnHeaderCellRenderer={renderColumnHeader}/>
-            <Column cellRenderer={(rowIndex) => renderCell(rowIndex,2,data)} columnHeaderCellRenderer={renderColumnHeader}/>
-            <Column cellRenderer={(rowIndex) => renderCell(rowIndex,3,data)} columnHeaderCellRenderer={renderColumnHeader}/>
+            <Column key="col-0" cellRenderer={(rowIndex) => renderCell(rowIndex,0,data)} columnHeaderCellRenderer={renderColumnHeader}/>
+            <Column key="col-1" cellRenderer={(rowIndex) => renderCell(rowIndex,1,data)} columnHeaderCellRenderer={renderColumnHeader}/>
+            <Column key="col-2" cellRenderer={(rowIndex) => renderCell(rowIndex,2,data)} columnHeaderCellRenderer={renderColumnHeader}/>
+            <Column key="col-3" cellRenderer={(rowIndex) => renderCell(rowIndex,3,data)} columnHeaderCellRenderer={renderColumnHeader}/>
         </Table>
     );
 }
