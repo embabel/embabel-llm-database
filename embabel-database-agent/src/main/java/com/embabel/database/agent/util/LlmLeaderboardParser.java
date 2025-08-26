@@ -47,6 +47,7 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
     private static final String MODEL_ID = "model_id";
     private static final String MODEL_PATH = "models";
     private static final String NAME = "model_name";
+    private static final String PROVIDER_NAME = "provider_id";
     private static final String PARAM_COUNT = "max_input_tokens";
     private static final String PRICE_PER_INPUT_TOKEN = "input_cents_per_million_tokens";
     private static final String PRICE_PER_OUTPUT_TOKEN = "output_cents_per_million_tokens";
@@ -72,8 +73,9 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
             List<Map<String,Object>> providerModelList = objectMapper.readValue(json, new TypeReference<List<Map<String,Object>>>(){});
             //get the primary components
             for (Map<String,Object> providerModel : providerModelList) {
-                String providerName = providerModel.get(NAME).toString();
-                String modelName = providerModel.get(MODEL_ID).toString();
+                String modelId = providerModel.get(MODEL_ID).toString();
+                String providerName = providerModel.get(PROVIDER_NAME).toString();
+                String modelName = providerModel.get(NAME).toString();
                 //date parse
                 LocalDate knowledgeCutoffDate = LocalDate.of(1970, 1, 1); //TODO need to fix updated at
                 // if (providerModels.get(UPDATED_AT) != null && providerModels.get(UPDATED_AT).toString().length() > 0) {
