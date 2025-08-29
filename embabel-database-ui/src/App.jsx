@@ -6,6 +6,7 @@ import './App.css'
 import Home from './components/pages/Home';
 import Search from './components/pages/Search';
 import Tags from './components/pages/Tags';
+import Providers from './components/pages/Providers';
 //components
 import Menu from './components/layout/Menu';
 
@@ -23,6 +24,7 @@ function App() {
               <Route exact path="/" element={<Home/>}/>
               <Route path="/search" element={<Search/>}/>
               <Route path="/tags" element={<Tags/>}/>
+              <Route path="/providers" element={<Providers/>}/>
             </Routes>
           </div>
         </div>

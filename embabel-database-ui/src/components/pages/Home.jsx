@@ -10,6 +10,8 @@ function Home() {
     const handleSearch = (searchString) => {
         if (searchString) {
             navigate('/search',{state: { searchTerm: searchString }});//set and navigate
+        } else {
+            navigate('/search'); //just go directly
         }
     }
 

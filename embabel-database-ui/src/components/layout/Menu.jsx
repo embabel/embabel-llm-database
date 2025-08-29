@@ -22,6 +22,10 @@ function Menu() {
     const handleGoHome = () => {
         navigate('/');
     }
+
+    const handleGoProviders = () => {
+        navigate('/providers');
+    }
     
     useEffect(() => {
         async function loadUpdatedDate() {
@@ -62,7 +66,7 @@ function Menu() {
                         <Button onClick={handleGoHome}>Home</Button>
                         <Button onClick={handleGoSearch}>Search</Button>
                         <Button onClick={handleGoTags}>Tags</Button>
-                        <Button>Providers</Button>
+                        <Button onClick={handleGoProviders}>Providers</Button>
                     </ButtonGroup>
                 </SectionCard>
             </div>

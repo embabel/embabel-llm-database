@@ -28,4 +28,35 @@ export default defineMock({
             "source": "LlmLeaderboardParser",
             "type": "LLM"
         }}
-});
+    },
+    {
+        url: '/api/v1/models/8a40c696-6458-402d-8c64-cafe7e187e4f',
+        method: 'GET',
+        body: () => {
+            return {
+                "modelId": "8a40c696-6458-402d-8c64-cafe7e187e4f",
+                "name": "Llama 3.2 11B Instruct",
+                "provider": "sambanova",
+                "knowledgeCutoffDate": [
+                    1970,
+                    1,
+                    1
+                ],
+                "pricingModel": {
+                    "usdPer1mInputTokens": 15.0,
+                    "usdPer1mOutputTokens": 30.0
+                },
+                "size": 128000,
+                "tags": [
+                    "image-to-text",
+                    "image-text-to-text",
+                    "text-to-image-text",
+                    "video-text-to-text",
+                    "text-to-text",
+                    "audio-video-image-text-to-text"
+                ],
+                "source": "LlmLeaderboardParser",
+                "type": "LLM"
+            }}
+    }
+);

@@ -97,4 +97,9 @@ class AiModelRepositoryController {
     fun getById(@PathVariable modelId: String): ModelMetadata? {
         return aiModelRepository.findById(modelId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No model found for ID")
     }
+
+    @GetMapping("/search/findByProvider")
+    fun getByProvider(@RequestParam("provider") provider: String): List<ModelMetadata>? {
+        return aiModelRepository.findByProvider(provider) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching models found")
+    }
 }

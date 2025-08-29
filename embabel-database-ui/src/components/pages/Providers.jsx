@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Section, SectionCard } from "@blueprintjs/core";
 
-import SearchByTags from "../forms/SearchByTags";
-import ResultsTable from "../data/ResultsTable";
+import SearchByProviders from "../forms/SearchByProviders";
 
 import Model from "../data/Model";
+import ResultsTable from "../data/ResultsTable";
 
-function Tags() {
+function Providers() {
 
     const [data, setData] = useState([]);
     const [model, setModel] = useState();
@@ -21,14 +21,9 @@ function Tags() {
         }
     }
 
-    const searchModels = async (tags) => {
+    const searchModels = async (searchString) => {
         try {
-            const params = new URLSearchParams();
-            tags.forEach(tag => {
-                params.append("tags",tag.tag);
-            })
-            const url = `/api/v1/models/search/findByTags?${params.toString()}`;
-            const response = await fetch(url);
+            const response = await fetch(`/api/v1/models/search/findByProvider?provider=${encodeURIComponent(searchString)}`);
             const data = await response.json();
             setData(data);
         } catch (error) {
@@ -60,19 +55,19 @@ function Tags() {
             });
     }
 
-    const handleSearch = (tags) => {
-        searchModels(tags);
+    const handleSearch = (searchString) => {
+        searchModels(searchString);
     }
 
     const handleReset = () => {
         fetchModels();
-    }    
+    }
 
     return (
         <>
             <Section style={{ height: '100vh', display: 'grid', placeItems: 'center', gridTemplateRows: '20% 40% 40%' }}>
-                <SectionCard style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
-                    <SearchByTags onSearch={handleSearch} onReset={handleReset} />
+                <SectionCard style={{ display: 'flex'}}>
+                    <SearchByProviders onSearch={handleSearch} onReset={handleReset}/>
                 </SectionCard>
                 <SectionCard style={{ overflowY: 'auto', padding: '1rem', height: '100%', width: '90%'}}>
                     <ResultsTable data={data} selectionCallback={handleRowSelection} />
@@ -80,9 +75,9 @@ function Tags() {
                 <SectionCard style={{ height: '100%', width: '90%'}}>
                     <Model model={model}/>
                 </SectionCard>
-            </Section>
+            </Section>        
         </>
     );
 }
 
-export default Tags
+export default Providers

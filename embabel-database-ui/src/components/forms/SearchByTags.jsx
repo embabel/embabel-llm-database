@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button,ControlGroup,MenuItem } from "@blueprintjs/core";
-import { Search } from "@blueprintjs/icons";
+import { Search, Reset } from "@blueprintjs/icons";
 import { MultiSelect } from "@blueprintjs/select";
 
 
-function SearchByTags() {
+function SearchByTags({ onSearch, onReset }) {
     const [tags, setTags] = useState([])
     const [selectedTags, setSelectedTags] = useState([]);
 
@@ -36,6 +36,19 @@ function SearchByTags() {
         fetchTags();
     }, []);
 
+    const handleSearch = () => {
+        if (onSearch) {
+            onSearch(selectedTags);
+        }
+    };
+
+    const handleReset = () => {
+        if (onReset) {
+            setSelectedTags([]);
+            onReset();
+        } //end if
+    }    
+
     return (
         <>
             <ControlGroup>
@@ -44,7 +57,8 @@ function SearchByTags() {
                     onItemSelect={item => setSelectedTags([...selectedTags, item])}
                     selectedItems={selectedTags}
                     tagRenderer={tags => tags.tag}/>
-                <Button><Search/></Button>
+                <Button onClick={handleSearch}><Search/></Button>
+                { (onReset) ? (<Button onClick={handleReset}><Reset/></Button>) : (<></>) }
             </ControlGroup>
         </>
     );
