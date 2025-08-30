@@ -33,6 +33,7 @@ function AppData() {
                 <p>{formatDate(lastUpdated)}</p>                
                 <p><strong>Version:</strong></p>
                 <p> v{version}</p>
+                <p><a href="https://github.com/embabel" target="_blank"><img src="/github-mark-white.svg" style={{height: "20px"}}/></a></p>
             </div>        
         </>
     );

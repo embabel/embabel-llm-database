@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button,ControlGroup,InputGroup } from "@blueprintjs/core";
+import { Button,ControlGroup,InputGroup, Tooltip } from "@blueprintjs/core";
 import { Search, Reset } from "@blueprintjs/icons";
 
 function SearchByProviders({ onSearch, onReset }) {
@@ -27,9 +27,23 @@ function SearchByProviders({ onSearch, onReset }) {
     return (
         <>
             <ControlGroup>
-                <InputGroup type="text" placeholder="Search by provider..." inputSize={50} onChange={(e) => setValue(e.target.value)} onKeyDown={handleKeyDown}/>
+                <Tooltip
+                    content={<span>Enter a provider name to search by or just hit 'enter' to see all</span>}
+                    openOnTargetFocus={false}
+                    placement="bottom"
+                    usePortal={false}>
+                    <InputGroup type="text" placeholder="Search by provider..." inputSize={50} onChange={(e) => setValue(e.target.value)} onKeyDown={handleKeyDown}/>
+                </Tooltip>
                 <Button onClick={handleSearch}><Search/></Button>
-                { (onReset) ? (<Button onClick={handleReset}><Reset/></Button>) : (<></>) }                                
+                { (onReset) ? (
+                    <Tooltip
+                        content={<span>Click here to 'reset' your search and see all models.</span>}
+                        openOnTargetFocus={false}
+                        placement="right"
+                        usePortal={false}>
+                        <Button onClick={handleReset}><Reset/></Button>
+                    </Tooltip>
+                    ) : (<></>) }                                
             </ControlGroup>        
         </>
     );

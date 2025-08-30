@@ -4,8 +4,12 @@ import { Cell, ColumnHeaderCell, Column, Table } from "@blueprintjs/table";
 
 import { formatPrice } from "../../utils/formatPrice";
 
+
+const columnNames = ["Name","Provider","Tokens","Pricing per 1m Token","Tags"];
+
 function renderColumnHeader(index) {
-    const name = ["Name","Provider","Tokens","Pricing per 1m Token","Tags"][index];
+    // const name = ["Name","Provider","Tokens","Pricing per 1m Token","Tags"][index];
+    const name = columnNames[index];
     const keyVal = name + "-" + index
     return <ColumnHeaderCell key={keyVal} name={name} index={index} nameRenderer={renderName}/>;
 }
@@ -70,6 +74,10 @@ function renderCell(rowIndex, columnIndex, data) {
 
 function ResultsTable({ data, selectionCallback }) {
 
+    const selectedColumns = [0,1,2,3,4]
+    const columnWidths = [200,100,100,200,500];
+    const totalWidth = columnWidths.reduce((a,b) => a + b, 0);
+
     const handleSelection = (region) => {
         if (selectionCallback) {
             //invoke selection callback
@@ -78,7 +86,7 @@ function ResultsTable({ data, selectionCallback }) {
     }
 
     return (
-        <Table numRows={data.length} onSelection={handleSelection} enableMultipleSelection={false} enableColumnResizing={true} columnWidths={[200,100,100,200,500]} style={{ height: '100vh', width: '90vw'}}>
+        <Table numRows={data.length} onSelection={handleSelection} enableMultipleSelection={false} enableColumnResizing={true} columnWidths={columnWidths} defaultColumnWidth={100} style={{ height: '100vh'}}>
             <Column key="col-0" cellRenderer={(rowIndex) => renderCell(rowIndex,0,data)} columnHeaderCellRenderer={renderColumnHeader}/>
             <Column key="col-1" cellRenderer={(rowIndex) => renderCell(rowIndex,1,data)} columnHeaderCellRenderer={renderColumnHeader}/>
             <Column key="col-2" cellRenderer={(rowIndex) => renderCell(rowIndex,2,data)} columnHeaderCellRenderer={renderColumnHeader}/>
