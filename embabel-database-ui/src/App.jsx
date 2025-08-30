@@ -7,8 +7,9 @@ import Home from './components/pages/Home';
 import Search from './components/pages/Search';
 import Tags from './components/pages/Tags';
 import Providers from './components/pages/Providers';
+import Maintenance from './components/pages/Maintenance';
 //components
-import Menu from './components/layout/Menu';
+import MenuBlock from './components/layout/MenuBlock';
 
 function App() {
 
@@ -17,7 +18,7 @@ function App() {
       <Router>
         <div id="main-page">
           <div id="left-column">
-            <Menu/>
+            <MenuBlock/>
           </div>
           <div id="content">
             <Routes>
@@ -25,6 +26,7 @@ function App() {
               <Route path="/search" element={<Search/>}/>
               <Route path="/tags" element={<Tags/>}/>
               <Route path="/providers" element={<Providers/>}/>
+              <Route path="/agent/maintenance" element={<Maintenance/>}/>
             </Routes>
           </div>
         </div>

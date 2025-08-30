@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, ButtonGroup, EntityTitle, Section, SectionCard } from "@blueprintjs/core";
+import { EntityTitle, Section, SectionCard, Menu, MenuItem, MenuDivider } from "@blueprintjs/core";
 import { Database } from "@blueprintjs/icons";
 import { version } from '../../../package.json';
 
 import AppData from './AppData';
 
-function Menu() {
+function MenuBlock() {
 
     const [lastUpdated, setLastUpdated] = useState("");
     const [recordCount, setRecordCount] = useState("");
@@ -27,6 +27,10 @@ function Menu() {
 
     const handleGoProviders = () => {
         navigate('/providers');
+    }
+
+    const handleGoAgentMaintenance = () => {
+        navigate('/agent/maintenance');
     }
     
     useEffect(() => {
@@ -64,19 +68,25 @@ function Menu() {
             </SectionCard>
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <SectionCard>
-                    <ButtonGroup vertical={true} fill={true}>
-                        <Button onClick={handleGoHome}>Home</Button>
-                        <Button onClick={handleGoSearch}>Search</Button>
-                        <Button onClick={handleGoTags}>Tags</Button>
-                        <Button onClick={handleGoProviders}>Providers</Button>
-                    </ButtonGroup>
+                    <Menu>
+                        <MenuItem text="Home" onClick={handleGoHome}/>
+                        <MenuItem text="Search">
+                            <MenuItem text="By Name" onClick={handleGoSearch}/>
+                            <MenuItem text="By Tags" onClick={handleGoTags}/>
+                            <MenuItem text="By Provider" onClick={handleGoProviders}/>
+                        </MenuItem>
+                        <MenuItem text="Agents">
+                            <MenuItem text="Maintenance" onClick={handleGoAgentMaintenance}/>
+                        </MenuItem>
+                    </Menu>
+
                 </SectionCard>
             </div>
             <SectionCard style={{ position: 'sticky', bottom: 0, zIndex: 1, background: 'inherit' }}>
-                <AppData/>
+                <AppData showVersion={true} />
             </SectionCard>
         </Section>
     );
 }
 
-export default Menu
+export default MenuBlock

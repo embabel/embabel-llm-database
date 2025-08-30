@@ -1,4 +1,8 @@
 export function formatDate(isoString) {
+  //validate
+  if (!isoString || typeof isoString !== "string") {
+    return "";
+  }
   const date = new Date(isoString);
 
   // Extract parts

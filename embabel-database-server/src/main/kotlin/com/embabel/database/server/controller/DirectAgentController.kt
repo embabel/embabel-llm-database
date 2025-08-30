@@ -42,4 +42,14 @@ class DirectAgentController {
         //return
         return ResponseEntity.ok(agentProcess.id)
     }
+
+    @GetMapping("/{agentName}/processes")
+    fun getProcessesForAgent(@PathVariable agentName: String): ResponseEntity<List<String>> {
+        val processIds = agentExecutionService.getProcessIds(agentName)
+        return if (processIds.isEmpty()) {
+            ResponseEntity.notFound().build()
+        } else {
+            ResponseEntity.ok(processIds)
+        }
+    }
 }

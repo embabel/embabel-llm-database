@@ -23,6 +23,17 @@ import com.embabel.agent.core.ProcessOptions;
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
+import java.util.concurrent.ConcurrentHashMap
+
+object AgentProcessRegistry {
+    val processMap: MutableMap<String, String> = ConcurrentHashMap()
+
+    fun getProcessIdsByAgentName(agentName: String): List<String> {
+        return processMap.filterValues { it == agentName }.keys.toList()
+    }
+}
+
+
 @Service
 class AgentExecutionService(
     private val agentFactory: AgentPlatform
@@ -32,6 +43,9 @@ class AgentExecutionService(
         val agent = agentFactory.agents().find { it.name == agentName } ?: throw IllegalArgumentException("Agent with name $agentName not found")
         val processOptions = ProcessOptions.DEFAULT
         val agentProcess = agentFactory.createAgentProcess(agent, processOptions, emptyMap<String, Any>())
+        //update the registry
+        AgentProcessRegistry.processMap[agentProcess.id] = agentName
+        //return
         return agentProcess
     }
 
@@ -40,6 +54,15 @@ class AgentExecutionService(
     fun runAgentProcessAsync(agentProcess: AgentProcess) {
         //execute
         agentProcess.run()
+    }
+
+    fun getProcessIds(agentName: String) : List<String> {
+        val processIds = AgentProcessRegistry.getProcessIdsByAgentName(agentName)
+        return if (processIds.isEmpty()) {
+            emptyList()
+        } else {
+            processIds
+        } //end if
     }
 
 }

@@ -3,7 +3,7 @@ import { version } from '../../../package.json';
 
 import { formatDate } from "../../utils/formatDate";
 
-function AppData() {
+function AppData({ showVersion }) {
     const [lastUpdated, setLastUpdated] = useState("");
     const [recordCount, setRecordCount] = useState("");
 
@@ -27,13 +27,20 @@ function AppData() {
     return (
         <>
             <div style={{ textAlign: "start "}}>
-                <p><strong>Record Count:</strong> </p>
+                <h4>Record Count</h4>
                 <p>{recordCount} </p>
-                <p><strong>Database Last Updated:</strong> </p>
-                <p>{formatDate(lastUpdated)}</p>                
-                <p><strong>Version:</strong></p>
-                <p> v{version}</p>
-                <p><a href="https://github.com/embabel" target="_blank"><img src="/github-mark-white.svg" style={{height: "20px"}}/></a></p>
+                <h4>Database Last Updated</h4>
+                <p>{formatDate(lastUpdated)}</p>  
+                {(showVersion) ? (
+                    <>
+                        <h4>Version</h4>
+                        <p style={{ display: "flex", alignItems: "center", gap: "10px" }}> v{version} 
+                            <a href="https://github.com/embabel" target="_blank" rel="noreferrer">
+                                <img src="/github-mark-white.svg" style={{height: "20px"}}/>
+                            </a>
+                        </p>
+                    </>
+                ) : (<></>)}
             </div>        
         </>
     );
