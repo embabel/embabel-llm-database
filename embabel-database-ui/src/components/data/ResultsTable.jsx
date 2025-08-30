@@ -43,14 +43,22 @@ function renderCell(rowIndex, columnIndex, data) {
     } else if (columnIndex === 3) {
         columnName = "pricingModel";
         //format to contain both input and output pricing
-        const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';        
-        const inputValue = `Input: ${formatPrice(cellData.usdPer1mInputTokens)}`
-        const outputValue = `Output: ${formatPrice(cellData.usdPer1mOutputTokens)}`
-        return (
-            <Cell key={cellKey} style={{ textAlign: "justify" }}>
-                {inputValue}&nbsp;{outputValue}
-            </Cell>   
-        );
+        const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';       
+        if (cellData === null || cellData === undefined) {
+            return (
+                <Cell key={cellKey} style={{ textAlign: "justify" }}>
+                    &nbsp;
+                </Cell> 
+            );  
+        } else {
+            const inputValue = `Input: ${formatPrice(cellData.usdPer1mInputTokens)}`
+            const outputValue = `Output: ${formatPrice(cellData.usdPer1mOutputTokens)}`
+            return (
+                <Cell key={cellKey} style={{ textAlign: "justify" }}>
+                    {inputValue}&nbsp;{outputValue}
+                </Cell>   
+            );
+        } //end if
     } else {
         columnName = "tags";
         // process tags a little differently

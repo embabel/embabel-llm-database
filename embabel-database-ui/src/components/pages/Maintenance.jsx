@@ -4,6 +4,10 @@ import { Refresh } from "@blueprintjs/icons";
 
 import AppData from "../layout/AppData";
 
+const base_url_agents = '/api/v1/agents'
+const base_url_platform = '/api/v1/platform-info'
+const base_url_process = '/api/v1/process'
+
 function Maintenance() {
 
     const [running,setRunning] = useState(false);
@@ -11,17 +15,60 @@ function Maintenance() {
     const [agents,setAgents] = useState([]);
     const [agentName,setAgentName] = useState("");
 
+    const monitorStatus = (processId) => {
+        let timeoutId;
+        const interval = 5000; //5 seconds
+
+        async function poll() {
+            let notFound = false;
+            try {
+                console.log("polling");
+                const response = await fetch(`${base_url_process}/${processId}`)
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        notFound = true;
+                    }
+                    throw new Error(`http error: ${response.status}`)
+                };
+                const data = await response.json()
+                if (data.status !== 'RUNNING') {
+                    //done
+                    setRunning(false);//stop this part
+                    //refresh the data block
+                    return;
+                } //end if
+                //update the timeout
+                timeoutId = setTimeout(poll,interval);
+            } catch (error) {
+                console.error('polling error:',error);
+                if (notFound) {
+                    setRunning(false);//stop this part
+                    //done
+                    return;
+                }
+                timeoutId = setTimeout(poll,interval);
+            }            
+        }
+
+        poll();//poll function
+
+        return () => cleaerTimeout(timeoutId);//reset
+    }
+
     const handleStartAgent = () => {
-        fetch(`/api/v1/agents/${agentName}`, {
+        fetch(`${base_url_agents}/${agentName}`, {
             method: 'POST',
             headers: {
                 'Content-type':'application/json'
             }
         })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
             setRunning(!running); //flip
-            setAgentId(data);//set the return            
+            setAgentId(data[0]);//set the return name
+            //start a polling systems         
+            console.log(data);
+            monitorStatus(data[0]);
         })
     }
 
@@ -38,11 +85,11 @@ function Maintenance() {
 
     const loadAgentStatus = (agentName) => {
         //get the processes for the agents and check the status
-        fetch(`/api/v1/agents/${agentName}/processes`)
+        fetch(`${base_url_agents}/${agentName}/processes`)
         .then((response) => response.json())
         .then((data) => {
             data.forEach((process) => {
-                fetch(`/api/v1/process/${process}`)
+                fetch(`${base_url_process}/${process}`)
                 .then((response) => response.json())
                 .then((processData) => {
                     if (processData.status.includes("RUNNING")) {
@@ -56,7 +103,7 @@ function Maintenance() {
     }
 
     const loadAgents = () => {
-        fetch('/api/v1/platform-info/agents')
+        fetch(`${base_url_platform}/agents`)
         .then(response => response.json())
         .then(data => {
             setAgents(data); 

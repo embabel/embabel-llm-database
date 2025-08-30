@@ -7,6 +7,7 @@ import SearchByName from "../forms/SearchByName";
 import Model from "../data/Model";
 import ResultsTable from "../data/ResultsTable";
 
+const base_url = "/api/v1/models";
 
 function Search() {
 
@@ -17,7 +18,7 @@ function Search() {
 
     const fetchModels = async () => {
         try {
-            const response = await fetch("/api/v1/models")
+            const response = await fetch(base_url)
             const data = await response.json();
             setData(data);
         } catch (error) {
@@ -27,7 +28,7 @@ function Search() {
 
     const searchModels = async (searchString) => {
         try {
-            const response = await fetch(`/api/v1/models/search/findByName?name=${encodeURIComponent(searchString)}`);
+            const response = await fetch(`${base_url}/search/findByNameContains?contains=${encodeURIComponent(searchString)}`);
             const data = await response.json();
             setData(data);
         } catch (error) {
@@ -47,7 +48,7 @@ function Search() {
         var idx = region[0]['rows'][0];
         var modelId = data[idx]['modelId'];
         //retrieve model
-        fetch('/api/v1/models/' + modelId)
+        fetch(`${base_url}/${modelId}`)
             .then(response => {
                 if (!response.ok) {
                     if (response.status === 404) {

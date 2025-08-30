@@ -83,7 +83,7 @@ function MenuBlock() {
                 </SectionCard>
             </div>
             <SectionCard style={{ position: 'sticky', bottom: 0, zIndex: 1, background: 'inherit' }}>
-                <AppData showVersion={true} />
+                <AppData showVersion={true} showRefresh={true}/>
             </SectionCard>
         </Section>
     );

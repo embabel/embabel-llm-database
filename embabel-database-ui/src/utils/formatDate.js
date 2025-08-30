@@ -1,9 +1,12 @@
 export function formatDate(isoString) {
   //validate
   if (!isoString || typeof isoString !== "string") {
+    console.warn("date is empty... returning")
     return "";
   }
-  const date = new Date(isoString);
+  let sanitized = isoString.replace(/"/g,'').replace(/\.(\d{3})\d*/, '.$1');
+
+  const date = new Date(sanitized);
 
   // Extract parts
   const year = date.getFullYear();

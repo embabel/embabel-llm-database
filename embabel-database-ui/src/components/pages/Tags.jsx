@@ -6,6 +6,8 @@ import ResultsTable from "../data/ResultsTable";
 
 import Model from "../data/Model";
 
+const base_url = "/api/v1/models";
+
 function Tags() {
 
     const [data, setData] = useState([]);
@@ -13,7 +15,7 @@ function Tags() {
 
     const fetchModels = async () => {
         try {
-            const response = await fetch("/api/v1/models")
+            const response = await fetch(`${base_url}`)
             const data = await response.json();
             setData(data);
         } catch (error) {
@@ -27,7 +29,7 @@ function Tags() {
             tags.forEach(tag => {
                 params.append("tags",tag.tag);
             })
-            const url = `/api/v1/models/search/findByTags?${params.toString()}`;
+            const url = `${base_url}/search/findByTags?${params.toString()}`;
             const response = await fetch(url);
             const data = await response.json();
             setData(data);
@@ -44,7 +46,7 @@ function Tags() {
         var idx = region[0]['rows'][0];
         var modelId = data[idx]['modelId'];
         //retrieve model
-        fetch('/api/v1/models/' + modelId)
+        fetch(`${base_url}/${modelId}`)
             .then(response => {
                 if (!response.ok) {
                     if (response.status === 404) {
