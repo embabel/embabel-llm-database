@@ -1,0 +1,7 @@
+td {
+    text-align: start;
+}
+
+td.emphasis-tag {
+    font-weight: bolder;
+}

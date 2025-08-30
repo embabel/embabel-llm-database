@@ -40,6 +40,7 @@ public class AgentExecutionServiceTest {
         AgentPlatform agentPlatform = mock(AgentPlatform.class);
         Agent agent = mock(Agent.class);
         AgentProcess agentProcess = mock(AgentProcess.class);
+        when(agentProcess.getId()).thenReturn("test-id");
         when(agent.getName()).thenReturn(agentName);
         when(agentPlatform.agents()).thenReturn(Collections.singletonList(agent));
         when(agentPlatform.createAgentProcess(any(), any(), any())).thenReturn(agentProcess);

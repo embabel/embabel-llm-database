@@ -6,6 +6,9 @@ target
 
 *.log
 
+node_modules
+
 embabel-database-agent/data
 # embabel-database-core/data
 embabel-database-server/data
+embabel-database-server/src/main/resources/static

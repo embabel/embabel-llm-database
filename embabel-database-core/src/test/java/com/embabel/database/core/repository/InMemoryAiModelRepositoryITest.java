@@ -38,6 +38,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(classes={InMemoryAiModelRepositoryITest.class,InMemoryAiModelRepositoryITest.TestConfig.class})
 public class InMemoryAiModelRepositoryITest {
@@ -54,7 +55,7 @@ public class InMemoryAiModelRepositoryITest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
         //save
         aiModelRepository.save(singleModel);
         //check

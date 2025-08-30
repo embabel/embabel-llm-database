@@ -20,8 +20,10 @@ import com.embabel.common.ai.model.ModelType;
 import com.embabel.common.ai.model.PricingModel;
 
 import java.time.LocalDate
+import java.util.UUID
 
 data class LlmModelMetadata (
+    val modelId: String = UUID.randomUUID().toString(),
     override val name: String,
     override val provider: String,
     override val knowledgeCutoffDate: LocalDate? = null,
@@ -72,8 +74,9 @@ data class LlmModelMetadata (
             pricingModel: PricingModel? = null,
             size: Long? = null,
             tags: List<String>? = null,
-            source: String? = null
-        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
+            source: String? = null,
+            modelId: String = UUID.randomUUID().toString()
+        ): LlmMetadata = LlmModelMetadata(modelId, name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
 
         @JvmStatic
         @JvmOverloads
@@ -84,8 +87,9 @@ data class LlmModelMetadata (
             pricingModel: PricingModel? = null,
             size: Long? = null,
             tags: List<String>? = null,
-            source: String? = null
-        ): LlmMetadata = LlmModelMetadata(name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
+            source: String? = null,
+            modelId: String = UUID.randomUUID().toString()
+        ): LlmMetadata = LlmModelMetadata(modelId, name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
     }
 
 }

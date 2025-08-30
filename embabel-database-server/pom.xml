@@ -13,6 +13,7 @@
     <description>Embabel Database Server</description>
 
     <dependencies>
+
         <dependency>
             <groupId>com.embabel.database</groupId>
             <artifactId>embabel-database-core</artifactId>
@@ -163,6 +164,34 @@
                     </execution>
                 </executions>                
             </plugin>   
+            <!-- ui presence validator -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>check-static-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <condition property="static.dir.exists">
+                                    <and>
+                                        <available file="${project.basedir}/src/main/resources/static" type="dir"/>
+                                        <resourcecount when="greater" count="0">
+                                            <fileset dir="${project.basedir}/src/main/resources/static"/>
+                                        </resourcecount>
+                                    </and>
+                                </condition>
+                                <fail unless="static.dir.exists" message="src/main/resources/static directory is empty or missing. Packaging aborted."/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>             
         </plugins>
     </build>    
 
