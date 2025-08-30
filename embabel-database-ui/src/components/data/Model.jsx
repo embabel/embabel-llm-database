@@ -1,5 +1,7 @@
 import { Elevation, Card, Tag } from "@blueprintjs/core";
 
+import { formatPrice } from "../../utils/formatPrice";
+
 import './Model.css';
 
 function Model({ model }) {
@@ -45,7 +47,7 @@ function Model({ model }) {
                                     Input:
                                 </td>
                                 <td>
-                                    ${model.pricingModel.usdPer1mInputTokens}
+                                    {formatPrice(model.pricingModel.usdPer1mInputTokens)}
                                 </td>
                             </tr>
                             <tr>
@@ -53,7 +55,7 @@ function Model({ model }) {
                                     Output:
                                 </td>
                                 <td>
-                                      ${model.pricingModel.usdPer1mOutputTokens}
+                                    {formatPrice(model.pricingModel.usdPer1mOutputTokens)}
                                 </td>
                             </tr>                       
                         </tbody>

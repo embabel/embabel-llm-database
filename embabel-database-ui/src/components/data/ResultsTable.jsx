@@ -2,8 +2,10 @@
 import { Classes, Tag } from "@blueprintjs/core";
 import { Cell, ColumnHeaderCell, Column, Table } from "@blueprintjs/table";
 
+import { formatPrice } from "../../utils/formatPrice";
+
 function renderColumnHeader(index) {
-    const name = ["Name","Provider","Tokens","Tags"][index];
+    const name = ["Name","Provider","Tokens","Pricing per 1m Token","Tags"][index];
     const keyVal = name + "-" + index
     return <ColumnHeaderCell key={keyVal} name={name} index={index} nameRenderer={renderName}/>;
 }
@@ -17,7 +19,6 @@ function renderName(name) {
         </div>
     )
 }
-
 
 function renderCell(rowIndex, columnIndex, data) {
     const cellKey = data[rowIndex]["modelId"] + "-" + columnIndex
@@ -34,7 +35,18 @@ function renderCell(rowIndex, columnIndex, data) {
         let displayValue;
         displayValue = cellData.toLocaleString();
         return (
-            <Cell key={cellKey} style={{ textAlign: "end" }}>{displayValue}</Cell>);    
+            <Cell key={cellKey} style={{ textAlign: "end" }}>{displayValue}</Cell>);   
+    } else if (columnIndex === 3) {
+        columnName = "pricingModel";
+        //format to contain both input and output pricing
+        const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';        
+        const inputValue = `Input: ${formatPrice(cellData.usdPer1mInputTokens)}`
+        const outputValue = `Output: ${formatPrice(cellData.usdPer1mOutputTokens)}`
+        return (
+            <Cell key={cellKey} style={{ textAlign: "justify" }}>
+                {inputValue}&nbsp;{outputValue}
+            </Cell>   
+        );
     } else {
         columnName = "tags";
         // process tags a little differently
@@ -66,11 +78,12 @@ function ResultsTable({ data, selectionCallback }) {
     }
 
     return (
-        <Table numRows={data.length} onSelection={handleSelection} enableMultipleSelection={false} enableColumnResizing={true} columnWidths={[200,200,100,600]} style={{ height: '100vh', width: '90vw'}}>
+        <Table numRows={data.length} onSelection={handleSelection} enableMultipleSelection={false} enableColumnResizing={true} columnWidths={[200,100,100,200,500]} style={{ height: '100vh', width: '90vw'}}>
             <Column key="col-0" cellRenderer={(rowIndex) => renderCell(rowIndex,0,data)} columnHeaderCellRenderer={renderColumnHeader}/>
             <Column key="col-1" cellRenderer={(rowIndex) => renderCell(rowIndex,1,data)} columnHeaderCellRenderer={renderColumnHeader}/>
             <Column key="col-2" cellRenderer={(rowIndex) => renderCell(rowIndex,2,data)} columnHeaderCellRenderer={renderColumnHeader}/>
             <Column key="col-3" cellRenderer={(rowIndex) => renderCell(rowIndex,3,data)} columnHeaderCellRenderer={renderColumnHeader}/>
+            <Column key="col-4" cellRenderer={(rowIndex) => renderCell(rowIndex,4,data)} columnHeaderCellRenderer={renderColumnHeader}/>
         </Table>
     );
 }
