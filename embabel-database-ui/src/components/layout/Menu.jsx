@@ -4,6 +4,8 @@ import { Button, ButtonGroup, EntityTitle, Section, SectionCard } from "@bluepri
 import { Database } from "@blueprintjs/icons";
 import { version } from '../../../package.json';
 
+import AppData from './AppData';
+
 function Menu() {
 
     const [lastUpdated, setLastUpdated] = useState("");
@@ -71,14 +73,7 @@ function Menu() {
                 </SectionCard>
             </div>
             <SectionCard style={{ position: 'sticky', bottom: 0, zIndex: 1, background: 'inherit' }}>
-                <div style={{ textAlign: "start "}}>
-                    <p><strong>Record Count:</strong> </p>
-                    <p>{recordCount} </p>
-                    <p><strong>Database Last Updated:</strong> </p>
-                    <p>{lastUpdated}</p>
-                    <p><strong>Version:</strong></p>
-                    <p> v{version}</p>
-                </div>
+                <AppData/>
             </SectionCard>
         </Section>
     );
