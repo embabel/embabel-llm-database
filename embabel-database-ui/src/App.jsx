@@ -8,6 +8,7 @@ import Search from './components/pages/Search';
 import Tags from './components/pages/Tags';
 import Providers from './components/pages/Providers';
 import Maintenance from './components/pages/Maintenance';
+import Recommender from './components/pages/Recommender';
 //components
 import MenuBlock from './components/layout/MenuBlock';
 
@@ -27,6 +28,7 @@ function App() {
               <Route path="/tags" element={<Tags/>}/>
               <Route path="/providers" element={<Providers/>}/>
               <Route path="/agent/maintenance" element={<Maintenance/>}/>
+              <Route path="/agent/recommender" element={<Recommender/>}/>
             </Routes>
           </div>
         </div>

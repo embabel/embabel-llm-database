@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Button, Section, SectionCard } from "@blueprintjs/core";
-import { Refresh } from "@blueprintjs/icons";
 
 import AppData from "../layout/AppData";
 

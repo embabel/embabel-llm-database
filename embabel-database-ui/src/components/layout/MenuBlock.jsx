@@ -32,6 +32,10 @@ function MenuBlock() {
     const handleGoAgentMaintenance = () => {
         navigate('/agent/maintenance');
     }
+
+    const handleGoAgentRecommender = () => {
+        navigate('/agent/recommender');
+    }    
     
     useEffect(() => {
         async function loadUpdatedDate() {
@@ -77,6 +81,7 @@ function MenuBlock() {
                         </MenuItem>
                         <MenuItem text="Agents">
                             <MenuItem text="Maintenance" onClick={handleGoAgentMaintenance}/>
+                            <MenuItem text="Recommender" onClick={handleGoAgentRecommender}/>
                         </MenuItem>
                     </Menu>
 
