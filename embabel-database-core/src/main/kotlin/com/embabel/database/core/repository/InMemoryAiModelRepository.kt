@@ -190,40 +190,36 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
                 else -> null
             }
 
+            // Helper to parse numbers safely from map entries
+            fun parseDouble(value: Any?): Double? =
+                (value as? Number)?.toDouble()
+                    ?: (value as? String)?.toDoubleOrNull()
+
             // Parse pricingModel using various supported keys/shapes
-            val pricingModel = when (val pm = map["pricingModel"]) {
+            val pricingModel: PricingModel? = when (val pm = map["pricingModel"]) {
+
+                // Already a PricingModel
                 is PricingModel -> pm
 
-                is String -> when (pm) {
+                // String shortcuts
+                is String -> when (pm.uppercase()) {
                     "ALL_YOU_CAN_EAT" -> PricingModel.ALL_YOU_CAN_EAT
-                    else -> null // Unknown string, adjust here if you have enums or named types
+                    else -> null // you could extend with enum-like mappings here
                 }
 
+                // Map<object, any> representation
                 is Map<*, *> -> {
-                    // Per-token pricing: expects keys usdPerInputToken and usdPerOutputToken (Double or String)
-                    val perTokenInput = pm["usdPerInputToken"]
-                    val perTokenOutput = pm["usdPerOutputToken"]
-                    if (perTokenInput != null && perTokenOutput != null) {
-                        val inUsd = (perTokenInput as? Number)?.toDouble()
-                            ?: (perTokenInput as? String)?.toDoubleOrNull()
-                        val outUsd = (perTokenOutput as? Number)?.toDouble()
-                            ?: (perTokenOutput as? String)?.toDoubleOrNull()
-                        if (inUsd != null && outUsd != null) {
-                            PricingModel.usdPerToken(inUsd, outUsd)
-                        } else null
-                    }
-                    // Per-1M-token pricing: expects keys usdPer1MInputTokens and usdPer1MOutputTokens
-                    else {
-                        val perMInput = pm["usdPer1MInputTokens"]
-                        val perMOutput = pm["usdPer1MOutputTokens"]
-                        if (perMInput != null && perMOutput != null) {
-                            val inUsd = (perMInput as? Number)?.toDouble()
-                                ?: (perMInput as? String)?.toDoubleOrNull()
-                            val outUsd = (perMOutput as? Number)?.toDouble()
-                                ?: (perMOutput as? String)?.toDoubleOrNull()
-                            if (inUsd != null && outUsd != null) {
-                                PricingModel.usdPer1MTokens(inUsd, outUsd)
-                            } else null
+                    // Try per-token pricing (per token values)
+                    val inToken = parseDouble(pm["usdPerInputToken"] ?: pm["inputTokenUsd"])
+                    val outToken = parseDouble(pm["usdPerOutputToken"] ?: pm["outputTokenUsd"])
+                    if (inToken != null && outToken != null) {
+                        PricingModel.usdPerToken(inToken, outToken)
+                    } else {
+                        // Try per-1M-token pricing
+                        val inM = parseDouble(pm["usdPer1MInputTokens"] ?: pm["usdPer1mInputTokens"])
+                        val outM = parseDouble(pm["usdPer1MOutputTokens"] ?: pm["usdPer1mOutputTokens"])
+                        if (inM != null && outM != null) {
+                            PricingModel.usdPer1MTokens(inM, outM)
                         } else null
                     }
                 }

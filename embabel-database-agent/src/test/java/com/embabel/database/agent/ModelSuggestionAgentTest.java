@@ -15,19 +15,33 @@
  */
 package com.embabel.database.agent;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.agent.testing.unit.FakeOperationContext;
+import com.embabel.common.ai.model.ModelMetadata;
+import com.embabel.common.ai.model.PerTokenPricingModel;
+import com.embabel.common.ai.model.PricingModel;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.TagParser;
+import com.embabel.database.core.repository.LlmModelMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ModelSuggestionAgentTest {
+
+    private static Log logger = LogFactory.getLog(ModelSuggestionAgentTest.class);
     
     @Test
     void testGetSuggestedTagList() throws Exception {
@@ -49,4 +63,21 @@ public class ModelSuggestionAgentTest {
         modelSuggestionAgent.getSuggestedTagList(userInput,operationContext);
     }
 
+    @Test
+    void testConvertModelList() throws Exception {
+        //create a model
+        LocalDate dateStamp = LocalDate.now();
+        LocalDateTime matchTime = LocalDateTime.now();
+        String modelName = "model-0";
+        String providerName = "provider-0";        
+        PricingModel pricingModel = new PerTokenPricingModel(0.1, 0.25);
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, pricingModel, 1l,Collections.singletonList("task"),"test",0l,"modelName");
+        List<ModelMetadata> list = Collections.singletonList(singleModel);
+        //wrap
+        ListModelMetadata listModelMetadata = new ListModelMetadata(list);
+        //now 'lighten'
+        LiteModelList liteList = new ModelSuggestionAgent().convertModelList(listModelMetadata);
+        assertNotNull(liteList.models());
+        assertTrue(liteList.models().size() == 1);
+    }
 }

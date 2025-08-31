@@ -78,6 +78,9 @@ public class ModelSuggestionAgentITest {
             } //end if
         } //end for
         assertNotNull(agent);
+        //load up the repository for testing
+        InMemoryAiModelRepository repository = applicationContext.getBean(InMemoryAiModelRepository.class);
+        repository.load();//invoke the load
         //execute
         ProcessOptions processOptions = ProcessOptions.getDEFAULT();
         AgentProcess agentProcess = agentFactory.createAgentProcess(agent, processOptions, Collections.singletonMap("userInput", userInput));
