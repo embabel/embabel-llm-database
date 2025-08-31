@@ -55,7 +55,7 @@ public class InMemoryAiModelRepositoryITest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test",0l,"modelName");
         //save
         aiModelRepository.save(singleModel);
         //check

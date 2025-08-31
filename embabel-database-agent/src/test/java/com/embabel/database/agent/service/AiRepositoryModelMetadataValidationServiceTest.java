@@ -40,7 +40,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test",0l,"modelName");
         //setup the repo
         AiModelRepository aiModelRepository = new InMemoryAiModelRepository();
         //save
@@ -52,7 +52,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
         //add existing
         newModels.add(singleModel);
         //add a new one
-        LlmModelMetadata newModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName + "-1", providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata newModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName + "-1", providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test",0l,"modelName");
         newModels.add(newModel);
         //process
         ModelMetadataValidationService modelMetadataValidationService = new AiRepositoryModelMetadataValidationService(aiModelRepository);
@@ -67,7 +67,7 @@ public class AiRepositoryModelMetadataValidationServiceTest {
     void testInverse() {
         LocalDate dateStamp = LocalDate.now();
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),"model-0", "provider-0", dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),"model-0", "provider-0", dateStamp, null, 1l,Collections.singletonList("task"),"test",0l,"modelName");
         //setup the repo
         AiModelRepository aiModelRepository = new InMemoryAiModelRepository();
         //save

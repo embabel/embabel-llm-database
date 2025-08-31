@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 record ListModelMetadata(List<ModelMetadata> models) { }
 
-@Agent(description = "Discovers and loads AI models from various sources")
+@Agent(name="AiModelRepositoryAgent", description = "Discovers and loads AI models from various sources")
 public class AiModelRepositoryAgent {
 
     private static Log logger = LogFactory.getLog(AiModelRepositoryAgent.class);

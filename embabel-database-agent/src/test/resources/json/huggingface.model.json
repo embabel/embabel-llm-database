@@ -1,0 +1,103 @@
+{
+    "_id": "68ac69484a1f0871ddf555e4",
+    "id": "microsoft/VibeVoice-1.5B",
+    "private": false,
+    "pipeline_tag": "text-to-speech",
+    "tags": [
+        "safetensors",
+        "vibevoice",
+        "Podcast",
+        "text-to-speech",
+        "en",
+        "zh",
+        "arxiv:2508.19205",
+        "arxiv:2412.08635",
+        "license:mit",
+        "region:us"
+    ],
+    "downloads": 67632,
+    "likes": 1070,
+    "modelId": "microsoft/VibeVoice-1.5B",
+    "author": "microsoft",
+    "sha": "cf42b8ff262f8a286bcbe580835cfaad62d277ca",
+    "lastModified": "2025-08-28T04:57:59.000Z",
+    "gated": false,
+    "disabled": false,
+    "model-index": null,
+    "config": {
+        "architectures": [
+            "VibeVoiceForConditionalGeneration"
+        ],
+        "model_type": "vibevoice"
+    },
+    "cardData": {
+        "license": "mit",
+        "language": [
+            "en",
+            "zh"
+        ],
+        "pipeline_tag": "text-to-speech",
+        "tags": [
+            "Podcast"
+        ]
+    },
+    "siblings": [
+        {
+            "rfilename": ".gitattributes"
+        },
+        {
+            "rfilename": "README.md"
+        },
+        {
+            "rfilename": "config.json"
+        },
+        {
+            "rfilename": "figures/Fig1.png"
+        },
+        {
+            "rfilename": "model-00001-of-00003.safetensors"
+        },
+        {
+            "rfilename": "model-00002-of-00003.safetensors"
+        },
+        {
+            "rfilename": "model-00003-of-00003.safetensors"
+        },
+        {
+            "rfilename": "model.safetensors.index.json"
+        },
+        {
+            "rfilename": "preprocessor_config.json"
+        }
+    ],
+    "spaces": [
+        "broadfield-dev/VibeVoice-demo",
+        "yasserrmd/VibeVoice",
+        "broadfield-dev/VibeVoice-demo-dev",
+        "akhaliq/VibeVoice-1.5B",
+        "mrfakename/VibeVoice-1.5B",
+        "NeuralFalcon/VibeVoice-Colab",
+        "thelip/VibeVoice",
+        "ReallyFloppyPenguin/VibeVoice-demo",
+        "Xenobd/VibeVoice-demo",
+        "Dorjzodovsuren/VibeVoice",
+        "umint/o4-mini",
+        "krishna-ag/ms-vibe-voice",
+        "Shubhvedi/Vibe-Voice-TTS",
+        "danhtran2mind/VibeVoice",
+        "SiddhJagani/Voice",
+        "pierreguillou/VibeVoice-demo",
+        "PunkTink/VibeVoice-mess",
+        "ginipick/VibeVoice-demo",
+        "umint/gpt-4.1-nano",
+        "umint/o3"
+    ],
+    "createdAt": "2025-08-25T13:46:48.000Z",
+    "safetensors": {
+        "parameters": {
+            "BF16": 2704021985
+        },
+        "total": 2704021985
+    },
+    "usedStorage": 5408698819
+}

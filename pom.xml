@@ -15,7 +15,7 @@
     <description>Common dependencies shared by child modules.</description>
 
     <properties>
-        <embabel.version>0.1.0</embabel.version>
+        <embabel.version>0.1.1</embabel.version>
         <mockk.version>1.13.3</mockk.version>
     </properties>
 

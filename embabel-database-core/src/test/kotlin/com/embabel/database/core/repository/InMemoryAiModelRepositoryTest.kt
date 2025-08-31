@@ -182,7 +182,11 @@ class InMemoryAiModelRepositoryTest {
             provider = "OpenAI",
             knowledgeCutoffDate = today,
             pricingModel = pricing,
-            size = 170_000_000_000 // 170B parameters
+            size = 10000, // context length
+            tags = null,
+            source = "test",
+            parameters = 0,
+            modelName = "test"
         )
         //instantiate
         val repository = InMemoryAiModelRepository()
@@ -226,7 +230,11 @@ class InMemoryAiModelRepositoryTest {
             provider = "OpenAI",
             knowledgeCutoffDate = today,
             pricingModel = pricing,
-            size = 170_000_000_000 // 170B parameters
+            size = 10000, // context length
+            tags = null,
+            source = "test",
+            parameters = 0,
+            modelName = "test"
         )
         //instantiate
         var repository = InMemoryAiModelRepository()

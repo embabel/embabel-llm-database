@@ -30,7 +30,9 @@ data class LlmModelMetadata (
     override val pricingModel: PricingModel? = null,
     val size: Long? = null,
     val tags: List<String>? = null,
-    val source: String? = null
+    val source: String? = null,
+    val parameters: Long? = null,
+    val modelName: String? = null
 ) : LlmMetadata  {
 
     override val type: ModelType
@@ -75,8 +77,10 @@ data class LlmModelMetadata (
             size: Long? = null,
             tags: List<String>? = null,
             source: String? = null,
+            parameters: Long? = null,
+            modelName: String? = null,
             modelId: String = UUID.randomUUID().toString()
-        ): LlmMetadata = LlmModelMetadata(modelId, name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
+        ): LlmMetadata = LlmModelMetadata(modelId, name, provider, knowledgeCutoffDate, pricingModel, size, tags, source, parameters, modelName)
 
         @JvmStatic
         @JvmOverloads
@@ -88,8 +92,10 @@ data class LlmModelMetadata (
             size: Long? = null,
             tags: List<String>? = null,
             source: String? = null,
+            parameters: Long? = null,
+            modelName: String? = null,
             modelId: String = UUID.randomUUID().toString()
-        ): LlmMetadata = LlmModelMetadata(modelId, name, provider, knowledgeCutoffDate, pricingModel, size, tags, source)
+        ): LlmMetadata = LlmModelMetadata(modelId, name, provider, knowledgeCutoffDate, pricingModel, size, tags, source, parameters, modelName)
     }
 
 }

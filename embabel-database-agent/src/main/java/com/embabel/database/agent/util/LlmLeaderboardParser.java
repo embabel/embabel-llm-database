@@ -25,6 +25,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,12 +49,10 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
     private static final String MODEL_PATH = "models";
     private static final String NAME = "model_name";
     private static final String PROVIDER_NAME = "provider_id";
-    private static final String PARAM_COUNT = "max_input_tokens";
+    private static final String CONTEXT_LENGTH = "max_input_tokens";
     private static final String PRICE_PER_INPUT_TOKEN = "input_cents_per_million_tokens";
     private static final String PRICE_PER_OUTPUT_TOKEN = "output_cents_per_million_tokens";
-    private static final String PROVIDER_MODELS = "providermodels";
     private static final String PROVIDER_PATH = "data/providers";
-    private static final String UPDATED_AT = "updated_at";
 
     ObjectMapper objectMapper;
 
@@ -86,11 +85,11 @@ public class LlmLeaderboardParser implements ModelMetadataParser {
                 //bulid the pricingModel
                 PricingModel pricingModel = new PerTokenPricingModel(pricePerInput, pricePerOutput);
                 //tokens
-                Long paramCount = providerModel.get(PARAM_COUNT) != null ? Long.parseLong(providerModel.get(PARAM_COUNT).toString()) : 0l;
+                Long contextLength = providerModel.get(CONTEXT_LENGTH) != null ? Long.parseLong(providerModel.get(CONTEXT_LENGTH).toString()) : 0l;
                 //task
                 List<String> tags = taskParser.getTags(providerModel);
                 //build the metadata
-                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,paramCount,tags,this.getClass().getSimpleName());
+                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,contextLength,tags,this.getClass().getSimpleName(),0l,modelId);
                 //add
                 listModelMetadata.add(modelMetadata);
             } //end loop                       

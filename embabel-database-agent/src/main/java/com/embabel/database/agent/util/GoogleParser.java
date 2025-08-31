@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,11 +65,11 @@ public class GoogleParser implements ModelMetadataParser {
                 //price
                 PricingModel pricingModel = new PerTokenPricingModel(0.0, 0.0);
                 //tokens
-                Long paramCount = model.get("inputTokenLimit") != null ? Long.parseLong(model.get("inputTokenLimit").toString()) : 0l;
+                Long contextLength = model.get("inputTokenLimit") != null ? Long.parseLong(model.get("inputTokenLimit").toString()) : 0l;
                 //get the task
                 List<String> tags = googleTaskParser.getTags(model);
                 //build the metadatamodel
-                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,0l,tags,this.getClass().getSimpleName());
+                ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,contextLength,tags,this.getClass().getSimpleName(),0l,modelName);
                 //add
                 listModelMetadata.add(modelMetadata);
             } //end for

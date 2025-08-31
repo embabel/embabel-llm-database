@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,7 +75,7 @@ public class AWSBedrockParser implements ModelMetadataParser {
             //task
             List<String> tags = awsBedrockTaskParser.getTags(attributeMap);
             //build the metadata
-            ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,0l,tags,this.getClass().getSimpleName());
+            ModelMetadata modelMetadata = LlmModelMetadata.Companion.create(modelName,providerName,knowledgeCutoffDate,pricingModel,0l,tags,this.getClass().getSimpleName(),0l,model.modelId());
             //add
             listModelMetadata.add(modelMetadata);
         }

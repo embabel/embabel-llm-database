@@ -181,6 +181,7 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
     ): List<LlmModelMetadata> {
         return maps.mapNotNull { map ->
             val name = map["name"] as? String ?: return@mapNotNull null
+            val modelId = map["modelId"] as? String ?: return@mapNotNull null
             val provider = map["provider"] as? String ?: return@mapNotNull null
 
             val knowledgeCutoffDate = when (val dateValue = map["knowledgeCutoffDate"]) {
@@ -237,12 +238,27 @@ class InMemoryAiModelRepository(allModels: List<ModelMetadata> = emptyList()) : 
                 else -> null
             }
 
+            val tags: List<String>? = (map["tags"] as? List<*>)?.mapNotNull { it as? String }
+            val source = map["source"] as? String ?: return@mapNotNull null
+            val parameters = when (val sizeValue = map["parameters"]) {
+                is Long -> sizeValue
+                is Int -> sizeValue.toLong()
+                is String -> sizeValue.toLongOrNull()
+                else -> null
+            }
+            val modelName = map["modelName"] as? String ?: return@mapNotNull null
+
             LlmModelMetadata(
+                modelId = modelId,
                 name = name,
                 provider = provider,
                 knowledgeCutoffDate = knowledgeCutoffDate,
                 pricingModel = pricingModel,
-                size = size
+                size = size,
+                tags = tags,
+                source = source,
+                parameters = parameters,
+                modelName = modelName
             )
         }
     }

@@ -51,7 +51,7 @@ public class AiModelRepositoryAgentTest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test",0l,"modelName");
         //setup the repo
         AiModelRepository aiModelRepository = mock(AiModelRepository.class);
         when(aiModelRepository.lastUpdated()).thenReturn(matchTime);
@@ -95,7 +95,7 @@ public class AiModelRepositoryAgentTest {
         String modelName = "model-0";
         String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test");
+        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test",0l,"modelName");
         List<ModelMetadata> models = new ArrayList<>();
         models.add(singleModel);
         //set the trigger
