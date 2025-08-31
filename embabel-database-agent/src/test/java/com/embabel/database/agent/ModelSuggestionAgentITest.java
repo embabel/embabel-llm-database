@@ -15,6 +15,7 @@
  */
 package com.embabel.database.agent;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
@@ -37,6 +38,7 @@ import com.embabel.agent.core.AgentProcess;
 import com.embabel.agent.core.AgentProcessStatusCode;
 import com.embabel.agent.core.ProcessOptions;
 import com.embabel.agent.domain.io.UserInput;
+import com.embabel.database.agent.domain.ProviderList;
 import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService;
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
@@ -94,6 +96,15 @@ public class ModelSuggestionAgentITest {
             //still waiting
             Thread.sleep(500);//wait 500ms            
         }//end while        
+
+        //use getObjects to get the history
+
+        Object result = agentProcess.lastResult();
+        assertNotNull(result);
+        ProviderList providerList = (ProviderList) result;
+        assertNotNull(providerList.providers());
+        assertFalse(providerList.providers().isEmpty());
+        logger.info(providerList.providers());
     }
 
     @TestConfiguration

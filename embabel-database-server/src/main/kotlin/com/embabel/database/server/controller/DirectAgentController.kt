@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping
 
 import com.embabel.database.server.service.AgentExecutionService
 
+import org.slf4j.LoggerFactory
+
 @RestController
 @RequestMapping("/api/v1/agents")
 class DirectAgentController {

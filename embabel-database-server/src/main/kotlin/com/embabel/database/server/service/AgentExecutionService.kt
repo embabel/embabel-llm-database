@@ -15,15 +15,19 @@
  */
 package com.embabel.database.server.service
 
-import com.embabel.agent.core.Agent;
-import com.embabel.agent.core.AgentPlatform;
-import com.embabel.agent.core.AgentProcess;
-import com.embabel.agent.core.ProcessOptions;
+import com.embabel.agent.core.Agent
+import com.embabel.agent.core.AgentPlatform
+import com.embabel.agent.core.AgentProcess
+import com.embabel.agent.core.AgentProcessStatusCode
+import com.embabel.agent.core.ProcessOptions
 
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
+// import java.lang.InterruptedException
 import java.util.concurrent.ConcurrentHashMap
+
+import org.slf4j.LoggerFactory
 
 object AgentProcessRegistry {
 
@@ -40,10 +44,12 @@ class AgentExecutionService(
     private val agentFactory: AgentPlatform
 ) {
 
-    fun createProcess(agentName: String) : AgentProcess {
+    private val logger = LoggerFactory.getLogger(AgentExecutionService::class.java)
+
+    fun createProcess(agentName: String, options: Map<String,Any> = emptyMap()) : AgentProcess {
         val agent = agentFactory.agents().find { it.name == agentName } ?: throw IllegalArgumentException("Agent with name $agentName not found")
         val processOptions = ProcessOptions.DEFAULT
-        val agentProcess = agentFactory.createAgentProcess(agent, processOptions, emptyMap<String, Any>())
+        val agentProcess = agentFactory.createAgentProcess(agent, processOptions, options)
         //update the registry
         AgentProcessRegistry.processMap[agentProcess.id] = agentName
         //return
@@ -64,6 +70,15 @@ class AgentExecutionService(
         } else {
             processIds
         } //end if
+    }
+
+    fun monitor(agentProcess: AgentProcess) {
+        while (agentProcess.status == AgentProcessStatusCode.RUNNING
+            || agentProcess.status == AgentProcessStatusCode.WAITING) {
+                //TODO add handler for crashed/failed
+                logger.info("waiting for agent to finish");
+                Thread.sleep(200)
+        }//end while
     }
 
 }

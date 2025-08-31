@@ -15,6 +15,7 @@
  */
 package com.embabel.database.agent;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,8 +35,12 @@ import com.embabel.agent.testing.unit.FakeOperationContext;
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.common.ai.model.PerTokenPricingModel;
 import com.embabel.common.ai.model.PricingModel;
+import com.embabel.database.agent.domain.ProviderList;
+import com.embabel.database.agent.domain.TagList;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.TagParser;
+import com.embabel.database.core.repository.AiModelRepository;
+import com.embabel.database.core.repository.InMemoryAiModelRepository;
 import com.embabel.database.core.repository.LlmModelMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -64,20 +69,29 @@ public class ModelSuggestionAgentTest {
     }
 
     @Test
-    void testConvertModelList() throws Exception {
-        //create a model
-        LocalDate dateStamp = LocalDate.now();
-        LocalDateTime matchTime = LocalDateTime.now();
-        String modelName = "model-0";
-        String providerName = "provider-0";        
-        PricingModel pricingModel = new PerTokenPricingModel(0.1, 0.25);
-        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, pricingModel, 1l,Collections.singletonList("task"),"test",0l,"modelName");
-        List<ModelMetadata> list = Collections.singletonList(singleModel);
-        //wrap
-        ListModelMetadata listModelMetadata = new ListModelMetadata(list);
-        //now 'lighten'
-        LiteModelList liteList = new ModelSuggestionAgent().convertModelList(listModelMetadata);
-        assertNotNull(liteList.models());
-        assertTrue(liteList.models().size() == 1);
+    void testGetProviders() throws Exception {
+        //build a tag list
+        //get the models
+        //get a list of groups
+        ModelSuggestionAgent modelSuggestionAgent = new ModelSuggestionAgent();
+        List<String> expectedTags = Collections.singletonList("image-to-text");
+        TagList tagList = new TagList(expectedTags);
+
+        AiModelRepository inMemoryAiModelRepository = new InMemoryAiModelRepository();
+        //create models that match the list
+        var today = LocalDate.now();
+        //stub object
+        var pricing = new PerTokenPricingModel(15.0,75.0);
+        var llmInstance = new LlmModelMetadata(UUID.randomUUID().toString(),"gpt-4","OpenAI",today,pricing,10000l,expectedTags,"test",0l,"test");
+        //insert
+        inMemoryAiModelRepository.save(llmInstance);
+        ReflectionTestUtils.setField(modelSuggestionAgent, "aiModelRepository", inMemoryAiModelRepository);
+        //hand over to the models for tag
+        ListModelMetadata models = modelSuggestionAgent.getModelsByTag(tagList);
+        //now get providers
+        ProviderList providers = modelSuggestionAgent.getProviders(models);
+        assertNotNull(providers);
+        assertNotNull(providers.providers());
+        assertFalse(providers.providers().isEmpty());
     }
 }

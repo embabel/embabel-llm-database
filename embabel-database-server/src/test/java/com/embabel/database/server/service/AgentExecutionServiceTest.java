@@ -18,6 +18,7 @@ package com.embabel.database.server.service;
 import com.embabel.agent.core.Agent;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.core.AgentProcess;
+import com.embabel.database.server.service.AgentExecutionService;
 
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,12 +48,12 @@ public class AgentExecutionServiceTest {
         //setup
         AgentExecutionService agentExecutionService = new AgentExecutionService(agentPlatform);
         //run
-        AgentProcess createdAgentProcess = agentExecutionService.createProcess(agentName);
+        AgentProcess createdAgentProcess = agentExecutionService.createProcess(agentName,Collections.emptyMap());
         agentExecutionService.runAgentProcessAsync(createdAgentProcess);
         //validate
         verify(agentProcess,times(1)).run();
         //validate for exception 
-        assertThrows(IllegalArgumentException.class, () -> {agentExecutionService.createProcess(otherName);});
+        assertThrows(IllegalArgumentException.class, () -> {agentExecutionService.createProcess(otherName,Collections.emptyMap());});
     }
 
 }

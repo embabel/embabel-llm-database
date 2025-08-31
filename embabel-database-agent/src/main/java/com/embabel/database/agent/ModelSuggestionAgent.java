@@ -29,19 +29,36 @@ import org.springframework.beans.factory.annotation.Value;
 import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
+import com.embabel.agent.api.annotation.Condition;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.common.ai.model.PerTokenPricingModel;
 import com.embabel.common.ai.model.PricingModel;
+import com.embabel.database.agent.domain.ProviderList;
+import com.embabel.database.agent.domain.TagList;
 import com.embabel.database.agent.util.TagParser;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.LlmModelMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-record TagList(List<String> tags) { }
+import groovyjarjarantlr4.v4.parse.ANTLRParser.id_return;
 
-record LiteModelList(List<Map<String,Object>> models) { }
+// record TagList(List<String> tags) { }
+
+/**
+ * flow
+ * - user request for a model(s) suggestion based on criteria
+ * - "I want a model to create an image from a prompt"
+ * - "I want a model that can update an image"
+ * - "I want a model that can create a narration"
+ * - "I want to ask a model to summarize a document"
+ * - LLM database has tags, models, providers, and prices
+ * - Step 1 is to convert request to a "tag"
+ * - Step 2 is to use the "tag" to collate a set of providers (group by providers)
+ * - present the options to the user for a provider
+ * - on provider choice, present a list of models to choose from
+ */
 
 @Agent(name="ModelSuggestionAgent", description = "Suggest models based on user criteria")
 public class ModelSuggestionAgent {
@@ -60,29 +77,30 @@ public class ModelSuggestionAgent {
     @Value("${embabel.models.defaultLlm:llama3.1:8b}")
     String modelName;
 
-    @AchievesGoal(
-        description="Retrieves model suggestions based on the entered criteria"
-    )
-    @Action
-    public LiteModelList getModelSuggestions(ListModelMetadata models, UserInput userInput, OperationContext operationContext) {
+    // @AchievesGoal(
+        // description="Retrieves model suggestions based on the entered criteria"
+    // )
+    // @Action
+    public String getModelSuggestions(ListModelMetadata models, UserInput userInput, OperationContext operationContext) {
         //convert the model list
-        LiteModelList liteModelList = convertModelList(models);
-        logger.info("models to be considered: " + liteModelList.models().size());
-        var prompt = """
-                Review the following request from the user and return a list of suggested models.
+        // LiteModelList liteModelList = convertModelList(models);
+        // logger.info("models to be considered: " + liteModelList.models().size());
+        // var prompt = """
+        //         Review the following request from the user and return a list of suggested models.
                 
-                Request = %s
+        //         Request = %s
 
-                Models = %s
-                """.formatted(userInput.getContent(),liteModelList.models());
-        //dump the prompt
-        logger.info(prompt);
-        //execute and return a lighter list with ids and names
-        return operationContext.ai()
-            .withLlm(modelName)
-            .createObject(prompt,LiteModelList.class);
+        //         Models = %s
+        //         """.formatted(userInput.getContent(),liteModelList.models());
+        // //dump the prompt
+        // logger.info(prompt);
+        // //execute and return a lighter list with ids and names
+        // return operationContext.ai()
+        //     .withLlm(modelName)
+        //     .createObject(prompt,LiteModelList.class);
+        return null;
     }
-
+    
     @Action
     public TagList getSuggestedTagList(UserInput userInput, OperationContext operationContext) {
         //retrieves the tags available
@@ -108,34 +126,38 @@ public class ModelSuggestionAgent {
             .createObject(prompt, TagList.class);
     }
 
-    @Action
+    //retrieve models for the specified tag(s)
+    @Action(pre="have_models")
     public ListModelMetadata getModelsByTag(TagList tagList) {
         logger.info("getting models");
         //build the search criteria
         String[] tags = tagList.tags().toArray(new String[tagList.tags().size()]);
         List<ModelMetadata> models = aiModelRepository.findByTags(tags);
+        //return
         return new ListModelMetadata(models);
     }
 
-    LiteModelList convertModelList(ListModelMetadata models) {
-        List<Map<String,Object>> liteModels = new ArrayList<>();
-        for (ModelMetadata model : models.models()) {
-            LlmModelMetadata llmModel = (LlmModelMetadata) model;
-            Map<String,Object> liteModel = new HashMap<>();
-            //set values including name, provider, pricing model, modelId
-            liteModel.put("modelId",llmModel.getModelId());
-            liteModel.put("name",llmModel.getName());
-            liteModel.put("provider",llmModel.getProvider());
-            PricingModel pricingModel = llmModel.getPricingModel();
-            if (pricingModel != null) {
-                liteModel.put("pricePer1MTokensIn",((PerTokenPricingModel) llmModel.getPricingModel()).getUsdPer1mInputTokens());
-                liteModel.put("pricePer1MTokensOut",((PerTokenPricingModel) llmModel.getPricingModel()).getUsdPer1mOutputTokens());
-            }
-            //add
-            liteModels.add(liteModel);
-        } //end for
+
+    //group by providers for model(s)
+    @AchievesGoal(
+        description="Retrieves providers list for models based on criteria"
+    )
+    @Action
+    public ProviderList getProviders(ListModelMetadata listModelMetadata) {
+        logger.info("getting provider group");
+        //group
+        List<String> providers = listModelMetadata.models()
+            .stream()
+            .map(ModelMetadata::getProvider)
+            .distinct()
+            .collect(Collectors.toList());
         //return
-        return new LiteModelList(liteModels);        
+        return new ProviderList(providers);
+    }    
+
+    @Condition(name="have_models")
+    public boolean haveModesl() {
+        logger.info("checking for models");
+        return (aiModelRepository.count() > 0);
     }
-    
 }
