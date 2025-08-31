@@ -294,4 +294,24 @@ private static final Log logger = LogFactory.getLog(HuggingFaceUpdateService.cla
             model.getModelName()
         );
     }
+
+    String getReadme(String modelId) {
+        String base_url = "https://huggingface.co/";
+        String readme_url = "/raw/main/README.md";
+        String url =  base_url + modelId + readme_url;
+        String readme = "";
+        //retrieve
+        ResponseEntity<String> responseEntity = webClient.get()
+                .uri(url)
+                .retrieve()
+                .toEntity(new ParameterizedTypeReference<String>() {})
+                .block();
+            if (responseEntity != null && responseEntity.getStatusCode().is2xxSuccessful()) {
+                readme = responseEntity.getBody();
+            } else {
+                logger.error("No data");
+            } //end if
+        //return
+        return readme;
+    }
 }

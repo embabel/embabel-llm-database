@@ -77,4 +77,11 @@ public class HuggingFaceUpdateServiceTest {
         huggingFaceUpdateService.updateModels(models);
     }
 
+    @Test
+    void testGetReadme() throws Exception {
+        String repoId = "openai/gpt-oss-20b";
+        String readme = new HuggingFaceUpdateService().getReadme(repoId);
+        assertNotNull(readme);
+        assertTrue(readme.contains("models were trained on our"));
+    }
 }
