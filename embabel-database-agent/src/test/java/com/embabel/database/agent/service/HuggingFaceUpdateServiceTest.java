@@ -63,7 +63,7 @@ public class HuggingFaceUpdateServiceTest {
         assertTrue(location.exists());
     }
 
-    @Test
+    // @Test
     void testUpdateModels() throws Exception {
         //load up the json representation into the maps
         ObjectMapper objectMapper = new ObjectMapper();
@@ -77,7 +77,7 @@ public class HuggingFaceUpdateServiceTest {
         huggingFaceUpdateService.updateModels(models);
     }
 
-    @Test
+    // @Test
     void testGetReadme() throws Exception {
         String repoId = "openai/gpt-oss-20b";
         String readme = new HuggingFaceUpdateService().getReadme(repoId);

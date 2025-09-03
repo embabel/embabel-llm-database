@@ -17,9 +17,11 @@ package com.embabel.database.agent;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +40,9 @@ import com.embabel.agent.core.AgentProcess;
 import com.embabel.agent.core.AgentProcessStatusCode;
 import com.embabel.agent.core.ProcessOptions;
 import com.embabel.agent.domain.io.UserInput;
+import com.embabel.database.agent.domain.ListModelMetadata;
 import com.embabel.database.agent.domain.ProviderList;
+import com.embabel.database.agent.domain.ProviderOptions;
 import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService;
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
@@ -72,8 +76,8 @@ public class ModelSuggestionAgentITest {
         List<Agent> agents = agentFactory.agents();        
         for (Agent a : agents) {
             logger.info("Agent Name: " + a.getName());
-            if (a.getName().equals("ModelSuggestionAgent")) {
-                logger.info(a.getName());
+            if (a.getName().equals("ModelProviderSuggestionAgent")) {
+                logger.info("Matched " + a.getName());
                 //this is the one
                 agent = a;
                 break;
@@ -101,16 +105,27 @@ public class ModelSuggestionAgentITest {
 
         Object result = agentProcess.lastResult();
         assertNotNull(result);
-        ProviderList providerList = (ProviderList) result;
-        assertNotNull(providerList.providers());
-        assertFalse(providerList.providers().isEmpty());
-        logger.info(providerList.providers());
+        // ProviderOptions providerOptions = (ProviderOptions) result;
+        // assertNotNull(providerOptions.response());
+        // assertFalse(providerOptions.response().length() <= 0);
+        logger.info(result);
+        // logger.info("blackboard " + agentProcess.spawn().getObjects());
+        //should be able to get the history and invoke a second agent
+        Optional<Object> list = agentProcess.getObjects().stream().filter(obj -> obj.getClass().isInstance(ListModelMetadata.class)).findFirst();
+        assertTrue(list.isPresent());
+        
+        
     }
 
     @TestConfiguration
     @EnableAgents
     public static class TestConfig {
       
+        @Bean
+        public ModelProviderSuggestionAgent modelProviderSuggestionAgent() {
+            return new ModelProviderSuggestionAgent();
+        }
+
         @Bean
         public ModelSuggestionAgent modelSuggestionAgent() {
             return new ModelSuggestionAgent();

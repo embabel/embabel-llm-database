@@ -15,149 +15,58 @@
  */
 package com.embabel.database.agent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
-import com.embabel.agent.api.annotation.Condition;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.common.ai.model.ModelMetadata;
-import com.embabel.common.ai.model.PerTokenPricingModel;
-import com.embabel.common.ai.model.PricingModel;
-import com.embabel.database.agent.domain.ProviderList;
-import com.embabel.database.agent.domain.TagList;
-import com.embabel.database.agent.util.TagParser;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.LlmModelMetadata;
+import com.embabel.database.agent.domain.ListModelMetadata;
+import com.embabel.database.agent.domain.ModelList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import groovyjarjarantlr4.v4.parse.ANTLRParser.id_return;
-
-// record TagList(List<String> tags) { }
-
-/**
- * flow
- * - user request for a model(s) suggestion based on criteria
- * - "I want a model to create an image from a prompt"
- * - "I want a model that can update an image"
- * - "I want a model that can create a narration"
- * - "I want to ask a model to summarize a document"
- * - LLM database has tags, models, providers, and prices
- * - Step 1 is to convert request to a "tag"
- * - Step 2 is to use the "tag" to collate a set of providers (group by providers)
- * - present the options to the user for a provider
- * - on provider choice, present a list of models to choose from
- */
-
-@Agent(name="ModelSuggestionAgent", description = "Suggest models based on user criteria")
+@Agent(name="ModelSuggestionAgent", description = "Suggest models based on selected providers and previously filtered tags")
 public class ModelSuggestionAgent {
     
-    private static Log logger = LogFactory.getLog(ModelSuggestionAgent.class);
-
-    @Autowired
-    TagParser tagParser;
-
     @Autowired
     ObjectMapper objectMapper;
-
-    @Autowired
-    AiModelRepository aiModelRepository;
 
     @Value("${embabel.models.defaultLlm:llama3.1:8b}")
     String modelName;
 
-    // @AchievesGoal(
-        // description="Retrieves model suggestions based on the entered criteria"
-    // )
-    // @Action
-    public String getModelSuggestions(ListModelMetadata models, UserInput userInput, OperationContext operationContext) {
-        //convert the model list
-        // LiteModelList liteModelList = convertModelList(models);
-        // logger.info("models to be considered: " + liteModelList.models().size());
-        // var prompt = """
-        //         Review the following request from the user and return a list of suggested models.
-                
-        //         Request = %s
-
-        //         Models = %s
-        //         """.formatted(userInput.getContent(),liteModelList.models());
-        // //dump the prompt
-        // logger.info(prompt);
-        // //execute and return a lighter list with ids and names
-        // return operationContext.ai()
-        //     .withLlm(modelName)
-        //     .createObject(prompt,LiteModelList.class);
-        return null;
-    }
-    
-    @Action
-    public TagList getSuggestedTagList(UserInput userInput, OperationContext operationContext) {
-        //retrieves the tags available
-        //uses an LLM to take the "criteria" from the user and build a tag option
-        List<Map<String,Object>> tags = tagParser.getTasks(objectMapper,TagParser.RESOURCE_LOCATION);
-        //convert to just a list of strings     
-        List<String> tagNames = tags.stream()
-            .map(map -> (String) map.get("tag"))
-            .collect(Collectors.toList());   
-       
-        //set up the prompt
-        var prompt = """
-                Review the following request from the user and return a list of tag names that meet
-                the users requested criteria. Respond only with a list of tags.
-
-                Criteria = %s
-
-                Tag Options = %s
-                """.formatted(userInput.getContent(),tagNames);
-        logger.debug(prompt);//quick dump of the prompot
-        return operationContext.ai()
-            .withLlm(modelName)
-            .createObject(prompt, TagList.class);
-    }
-
-    //retrieve models for the specified tag(s)
-    @Action(pre="have_models")
-    public ListModelMetadata getModelsByTag(TagList tagList) {
-        logger.info("getting models");
-        //build the search criteria
-        String[] tags = tagList.tags().toArray(new String[tagList.tags().size()]);
-        List<ModelMetadata> models = aiModelRepository.findByTags(tags);
-        //return
-        return new ListModelMetadata(models);
-    }
-
-
-    //group by providers for model(s)
     @AchievesGoal(
-        description="Retrieves providers list for models based on criteria"
+        description = "Generates a list of models based on user selected provider, tags and previously filtered list"
     )
     @Action
-    public ProviderList getProviders(ListModelMetadata listModelMetadata) {
-        logger.info("getting provider group");
-        //group
-        List<String> providers = listModelMetadata.models()
-            .stream()
-            .map(ModelMetadata::getProvider)
-            .distinct()
-            .collect(Collectors.toList());
-        //return
-        return new ProviderList(providers);
-    }    
+    public ModelList getModels(UserInput userInput, ListModelMetadata listModelMetadata, OperationContext operationContext) {
+        String models = getModels(userInput.getContent(),listModelMetadata);
+        //build the prompt
+        var prompt = """
+                Format the following list of models into a human readable table with a request for the user
+                to select a model.
 
-    @Condition(name="have_models")
-    public boolean haveModesl() {
-        logger.info("checking for models");
-        return (aiModelRepository.count() > 0);
+                models = %s
+                """.formatted(models);
+        return operationContext.ai()
+            .withLlm(modelName)
+            .createObject(prompt,ModelList.class);
     }
+
+    String getModels(String provider, ListModelMetadata listModelMetadata) {
+        //loop and filter by the provider
+        List<String> modelNames = listModelMetadata.models()
+                                    .stream()
+                                    .filter(model -> provider.equalsIgnoreCase(model.getProvider()))
+                                    .map(ModelMetadata::getName)
+                                    .collect(Collectors.toList());
+        
+        return String.join(",",modelNames);
+    }
+
 }

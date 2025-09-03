@@ -28,6 +28,7 @@ import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.annotation.Condition;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.common.ai.model.ModelMetadata;
+import com.embabel.database.agent.domain.ListModelMetadata;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataService;
 import com.embabel.database.agent.service.ModelMetadataValidationService;
@@ -37,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * record to wrap the model list
  */
-record ListModelMetadata(List<ModelMetadata> models) { }
+// record ListModelMetadata(List<ModelMetadata> models) { }
 
 @Agent(name="AiModelRepositoryAgent", description = "Discovers and loads AI models from various sources")
 public class AiModelRepositoryAgent {

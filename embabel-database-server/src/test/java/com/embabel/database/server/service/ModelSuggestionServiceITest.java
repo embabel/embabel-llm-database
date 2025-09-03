@@ -28,7 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.core.AgentPlatform;
-import com.embabel.database.agent.ModelSuggestionAgent;
+import com.embabel.database.agent.ModelProviderSuggestionAgent;
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataService;
@@ -101,8 +101,8 @@ public class ModelSuggestionServiceITest {
         }
 
         @Bean        
-        public ModelSuggestionAgent modelSuggestionAgent() {
-            return new ModelSuggestionAgent();
+        public ModelProviderSuggestionAgent modelSuggestionAgent() {
+            return new ModelProviderSuggestionAgent();
         }
 
         @Bean

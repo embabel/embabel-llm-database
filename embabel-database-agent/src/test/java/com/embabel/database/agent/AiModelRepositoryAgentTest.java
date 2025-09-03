@@ -20,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.common.ai.model.ModelMetadata;
+import com.embabel.database.agent.domain.ListModelMetadata;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.LlmModelMetadata;
 
