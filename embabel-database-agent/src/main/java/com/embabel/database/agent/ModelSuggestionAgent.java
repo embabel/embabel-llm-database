@@ -45,7 +45,7 @@ public class ModelSuggestionAgent {
     )
     @Action
     public ModelList getModels(UserInput userInput, ListModelMetadata listModelMetadata, OperationContext operationContext) {
-        String models = getModels(userInput.getContent(),listModelMetadata);
+        String models = getModelsForProvider(userInput.getContent(),listModelMetadata);
         //build the prompt
         var prompt = """
                 Format the following list of models into a human readable table with a request for the user
@@ -58,7 +58,8 @@ public class ModelSuggestionAgent {
             .createObject(prompt,ModelList.class);
     }
 
-    String getModels(String provider, ListModelMetadata listModelMetadata) {
+    // @Action
+    String getModelsForProvider(String provider, ListModelMetadata listModelMetadata) {
         //loop and filter by the provider
         List<String> modelNames = listModelMetadata.models()
                                     .stream()

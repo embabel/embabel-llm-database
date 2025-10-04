@@ -20,7 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.logging.Log;
@@ -109,12 +111,53 @@ public class ModelSuggestionAgentITest {
         // assertNotNull(providerOptions.response());
         // assertFalse(providerOptions.response().length() <= 0);
         logger.info(result);
-        // logger.info("blackboard " + agentProcess.spawn().getObjects());
         //should be able to get the history and invoke a second agent
-        Optional<Object> list = agentProcess.getObjects().stream().filter(obj -> obj.getClass().isInstance(ListModelMetadata.class)).findFirst();
+        Optional<Object> list = agentProcess.spawn()
+            .getObjects()
+            .stream()
+            .filter(obj -> obj.getClass().isAssignableFrom(ListModelMetadata.class))
+            .findFirst();
         assertTrue(list.isPresent());
-        
-        
+        //now pull the model list from the prompt
+        ListModelMetadata listModelMetadata = (ListModelMetadata) list.get();
+        assertNotNull(listModelMetadata);
+        //can reuse this in the next prompt --> lets use 'deepinfra'
+        String selectedProvider = "deepinfra";
+        //check its there
+        assertTrue(result.toString().contains(selectedProvider));
+        //update the user input with the full context
+        StringBuilder stringBuilder = new StringBuilder();
+        //now use this to invoke the ModelSuggestionAgent
+        for (Agent a : agents) {
+            logger.info("Agent Name: " + a.getName());
+            if (a.getName().equals("ModelSuggestionAgent")) {
+                logger.info("Matched " + a.getName());
+                //this is the one
+                agent = a;
+                break;
+            } //end if
+        } //end for
+        userInput = new UserInput(selectedProvider);
+        //build the context
+        Map<String,Object> contextMap = new HashMap<>();
+        contextMap.put("userInput",userInput);
+        contextMap.put("listModelMetadata",listModelMetadata);
+
+        processOptions = ProcessOptions.getDEFAULT();
+        agentProcess = agentFactory.createAgentProcess(agent, processOptions, contextMap);
+        //get the id
+        id = agentProcess.getId();
+        logger.info(id);
+        //invoke
+        agentProcess.run();
+        //check
+        while (agentProcess.getStatus().equals(AgentProcessStatusCode.RUNNING) || agentProcess.getStatus().equals(AgentProcessStatusCode.WAITING)) {
+            //still waiting
+            Thread.sleep(500);//wait 500ms            
+        }//end while          
+        result = agentProcess.lastResult();
+        assertNotNull(result);      
+        logger.info(result);  
     }
 
     @TestConfiguration
