@@ -131,8 +131,7 @@ public class ModelSuggestionService {
             throw new IllegalArgumentException("unable to find agent " + agentName);
         } //end if
         //load
-        ProcessOptions.getDEFAULT();
-        AgentProcess agentProcess = agentPlatform.createAgentProcess(agent, ProcessOptions.getDEFAULT(), parameters);
+        AgentProcess agentProcess = agentPlatform.createAgentProcess(agent, ProcessOptions.DEFAULT, parameters);
         String processId = agentProcess.getId();
         //run
         agentProcess.run();

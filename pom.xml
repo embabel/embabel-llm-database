@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.embabel.build</groupId>
         <artifactId>embabel-build-parent</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.4</version>
     </parent>
     <groupId>com.embabel.database</groupId>
     <artifactId>embabel-database-parent</artifactId>
@@ -15,7 +15,7 @@
     <description>Common dependencies shared by child modules.</description>
 
     <properties>
-        <embabel.version>0.1.1</embabel.version>
+        <embabel.version>0.1.3</embabel.version>
         <mockk.version>1.13.3</mockk.version>
     </properties>
 

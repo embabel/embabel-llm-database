@@ -91,8 +91,7 @@ public class ModelSuggestionAgentITest {
         InMemoryAiModelRepository repository = applicationContext.getBean(InMemoryAiModelRepository.class);
         repository.load();//invoke the load
         //execute
-        ProcessOptions processOptions = ProcessOptions.getDEFAULT();
-        AgentProcess agentProcess = agentFactory.createAgentProcess(agent, processOptions, Collections.singletonMap("userInput", userInput));
+        AgentProcess agentProcess = agentFactory.createAgentProcess(agent, ProcessOptions.DEFAULT, Collections.singletonMap("userInput", userInput));
         //get the id
         String id = agentProcess.getId();
         logger.info(id);
@@ -138,9 +137,7 @@ public class ModelSuggestionAgentITest {
         Map<String,Object> contextMap = new HashMap<>();
         contextMap.put("userInput",userInput);
         contextMap.put("listModelMetadata",listModelMetadata);
-
-        processOptions = ProcessOptions.getDEFAULT();
-        agentProcess = agentFactory.createAgentProcess(agent, processOptions, contextMap);
+        agentProcess = agentFactory.createAgentProcess(agent, ProcessOptions.DEFAULT, contextMap);
         //get the id
         id = agentProcess.getId();
         logger.info(id);

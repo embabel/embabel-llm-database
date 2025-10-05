@@ -26,9 +26,12 @@ logging:
     console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr([%t]){magenta} %clr(%-5level) %clr(%logger{0}){cyan} %clr(-){faint} %msg%n"          
 
 embabel:
+  llm-operations:
+    prompts:
+      default-timeout: PT1M
   models:
     defaultLlm: llama3.1:8b
-    defaultEmbeddingModel: nomic-embed-text:latest
+    # defaultEmbeddingModel: nomic-embed-text:latest
 
 aws:
   region: us-east-1

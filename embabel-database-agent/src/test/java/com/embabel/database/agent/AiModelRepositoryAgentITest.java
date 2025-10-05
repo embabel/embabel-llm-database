@@ -118,10 +118,8 @@ public class AiModelRepositoryAgentITest {
 
         
         assertEquals(agent.getName(),"AiModelRepositoryAgent");
-        //create a process support
-        ProcessOptions processOptions = ProcessOptions.getDEFAULT();
         //create the process
-        AgentProcess process = agentFactory.createAgentProcess(agent, processOptions, Collections.emptyMap()); //structured
+        AgentProcess process = agentFactory.createAgentProcess(agent, ProcessOptions.DEFAULT, Collections.emptyMap()); //structured
         String id = process.getId();
         logger.info("process id " + id);
         //now let's wait for it to complete
@@ -138,7 +136,7 @@ public class AiModelRepositoryAgentITest {
         //lets validated
         assertFalse(aiModelRepository.findAll().isEmpty());
         //let's invoke the agent again
-        process = agentFactory.createAgentProcess(agent, processOptions, Collections.emptyMap());
+        process = agentFactory.createAgentProcess(agent, ProcessOptions.DEFAULT, Collections.emptyMap());
         logger.info("process id " + id);
         process.run();//start
         //check
