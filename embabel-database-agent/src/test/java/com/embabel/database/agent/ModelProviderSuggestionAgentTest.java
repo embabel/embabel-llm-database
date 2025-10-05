@@ -56,13 +56,25 @@ public class ModelProviderSuggestionAgentTest {
     void testGetSuggestedTagList() throws Exception {
         //setup the objects
         ObjectMapper objectMapper = new ObjectMapper();
-        ModelProviderSuggestionAgent modelSuggestionAgent = new ModelProviderSuggestionAgent();
+        ModelProviderSuggestionAgent modelSuggestionAgent = new ModelProviderSuggestionAgent(new LlmLeaderboardTagParser());
         TagParser tagParser = new LlmLeaderboardTagParser();
         ReflectionTestUtils.setField(modelSuggestionAgent, "objectMapper", objectMapper);
         ReflectionTestUtils.setField(modelSuggestionAgent, "tagParser", tagParser);
         ReflectionTestUtils.setField(modelSuggestionAgent, "modelName", "llama3.1:8b");
-
         List<String> expectedTags = Collections.singletonList("image-to-text");
+        TagList tagList = new TagList(expectedTags);
+
+        AiModelRepository inMemoryAiModelRepository = new InMemoryAiModelRepository();
+        //create models that match the list
+        var today = LocalDate.now();
+        //stub object
+        var pricing = new PerTokenPricingModel(15.0,75.0);
+        var llmInstance = new LlmModelMetadata(UUID.randomUUID().toString(),"gpt-4","OpenAI",today,pricing,10000l,expectedTags,"test",0l,"test");
+        //insert
+        inMemoryAiModelRepository.save(llmInstance);
+        ReflectionTestUtils.setField(modelSuggestionAgent, "aiModelRepository", inMemoryAiModelRepository);
+
+        // List<String> expectedTags = Collections.singletonList("image-to-text");
 
         FakeOperationContext operationContext = new FakeOperationContext();
         operationContext.expectResponse(new TagList(expectedTags));
@@ -77,7 +89,7 @@ public class ModelProviderSuggestionAgentTest {
         //build a tag list
         //get the models
         //get a list of groups
-        ModelProviderSuggestionAgent modelSuggestionAgent = new ModelProviderSuggestionAgent();
+        ModelProviderSuggestionAgent modelSuggestionAgent = new ModelProviderSuggestionAgent(new LlmLeaderboardTagParser());
         List<String> expectedTags = Collections.singletonList("image-to-text");
         TagList tagList = new TagList(expectedTags);
 

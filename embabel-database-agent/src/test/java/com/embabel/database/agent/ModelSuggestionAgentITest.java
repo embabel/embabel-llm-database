@@ -69,7 +69,8 @@ public class ModelSuggestionAgentITest {
 
     @Test
     void testGetSuggestedTagList() throws Exception {
-        String userInputText = "find a model that can extract text from an image";
+        // String userInputText = "find a model that can extract text from an image";
+        String userInputText = "I want a model that will create an image from text";
         UserInput userInput = new UserInput(userInputText);
         //get the agent execution environment
         AgentPlatform agentFactory = applicationContext.getBean(AgentPlatform.class);
@@ -160,8 +161,8 @@ public class ModelSuggestionAgentITest {
     public static class TestConfig {
       
         @Bean
-        public ModelProviderSuggestionAgent modelProviderSuggestionAgent() {
-            return new ModelProviderSuggestionAgent();
+        public ModelProviderSuggestionAgent modelProviderSuggestionAgent(TagParser tagParser) {
+            return new ModelProviderSuggestionAgent(tagParser);
         }
 
         @Bean

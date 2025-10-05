@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 
 import org.slf4j.LoggerFactory
-import com.embabel.database.server.service.ModelSuggestionService
+import com.embabel.database.agent.service.ModelSuggestionService
 
 import java.util.UUID
 
@@ -45,17 +45,18 @@ class ModelSuggestionController {
         return if (sessionKey in headers) {
             //this is a reply with the same session
             val requestId: String? = headers[sessionKey]
-            val models = modelSuggestionService.getModels(prompt, requestId!!)
-            val resultMap = mapOf("models" to models)
+            val results = modelSuggestionService.getModelOptions(prompt, requestId!!)
+            val resultMap = mapOf("result" to results["result"])
             ResponseEntity.ok()
                 .header(sessionKey,requestId)
                 .body(resultMap)
         } else {
             //generate a session id
-            val requestId = UUID.randomUUID().toString()
+            // val requestId = UUID.randomUUID().toString()
             //use to get the providers
-            val results = modelSuggestionService.getProviders(prompt, requestId)
-            val resultMap = mapOf("providers" to results)
+            val results = modelSuggestionService.getProviderSuggestions(prompt)
+            val resultMap = mapOf("result" to results["result"])
+            val requestId: String? = results["sessionId"] as String?
             //add to the header and return
             ResponseEntity.ok()
                 .header(sessionKey,requestId)

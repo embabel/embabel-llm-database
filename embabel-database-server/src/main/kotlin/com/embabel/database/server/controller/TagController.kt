@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.beans.factory.annotation.Autowired
 
 
-@RestController
+@RestController("TagController")
 @RequestMapping("/api/v1/tags")
 class TagController : TagParser {
 

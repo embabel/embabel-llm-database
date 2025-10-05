@@ -19,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,7 @@ import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.database.agent.AiModelRepositoryAgent;
 import com.embabel.database.agent.ModelProviderSuggestionAgent;
 import com.embabel.database.agent.ModelSuggestionAgent;
+import com.embabel.database.agent.ModelSuggestionAgentITest;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
@@ -42,6 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(classes={ModelSuggestionServiceITest.class,ModelSuggestionServiceITest.TestConfig.class})
 @ActiveProfiles("ollama")
 public class ModelSuggestionServiceITest {
+
+    private static final Log logger = LogFactory.getLog(ModelSuggestionServiceITest.class);
 
     @Autowired
     ModelSuggestionService modelSuggestionService;
@@ -55,7 +60,9 @@ public class ModelSuggestionServiceITest {
         InMemoryAiModelRepository repository = applicationContext.getBean(InMemoryAiModelRepository.class);
         repository.load();//invoke the load
         //setup the query
-        String userInputText = "find a model that can extract text from an image";        
+        // String userInputText = "find a model that can extract text from an image";  
+        // String userInputText = "I want a model that will create an image from text";      
+        String userInputText = "I want a model that can create images";
         //invoke the service
         Map<String,Object> results = modelSuggestionService.getProviderSuggestions(userInputText);
         assertNotNull(results);
@@ -68,9 +75,9 @@ public class ModelSuggestionServiceITest {
         results = modelSuggestionService.getModelOptions(provider, sessionId);
         assertNotNull(results);
         assertNotNull(results.get("sessionId"));
-        assertNotNull(results.get("results"));
+        assertNotNull(results.get("result"));
+        logger.info(results.get("result"));
     }
-
 
     @TestConfiguration
     @EnableAgents
@@ -82,8 +89,8 @@ public class ModelSuggestionServiceITest {
         }
 
         @Bean
-        public ModelProviderSuggestionAgent modelProviderSuggestionAgent() {
-            return new ModelProviderSuggestionAgent();
+        public ModelProviderSuggestionAgent modelProviderSuggestionAgent(TagParser tagParser) {
+            return new ModelProviderSuggestionAgent(tagParser);
         }
 
         @Bean

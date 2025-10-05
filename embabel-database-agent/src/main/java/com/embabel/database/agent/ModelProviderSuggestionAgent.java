@@ -65,7 +65,7 @@ public class ModelProviderSuggestionAgent {
     
     private static Log logger = LogFactory.getLog(ModelProviderSuggestionAgent.class);
 
-    @Autowired
+    // @Autowired
     TagParser tagParser;
 
     @Autowired
@@ -76,16 +76,24 @@ public class ModelProviderSuggestionAgent {
 
     @Value("${embabel.models.defaultLlm:llama3.1:8b}")
     String modelName;
+
+    public ModelProviderSuggestionAgent(TagParser tagParser) {
+        this.tagParser = tagParser;
+    }
     
     @Action
     public TagList getSuggestedTagList(UserInput userInput, OperationContext operationContext) {
         //retrieves the tags available
+        logger.info("checking for tags");
         //uses an LLM to take the "criteria" from the user and build a tag option
-        List<Map<String,Object>> tags = tagParser.getTasks(objectMapper,TagParser.RESOURCE_LOCATION);
+        // List<Map<String,Object>> tags = tagParser.getTasks(objectMapper,TagParser.RESOURCE_LOCATION);
+        
+
         //convert to just a list of strings     
-        List<String> tagNames = tags.stream()
-            .map(map -> (String) map.get("tag"))
-            .collect(Collectors.toList());   
+        // List<String> tagNames = tags.stream()
+        //     .map(map -> (String) map.get("tag"))
+        //     .collect(Collectors.toList());   
+        List<String> tagNames = getAvailableTags();
        
         //set up the prompt
         var prompt = """
@@ -96,7 +104,7 @@ public class ModelProviderSuggestionAgent {
 
                 Tag Options = %s
                 """.formatted(userInput.getContent(),tagNames);
-        logger.debug(prompt);//quick dump of the prompot
+        logger.info(prompt);//quick dump of the prompot
         return operationContext.ai()
             .withLlm(modelName)
             .createObject(prompt, TagList.class);
@@ -105,10 +113,14 @@ public class ModelProviderSuggestionAgent {
     //retrieve models for the specified tag(s)
     @Action(pre="have_models")
     public ListModelMetadata getModelsByTag(TagList tagList) {
-        logger.info("getting models");
+        logger.info("getting models: " + tagList.toString());
         //build the search criteria
         String[] tags = tagList.tags().toArray(new String[tagList.tags().size()]);
+        logger.info("tags passed " + String.join(", ",tags));
         List<ModelMetadata> models = aiModelRepository.findByTags(tags);
+        logger.info("models is null: " + (models == null));
+        logger.info("models is empty: " + (models != null ? models.isEmpty() : "null"));
+        //TODO need to be able to short circuit here if there are no matches
         //return
         return new ListModelMetadata(models);
     }
@@ -147,6 +159,17 @@ public class ModelProviderSuggestionAgent {
     public boolean haveModels() {
         logger.info("checking for models");
         return (aiModelRepository.count() > 0);
+    }
+
+    List<String> getAvailableTags() {
+        //get all the models
+        List<ModelMetadata> models = aiModelRepository.findAll();
+        //filter to get a unique list of actual tags in the repository
+        //return
+        return models.stream()
+            .flatMap(model -> ((LlmModelMetadata) model).getTags().stream())
+            .distinct()
+            .collect(Collectors.toList());
     }
 
 }

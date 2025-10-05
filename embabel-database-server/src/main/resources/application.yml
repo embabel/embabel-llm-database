@@ -6,7 +6,11 @@ spring:
     ollama:
       base-url: http://localhost:11434
   application:
-    name: embabel-database-server  
+    name: embabel-database-server
+  http:
+    client:
+      connect-timeout: 30s
+      read-timeout: 240s #increased to cater for CPU-based ollama  
   output:
     ansi:
       enabled: ALWAYS

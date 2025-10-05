@@ -31,9 +31,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.database.agent.ModelProviderSuggestionAgent;
+import com.embabel.database.agent.ModelSuggestionAgent;
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataService;
+import com.embabel.database.agent.service.ModelSuggestionService;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
@@ -41,8 +43,6 @@ import com.embabel.database.agent.util.TagParser;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.InMemoryAiModelRepository;
 import com.embabel.database.server.service.AgentExecutionService;
-import com.embabel.database.server.service.ModelSuggestionService;
-import com.embabel.database.server.service.ModelSuggestionServiceITest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -105,6 +105,17 @@ public class ModelSuggestionControllerITest {
     @EnableAgents
     public static class TestConfig {
 
+      
+        @Bean
+        public ModelProviderSuggestionAgent modelProviderSuggestionAgent(TagParser tagParser) {
+            return new ModelProviderSuggestionAgent(tagParser);
+        }
+
+        @Bean
+        public ModelSuggestionAgent modelSuggestionAgent() {
+            return new ModelSuggestionAgent();
+        }
+
         @Bean
         public ModelSuggestionController modelSuggestionController() {
             return new ModelSuggestionController();
@@ -126,7 +137,7 @@ public class ModelSuggestionControllerITest {
         }
 
         @Bean
-        public LlmLeaderboardTagParser llmLeaderboardTagParser() {
+        public TagParser llmLeaderboardTagParser() {
             return new LlmLeaderboardTagParser();
         }
 
@@ -138,11 +149,6 @@ public class ModelSuggestionControllerITest {
         @Bean
         public AgentExecutionService agentExecutionService(AgentPlatform agentPlatform) {
             return new AgentExecutionService(agentPlatform);
-        }
-
-        @Bean        
-        public ModelProviderSuggestionAgent modelSuggestionAgent() {
-            return new ModelProviderSuggestionAgent();
         }
 
         @Bean

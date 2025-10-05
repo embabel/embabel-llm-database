@@ -17,13 +17,17 @@ package com.embabel.database.server.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.beans.factory.annotation.Qualifier
 
 import com.embabel.database.agent.AiModelRepositoryAgent
+import com.embabel.database.agent.ModelProviderSuggestionAgent
+import com.embabel.database.agent.ModelSuggestionAgent
 import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataService
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataValidationService
+import com.embabel.database.agent.service.ModelSuggestionService;
 import com.embabel.database.agent.util.LlmLeaderboardParser
 import com.embabel.database.agent.util.LlmLeaderboardTagParser
 import com.embabel.database.agent.util.ModelMetadataParser
@@ -48,15 +52,15 @@ class DefaultConfig {
         return AiModelRepositoryAgent()
     }
 
-    //task parser
+    //tag parser
     @Bean
-    fun taskParser(): TagParser {
+    fun tagParser(): TagParser {
         return LlmLeaderboardTagParser()
     }
 
     //model parser
     @Bean
-    fun modelMetadataParser(objectMapper: ObjectMapper, taskParser: TagParser): ModelMetadataParser {
+    fun modelMetadataParser(objectMapper: ObjectMapper, @Qualifier("tagParser") taskParser: TagParser): ModelMetadataParser {
         return LlmLeaderboardParser(objectMapper, taskParser)
     }
 
@@ -82,5 +86,20 @@ class DefaultConfig {
     @Bean
     fun modelMetadataValidationService(aiModelRepository: AiModelRepository): ModelMetadataValidationService {
         return AiRepositoryModelMetadataValidationService(aiModelRepository)
+    }
+
+    @Bean
+    fun modelProviderSuggestionAgent(@Qualifier("tagParser") tagParser: TagParser): ModelProviderSuggestionAgent {
+        return ModelProviderSuggestionAgent(tagParser)
+    }
+
+    @Bean
+    fun modelSuggestionAgent(): ModelSuggestionAgent {
+        return ModelSuggestionAgent()
+    }
+
+    @Bean
+    fun modelSuggestionService(): ModelSuggestionService {
+        return ModelSuggestionService();
     }
 }
