@@ -44,7 +44,7 @@ public class ModelSuggestionAgent {
         description = "Generates a list of models based on user selected provider, tags and previously filtered list"
     )
     @Action
-    public ModelList getModels(UserInput userInput, ListModelMetadata listModelMetadata, OperationContext operationContext) {
+    public String getModels(UserInput userInput, ListModelMetadata listModelMetadata, OperationContext operationContext) {
         String models = getModelsForProvider(userInput.getContent(),listModelMetadata);
         //build the prompt
         var prompt = """
@@ -55,7 +55,8 @@ public class ModelSuggestionAgent {
                 """.formatted(models);
         return operationContext.ai()
             .withLlm(modelName)
-            .createObject(prompt,ModelList.class);
+            .createObject(prompt,String.class);
+            // .createObject(prompt,ModelList.class);
     }
 
     // @Action

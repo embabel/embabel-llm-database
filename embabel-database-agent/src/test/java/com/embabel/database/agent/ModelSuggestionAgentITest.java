@@ -102,14 +102,9 @@ public class ModelSuggestionAgentITest {
             //still waiting
             Thread.sleep(500);//wait 500ms            
         }//end while        
-
         //use getObjects to get the history
-
         Object result = agentProcess.lastResult();
         assertNotNull(result);
-        // ProviderOptions providerOptions = (ProviderOptions) result;
-        // assertNotNull(providerOptions.response());
-        // assertFalse(providerOptions.response().length() <= 0);
         logger.info(result);
         //should be able to get the history and invoke a second agent
         Optional<Object> list = agentProcess.spawn()
