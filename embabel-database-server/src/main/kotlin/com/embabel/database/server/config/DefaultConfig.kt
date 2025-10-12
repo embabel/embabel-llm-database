@@ -17,6 +17,7 @@ package com.embabel.database.server.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
 import org.springframework.beans.factory.annotation.Qualifier
 
 import com.embabel.database.agent.AiModelRepositoryAgent
@@ -72,8 +73,8 @@ class DefaultConfig {
 
     //model loader action
     @Bean
-    fun modelLoader(): InMemoryAiModelRepositoryLoader {
-        return InMemoryAiModelRepositoryLoader()
+    fun modelLoader(env: Environment): InMemoryAiModelRepositoryLoader {
+        return InMemoryAiModelRepositoryLoader(env)
     }
 
     //instantiate coordination service

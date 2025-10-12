@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
@@ -42,7 +43,9 @@ import com.embabel.database.agent.util.ModelMetadataParser;
 import com.embabel.database.agent.util.TagParser;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.InMemoryAiModelRepository;
+import com.embabel.database.server.config.DefaultConfig;
 import com.embabel.database.server.service.AgentExecutionService;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,7 +53,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes={ModelSuggestionControllerITest.class,ModelSuggestionControllerITest.TestConfig.class})
+@SpringBootTest
+@Import(DefaultConfig.class)
 @ActiveProfiles("ollama")
 public class ModelSuggestionControllerITest {
 
@@ -97,68 +101,6 @@ public class ModelSuggestionControllerITest {
         String models = result.getResponse().getContentAsString();
         assertNotNull(models);
         logger.info(models);
-
     }
 
-
-    @TestConfiguration
-    @EnableAgents
-    public static class TestConfig {
-
-      
-        @Bean
-        public ModelProviderSuggestionAgent modelProviderSuggestionAgent(TagParser tagParser) {
-            return new ModelProviderSuggestionAgent(tagParser);
-        }
-
-        @Bean
-        public ModelSuggestionAgent modelSuggestionAgent() {
-            return new ModelSuggestionAgent();
-        }
-
-        @Bean
-        public ModelSuggestionController modelSuggestionController() {
-            return new ModelSuggestionController();
-        }
-
-        @Bean
-        public ModelMetadataService metadataService() {
-            return new ModelMetadataService();
-        }
-
-        @Bean
-        public ModelMetadataDiscoveryService modelMetadataDiscoveryService(ModelMetadataParser modelMetadataParser) {
-            return new LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser);
-        }
-
-        @Bean
-        public ModelMetadataParser llmLeaderboardParser(ObjectMapper objectMapper, TagParser tagParser) {
-            return new LlmLeaderboardParser(objectMapper,tagParser);
-        }
-
-        @Bean
-        public TagParser llmLeaderboardTagParser() {
-            return new LlmLeaderboardTagParser();
-        }
-
-        @Bean
-        public ModelSuggestionService modelSuggestionService() {
-            return new ModelSuggestionService();
-        }
-
-        @Bean
-        public AgentExecutionService agentExecutionService(AgentPlatform agentPlatform) {
-            return new AgentExecutionService(agentPlatform);
-        }
-
-        @Bean
-        public ObjectMapper objectMapper() {
-            return new ObjectMapper();
-        }
-
-        @Bean
-        public AiModelRepository aiModelRepository() {
-            return new InMemoryAiModelRepository();
-        }
-    }
 }

@@ -17,8 +17,7 @@ package com.embabel.database.server.controller;
 
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.common.ai.model.ModelType;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.InMemoryAiModelRepository;
+import com.embabel.database.server.config.DefaultConfig;
 import com.embabel.database.core.repository.LlmModelMetadata;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +27,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -38,7 +39,9 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.UUID;
 
-@SpringBootTest(classes={AiModelRepositoryControllerITest.class,AiModelRepositoryControllerITest.TestConfig.class})
+@SpringBootTest
+@Import(DefaultConfig.class)
+@ActiveProfiles({"ollama","no-auto-load"})
 public class AiModelRepositoryControllerITest {
     
     MockMvc mockMvc;
@@ -69,21 +72,6 @@ public class AiModelRepositoryControllerITest {
         //try the mock again
         mockMvc.perform(get("/api/v1/models"))
             .andExpect(status().isOk()); //simple is ok (200)        
-    }
-
-    @TestConfiguration
-    public static class TestConfig {
-
-        @Bean
-        AiModelRepository aiModelRepository() {
-            return new InMemoryAiModelRepository();
-        }
-
-        @Bean
-        AiModelRepositoryController aiModelRepositoryController() {
-            return new AiModelRepositoryController();
-        }
-
     }
 
     // Stub/mock implementation for testing

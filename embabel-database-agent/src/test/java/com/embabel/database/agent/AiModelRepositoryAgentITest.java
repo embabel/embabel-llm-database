@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -41,6 +42,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
+// import com.embabel.agent.config.annotation.AgentPlatform;
+import com.embabel.agent.autoconfigure.platform.AgentPlatformAutoConfiguration;
+import com.embabel.agent.config.annotation.EnableAgentMcpServer;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.core.ActionInvocation;
 import com.embabel.agent.core.Agent;
@@ -48,6 +52,7 @@ import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.core.AgentProcess;
 import com.embabel.agent.core.AgentProcessStatusCode;
 import com.embabel.agent.core.ProcessOptions;
+import com.embabel.agent.core.support.DefaultAgentPlatform;
 import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService;
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
@@ -111,6 +116,10 @@ public class AiModelRepositoryAgentITest {
         aiModelRepository.deleteAll();//clean it out
         //check
         assertTrue(aiModelRepository.findAll().isEmpty());
+        //list all the beans
+        for (String name : applicationContext.getBeanDefinitionNames()) {
+            logger.info("Bean " + name);
+        }
         //get the agents
         AgentPlatform agentFactory = applicationContext.getBean(AgentPlatform.class);
         //get agents

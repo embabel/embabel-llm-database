@@ -17,14 +17,24 @@ package com.embabel.database.core.repository.util
 
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 
 import com.embabel.database.core.repository.InMemoryAiModelRepository
 
+/**
+ * Component can be disabled by setting the profile 'no-auto-load'
+ */
 @Component
-class InMemoryAiModelRepositoryLoader() : ApplicationListener<ContextRefreshedEvent> {
+class InMemoryAiModelRepositoryLoader(
+    private val environment: Environment
+) : ApplicationListener<ContextRefreshedEvent> {
 
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
+        val activeProfiles = environment.activeProfiles
+        if (activeProfiles.contains("no-auto-load")) {
+            return
+        }
         val repository = event.applicationContext.getBean(InMemoryAiModelRepository::class.java)
         //trigger load
         repository.load()
