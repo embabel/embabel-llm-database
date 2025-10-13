@@ -131,7 +131,7 @@ public class ModelProviderSuggestionAgent {
     )
     @Action
     public String getProviders(ListModelMetadata listModelMetadata,UserInput userInput, OperationContext operationContext) {
-        logger.info("getting provider group");
+        logger.info("(getProviders) getting provider group");
         //group
         List<String> providers = listModelMetadata.models()
             .stream()
@@ -157,7 +157,7 @@ public class ModelProviderSuggestionAgent {
 
     @Condition(name="have_models")
     public boolean haveModels() {
-        logger.info("checking for models");
+        logger.info("(haveModels) checking for models");
         return (aiModelRepository.count() > 0);
     }
 

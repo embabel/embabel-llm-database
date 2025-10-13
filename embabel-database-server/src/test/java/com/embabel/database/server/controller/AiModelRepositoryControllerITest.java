@@ -18,6 +18,7 @@ package com.embabel.database.server.controller;
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.common.ai.model.ModelType;
 import com.embabel.database.server.config.DefaultConfig;
+import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.LlmModelMetadata;
 
 import org.junit.jupiter.api.BeforeEach;

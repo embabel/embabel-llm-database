@@ -35,6 +35,7 @@ import com.embabel.agent.core.AgentProcessStatusCode;
 import com.embabel.agent.core.ProcessOptions;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.database.agent.domain.AgentResult;
+import com.embabel.database.agent.domain.AgentSession;
 import com.embabel.database.agent.domain.ListModelMetadata;
 
 import jakarta.annotation.PostConstruct;
@@ -62,41 +63,41 @@ public class ModelSuggestionService {
     @Value("${embabel.database.recommendation.agents:ModelProviderSuggestionAgent,ModelSuggestionAgent}")
     String[] agentNames;
 
-    //TODO move to a broader session state
-    Map<String,Map<String,Object>> sessionMap;
+    @Autowired
+    AgentManagementService agentManagementService;
 
-    @PostConstruct
-    public void setup() {
-        sessionMap = Collections.synchronizedMap(new HashMap<>()); //TODO enhance to externalize for robust sessions
-    }
-
-    public Map<String,Object> getProviderSuggestions(String request) throws Exception {
+    public String getProviderSuggestions(String request) throws Exception {
+        //return the session ID and trigger the process
         //establish a session
         String sessionId = UUID.randomUUID().toString();        
         //add to the session
         Map<String,Object> sessionRecord = new HashMap<>();
-        sessionRecord.put(REQUEST,request); //TODO externalize names
+        sessionRecord.put(REQUEST,request);
         //take in a description and coordinate with agents
         UserInput userInput = new UserInput(request);        
-        //retrieve the first agent
-        AgentResult agentResult = runAgent("ModelProviderSuggestionAgent",Collections.singletonMap(USER_INPUT, userInput));
-        //add to the session
-        sessionRecord.put(BLACKBOARD,agentResult.blackboard());
-        sessionRecord.put(RESULT,agentResult.result());
-        sessionMap.put(sessionId,sessionRecord);
+        Map<String,Object> context = new HashMap<>();
+        context.put(USER_INPUT,userInput);
+        agentManagementService.run(sessionId,"ModelProviderSuggestionAgent",context);
         //return
-        Map<String,Object> result = new HashMap<>();
-        result.put(SESSION_ID,sessionId);
-        result.put(RESULT,agentResult.result());
-        return result;
+        return sessionId;
     }
 
-    public Map<String,Object> getModelOptions(String request,String sessionId) throws Exception {
+    public Map<String,Object> getResponse(String sessionId) throws Exception {
+        //check if there's a response yet
+        Map<String,Object> sessionResults = agentManagementService.getLatestResults(sessionId);
+        if (sessionResults == null) {
+            return null;//return nothing... not done
+        } //end if
+        return sessionResults;
+    }
+
+
+    public String getModelOptions(String request,String sessionId) throws Exception {
         if (sessionId == null || sessionId.length() <= 0) {
             throw new IllegalArgumentException("no session id passed");
         }//end if
         //retrieve the session
-        Map<String,Object> sessionRecord = sessionMap.get(sessionId);
+        Map<String,Object> sessionRecord = agentManagementService.getResults(sessionId, "ModelProviderSuggestionAgent"); //other agent results
         if (sessionRecord == null) {
             throw new IllegalArgumentException("no session id found"); //throws exception as really should abort
         } //end if
@@ -107,12 +108,9 @@ public class ModelSuggestionService {
         context.put(USER_INPUT,new UserInput(request));
         context.put(LIST_MODEL_METADATA,blackboard.get(ListModelMetadata.class.getSimpleName()));
         //now invoke
-        AgentResult agentResult = runAgent("ModelSuggestionAgent",context);
+        agentManagementService.run(sessionId,"ModelSuggestionAgent",context);
         //return
-        Map<String,Object> result = new HashMap<>();
-        result.put(SESSION_ID,sessionId);
-        result.put(RESULT,agentResult.result());
-        return result;
+        return sessionId;
     }
 
     /**

@@ -27,10 +27,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.embabel.agent.config.annotation.EnableAgentMcpServer;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.database.agent.AiModelRepositoryAgent;
+import com.embabel.database.agent.DefaultTestConfig;
 import com.embabel.database.agent.ModelProviderSuggestionAgent;
 import com.embabel.database.agent.ModelSuggestionAgent;
 import com.embabel.database.agent.ModelSuggestionAgentITest;
@@ -42,7 +45,9 @@ import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.InMemoryAiModelRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootTest(classes={ModelSuggestionServiceITest.class,ModelSuggestionServiceITest.TestConfig.class})
+@SpringBootTest(classes={ModelSuggestionServiceITest.class,DefaultTestConfig.class})
+// @SpringBootTest
+// @Import(DefaultTestConfig.class)
 @ActiveProfiles("ollama")
 public class ModelSuggestionServiceITest {
 
@@ -64,23 +69,24 @@ public class ModelSuggestionServiceITest {
         // String userInputText = "I want a model that will create an image from text";      
         String userInputText = "I want a model that can create images";
         //invoke the service
-        Map<String,Object> results = modelSuggestionService.getProviderSuggestions(userInputText);
-        assertNotNull(results);
-        assertNotNull(results.get("sessionId"));
+        String sessionId = modelSuggestionService.getProviderSuggestions(userInputText);
+        assertNotNull(sessionId);
+        Map<String,Object> results = null;
+        //wait for complete
+        while (true) {
+            results = modelSuggestionService.getResponse(sessionId);
+            if (results != null) {
+                break;//end loop
+            } //end if
+            //wait again
+            Thread.sleep(200);
+        } //end while
         //get the sessionid
-        String sessionId = results.get("sessionId").toString();
-        //select a provider (assume deepinfra)
-        String provider = "deepinfra";
-        //invoke the next steps
-        results = modelSuggestionService.getModelOptions(provider, sessionId);
-        assertNotNull(results);
-        assertNotNull(results.get("sessionId"));
         assertNotNull(results.get("result"));
-        logger.info(results.get("result"));
     }
 
-    @TestConfiguration
-    @EnableAgents
+    // @TestConfiguration
+    // @EnableAgents
     public static class TestConfig {
       
         @Bean

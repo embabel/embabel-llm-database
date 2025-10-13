@@ -23,12 +23,15 @@ import org.springframework.beans.factory.annotation.Qualifier
 import com.embabel.database.agent.AiModelRepositoryAgent
 import com.embabel.database.agent.ModelProviderSuggestionAgent
 import com.embabel.database.agent.ModelSuggestionAgent
+import com.embabel.database.agent.service.AgentManagementService;
 import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService
 import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService
+import com.embabel.database.agent.service.InMemorySessionManagementService;
 import com.embabel.database.agent.service.ModelMetadataService
 import com.embabel.database.agent.service.ModelMetadataDiscoveryService
 import com.embabel.database.agent.service.ModelMetadataValidationService
 import com.embabel.database.agent.service.ModelSuggestionService;
+import com.embabel.database.agent.service.SessionManagementService;
 import com.embabel.database.agent.util.LlmLeaderboardParser
 import com.embabel.database.agent.util.LlmLeaderboardTagParser
 import com.embabel.database.agent.util.ModelMetadataParser
@@ -102,5 +105,15 @@ class DefaultConfig {
     @Bean
     fun modelSuggestionService(): ModelSuggestionService {
         return ModelSuggestionService();
+    }
+
+    @Bean
+    fun agentManagementService(): AgentManagementService {
+        return AgentManagementService();
+    }
+
+    @Bean
+    fun sessionManagementService(): SessionManagementService {
+        return InMemorySessionManagementService();
     }
 }

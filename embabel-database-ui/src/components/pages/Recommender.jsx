@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Section, SectionCard } from "@blueprintjs/core";
+import ReactMarkdown from 'react-markdown';
 
 import ChatInput from "../forms/ChatInput";
 const base_url = "/api/v1/models";
@@ -7,6 +8,7 @@ const base_url = "/api/v1/models";
 function Recommender() {
 
     const [messages, setMessages] = useState([]);
+    const [sessionId, setSessionId] = useState("");
 
     const chatInputRef = useRef(null);
 
@@ -17,42 +19,87 @@ function Recommender() {
             "role":role
         }
         console.log(message);
-        if ("providers" in message) {
-            //it's the provider message
-            //split up the response
-            let providers = message["providers"]
-            //providers is a comma delimited array
-            let split = providers.split(",");
-            let formattedProviders = split.join(" ");
-            msg.message = `Please reply with the name one of the following providers. ${formattedProviders}`
-        } else if ("models" in message) {
-            //it's the message with the full models
-            //TODO format models
-            msg.message = `Here are some model options`;
-        } else {
+        if (message.message) {
             msg.message = message.message;
-        } //end if
+        } else {
+            msg.message = message;    
+        }
+        // } //end if
         //get the existing message set
         setMessages(prev => [...prev, msg]);
     }
 
     const sendMessage = (message) => {
-        //update the value straight away
-        updateMessages({"message":message},"user");//request
-        //send the content of value
-        fetch(`${base_url}/recommend`,{
-            method:'POST',
-            headers:{'Content-type': 'text/plain', 'Accept':'application/json'},
+        // Immediately show user's message
+        updateMessages({ message }, "user");
+
+        if (chatInputRef.current) {
+            chatInputRef.current.setThinkingState(true);
+        }
+
+        // First POST to initiate recommendation session
+        fetch(`${base_url}/recommend`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'text/plain',
+                'Accept': 'application/json',
+                ...(sessionId ? { 'x-embabel-request-id': sessionId } : {})                
+            },
             body: message
         })
         .then(response => response.json())
-        .then(data => {            
-            updateMessages(data,"system");//reply
+        .then(data => {
+            const sessionId = data.sessionId;
+            if (!sessionId) {
+                throw new Error("No sessionId returned");
+            }
+            setSessionId(sessionId);
+            
+            // Start polling for results
+            pollForResults(sessionId);
+        })
+        .catch(error => {
+            console.error("Error initiating recommendation:", error);
             if (chatInputRef.current) {
                 chatInputRef.current.setThinkingState(false);
-            }            
+            }
         });
-    }
+    };
+
+    const pollForResults = (sessionId) => {
+        const pollInterval = 2000; // ms
+
+        const poll = () => {
+            fetch(`${base_url}/recommend/${sessionId}`, {
+                method: 'GET',
+                headers: { 
+                    'Accept': 'application/json',
+                    'x-embabel-request-id': sessionId
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    // Got a result, stop polling
+                    updateMessages(data.result, "system");
+                    if (chatInputRef.current) {
+                        chatInputRef.current.setThinkingState(false);
+                    }
+                } else {
+                    // Continue polling until result is ready
+                    setTimeout(poll, pollInterval);
+                }
+            })
+            .catch(error => {
+                console.error("Error polling for results:", error);
+                if (chatInputRef.current) {
+                    chatInputRef.current.setThinkingState(false);
+                }
+            });
+        };
+
+        poll();
+    };
 
     return (
         <>
@@ -79,7 +126,7 @@ function Recommender() {
                                         textAlign: msg.role === "user" ? "end" : "start",
                                         maxWidth: "70%",
                                     }} >
-                                    {msg.message}
+                                    <ReactMarkdown>{msg.message}</ReactMarkdown>
                                 </div>
                             </div>                     
                         ))
@@ -94,9 +141,3 @@ function Recommender() {
 }
 
 export default Recommender
-
-
-                    // <ControlGroup>
-                    //     <InputGroup type="text" inputSize={50} style={{width: '60vw'}} value={value} onChange={(e) => setValue(e.target.value)} onKeyDown={handleKeyDown}/>
-                    //     <Button icon="send-message" text="Send" onClick={sendMessage}/>
-                    // </ControlGroup>

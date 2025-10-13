@@ -28,6 +28,7 @@ const ChatInput = forwardRef(({sendMessage}, ref) => {
         if (sendMessage) {
             sendMessage(value);
             setThinking(true);
+            setValue("");//make it blank
         } //end if
     }    
 

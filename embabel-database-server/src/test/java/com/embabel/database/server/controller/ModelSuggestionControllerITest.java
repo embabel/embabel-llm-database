@@ -50,8 +50,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Map;
 
 @SpringBootTest
 @Import(DefaultConfig.class)
@@ -77,30 +80,88 @@ public class ModelSuggestionControllerITest {
 
     @Test
     void testRecommendations() throws Exception {
-        //load the registry
+        // Load the registry
         ((InMemoryAiModelRepository) aiModelRepository).load();
-        //run the prompt        
+
         String prompt = "Recommend a model that can narrate a script";
-        //expected results are text to audio tags
-        MvcResult result = mockMvc.perform(post(url).content(prompt.getBytes()))
-                                .andExpect(status().isOk())
-                                .andReturn();
-        //check for the presence of the header
-        String requestId = result.getResponse()
-                                .getHeader("X-embabel-request-id");
-        assertNotNull(requestId);
-        //check for the provider names
-        String providers = result.getResponse().getContentAsString();
-        assertNotNull(providers);
-        assertTrue(providers.contains("sambanova")); //this should be in the list
-        logger.info(providers);
-        //now send back the "selection"
-        result = mockMvc.perform(post(url).content("sambanova").header("X-embabel-request-id",requestId))
-                        .andExpect(status().isOk())
-                        .andReturn();
-        String models = result.getResponse().getContentAsString();
-        assertNotNull(models);
-        logger.info(models);
+        logger.info("Sending initial provider suggestion request...");
+
+        // Step 1: Send prompt to initiate session
+        MvcResult initialResult = mockMvc.perform(post(url)
+                .content(prompt.getBytes()))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        // Extract session ID from header
+        String sessionId = initialResult.getResponse()
+            .getHeader("X-embabel-request-id");
+        assertNotNull(sessionId, "Session ID must be returned in header");
+        logger.info("Session started with ID: {}", sessionId);
+
+        // Step 2: Poll the GET endpoint for results until they are ready
+        Map<String, Object> responseData = null;
+        int maxAttempts = 5;
+        int attempt = 0;
+        while (true) {
+            MvcResult pollResult = mockMvc.perform(get(url + "/" + sessionId)
+                    .header("X-embabel-request-id", sessionId))
+                .andExpect(status().isOk())
+                .andReturn();
+
+            String content = pollResult.getResponse().getContentAsString();
+            logger.info("Polling attempt {} response: {}", attempt + 1, content);
+
+            // Parse JSON response
+            responseData = new ObjectMapper().readValue(content, Map.class);
+
+            if (responseData.get("result") != null) {
+                break; // results ready
+            }
+
+            Thread.sleep(10000); // wait 10 seconds before polling again
+            attempt++;
+        }
+
+        assertNotNull(responseData, "Response data should not be null");
+        assertTrue(responseData.get("result") != null, "Expected non-null results after polling");
+        assertTrue(responseData.get("result").toString().contains("sambanova"),
+            "Result should contain 'sambanova' provider");
+
+        logger.info("Final provider results: {}", responseData);
+
+        // Step 3: Send back a selection using the same session
+        MvcResult selectionResult = mockMvc.perform(post(url)
+                .content("sambanova")
+                .header("X-embabel-request-id", sessionId))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        logger.info("asking the agent to use the sambanova model");
+
+        //loop again on the session id
+        while (true) {
+            MvcResult pollResult = mockMvc.perform(get(url + "/" + sessionId)
+                    .header("X-embabel-request-id", sessionId))
+                .andExpect(status().isOk())
+                .andReturn();
+
+            String content = pollResult.getResponse().getContentAsString();
+            logger.info("Polling attempt {} response: {}", attempt + 1, content);
+
+            // Parse JSON response
+            responseData = new ObjectMapper().readValue(content, Map.class);
+
+            if (responseData.get("result") != null) {
+                break; // results ready
+            }
+
+            Thread.sleep(10000); // wait 10 seconds before polling again
+            attempt++;
+        }        
+
+        assertNotNull(responseData, "Response data should not be null");
+        assertTrue(responseData.get("result") != null, "Expected non-null results after polling");
+        logger.info("Models response: {}", responseData.get("result").toString());
     }
 
 }
