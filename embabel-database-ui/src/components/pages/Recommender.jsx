@@ -1,16 +1,57 @@
 import { useState, useRef } from "react";
-import { Section, SectionCard } from "@blueprintjs/core";
+import { Card, Section, SectionCard, TextAlignment } from "@blueprintjs/core";
 import ReactMarkdown from 'react-markdown';
+
+import { ChatContainer, MessageList, MessageSeparator, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
 import ChatInput from "../forms/ChatInput";
 const base_url = "/api/v1/models";
+
+import './Recommender.css';
 
 function Recommender() {
 
     const [messages, setMessages] = useState([]);
     const [sessionId, setSessionId] = useState("");
+    const [thinking,setThinking] = useState(false);
 
     const chatInputRef = useRef(null);
+
+    const formatMessage = (message,sender) => {
+        const messageObj = {
+            props: {
+                model: {
+                    message: message,
+                    sender: sender,
+                    direction: sender === "user" ? "outgoing" : "incoming",
+                    position: "normal"
+                },
+                children: [
+                    <Message.CustomContent>
+                        <ReactLinkify componentDecorator={(decoratedRef, descroatedText, key) => <Button text="View More" onClick={handleViewMoreClick} key={key}/>}>
+                            {message}
+                        </ReactLinkify>
+                    </Message.CustomContent>
+                ]
+            }
+        }
+        return messageObj;
+    }
+
+    const handleViewMoreClick = () => {
+        //navigate to view more detail
+    }
+
+    const handleMessageSend = (message) => {
+        //show working
+        setThinking(true);
+        //format message
+        let msg = formatMessage(message,"user");
+        //add to the list
+        setMessages(prev => [...prev,msg]);
+        //send
+        sendMessage(message);
+    }
 
     const updateMessages = (message,role) => {
         //normalize the message object first
@@ -102,41 +143,26 @@ function Recommender() {
     };
 
     return (
-        <>
-            <Section style={{  height: '100vh',
-                        display: 'grid',
-                        gridTemplateRows: '1fr auto',  // top scrollable, bottom fixed
-                        overflow: 'hidden' }}>
-                <SectionCard style={{ overflowY: 'auto',padding: '1rem' }}>
-                    {messages.length > 0 &&
-                        messages.map((msg) => (
-                            <div
-                                key={msg.id}
-                                style={{
-                                display: "flex",
-                                justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-                                margin: "0.5rem 0", // vertical spacing between messages
-                                }} >
-                                <div
-                                    style={{
-                                        padding: "0.5rem 1rem",
-                                        borderRadius: "8px",
-                                        color: "black",
-                                        backgroundColor: msg.role === "user" ? "#d1e7ff" : "#f0f0f0",
-                                        textAlign: msg.role === "user" ? "end" : "start",
-                                        maxWidth: "70%",
-                                    }} >
-                                    <ReactMarkdown>{msg.message}</ReactMarkdown>
-                                </div>
-                            </div>                     
-                        ))
-                    }
-                </SectionCard>
-                <SectionCard style={{  borderTop: '1px solid #ccc' }}>
-                    <ChatInput ref={chatInputRef} sendMessage={sendMessage}/>
-                </SectionCard>
-            </Section>
-        </>
+        <Section style={{height: '100%', display: 'grid', gridTemplateRows: '20% 80%', placeItems: 'center '}}>
+            <SectionCard>
+                <h3>Embabel LLM Recommender</h3>
+            </SectionCard>
+            <SectionCard style={{width:'100%', height: '100%', placeItems: 'center'}}>
+                <Card style={{width:'90%',height: '90%'}}>
+                    <ChatContainer style={{height:'90%',overflow:'auto'}}>
+                        <MessageList typingIndicator={thinking ? <TypingIndicator content="Thinking..."/> : null}>
+                            {(messages.map((msg,idx) => msg.type === "separator" ? (
+                                <MessageSeparator key={idx} {...msg.props}/>
+                            ) : (
+                                <Message key={idx} {...msg.props}/>
+                            )))}
+                        </MessageList>
+                        
+                    </ChatContainer>
+                    <MessageInput style={{textAlign:'start', height:'10%',width:'100%'}} placeholder="Enter what you want the model to do..." attachButton={false} onSend={handleMessageSend}/>
+                </Card>
+            </SectionCard>
+        </Section>
     );
 }
 

@@ -15,7 +15,7 @@ import MenuBlock from './components/layout/MenuBlock';
 function App() {
 
   return (
-    <div className="bp6-dark">
+    <div className="bp6-dark" style={{height: '100vh', display: 'flex', flexDirection: 'column'}}>
       <Router>
         <div id="main-page">
           <div id="left-column">

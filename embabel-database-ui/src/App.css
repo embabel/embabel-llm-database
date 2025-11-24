@@ -3,22 +3,25 @@
   margin: 0 auto;
   /* padding: 2rem; */
   text-align: center;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 #main-page {
   display: flex;
-  height: 100vh;
-  width: 100vw;
+  height: 95vh;
+  /* width: 100vw; */
 }
 
 #left-column {
-  flex: 0 0 20%;
+  flex: 0 0 12%;
   overflow-y: auto;
+  height: 100%;
 }
 
 #content {
   flex: 1;
   overflow-y: auto;
+  height: 100%;
+  width: 100%;
 }
 
