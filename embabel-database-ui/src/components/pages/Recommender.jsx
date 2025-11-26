@@ -5,8 +5,10 @@ import ReactMarkdown from 'react-markdown';
 import { ChatContainer, MessageList, MessageSeparator, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
 
 import ChatInput from "../forms/ChatInput";
+
 const base_url = "/api/v1/models";
 
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import './Recommender.css';
 
 function Recommender() {
@@ -143,24 +145,27 @@ function Recommender() {
     };
 
     return (
-        <Section style={{height: '100%', display: 'grid', gridTemplateRows: '20% 80%', placeItems: 'center '}}>
-            <SectionCard>
+        <Section
+            style={{ height: '100%', display: 'grid', gridTemplateRows: '20% 80%', placeItems: 'center'}}>
+            <SectionCard style={{ width: '100%'}}>
                 <h3>Embabel LLM Recommender</h3>
             </SectionCard>
-            <SectionCard style={{width:'100%', height: '100%', placeItems: 'center'}}>
-                <Card style={{width:'90%',height: '90%'}}>
-                    <ChatContainer style={{height:'90%',overflow:'auto'}}>
-                        <MessageList typingIndicator={thinking ? <TypingIndicator content="Thinking..."/> : null}>
-                            {(messages.map((msg,idx) => msg.type === "separator" ? (
-                                <MessageSeparator key={idx} {...msg.props}/>
+            <SectionCard style={{width:'100%', height:'100%', backgroundColor: '#252A31'}}>
+                <ChatContainer style={{ height: '100%', overflow:'auto'}}>
+                    <MessageList style={{backgroundColor:'#252A31', color:'white'}} typingIndicator={thinking ? <TypingIndicator style={{ textAlign:'start',backgroundColor:'#252A31', color:'white'}} content="Thinking..." /> : null}>
+                        {messages.map((msg, idx) =>
+                            msg.type === 'separator' ? (
+                                <MessageSeparator key={idx} {...msg.props} />
                             ) : (
-                                <Message key={idx} {...msg.props}/>
-                            )))}
-                        </MessageList>
-                        
-                    </ChatContainer>
-                    <MessageInput style={{textAlign:'start', height:'10%',width:'100%'}} placeholder="Enter what you want the model to do..." attachButton={false} onSend={handleMessageSend}/>
-                </Card>
+                                <Message key={idx} {...msg.props} />
+                            )
+                        )}
+                    </MessageList>
+                    <MessageInput style={{ textAlign:'start',backgroundColor:'#252A31', color:'white'}}
+                        placeholder="Enter what you want the model to do..."
+                        attachButton={false}
+                        onSend={handleMessageSend}/>
+                </ChatContainer>
             </SectionCard>
         </Section>
     );
