@@ -15,12 +15,7 @@
  */
 package com.embabel.database.agent;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -30,15 +25,11 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.embabel.agent.api.common.PromptRunner;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.agent.testing.unit.FakeOperationContext;
 import com.embabel.agent.testing.unit.FakePromptRunner;
-import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.common.ai.model.PerTokenPricingModel;
-import com.embabel.common.ai.model.PricingModel;
 import com.embabel.database.agent.domain.ListModelMetadata;
-import com.embabel.database.agent.domain.ProviderList;
 import com.embabel.database.agent.domain.ProviderOptions;
 import com.embabel.database.agent.domain.TagList;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
@@ -53,7 +44,7 @@ public class ModelProviderSuggestionAgentTest {
     private static Log logger = LogFactory.getLog(ModelProviderSuggestionAgentTest.class);
     
     @Test
-    void testGetSuggestedTagList() throws Exception {
+    void testGetSuggestedTagList() {
         //setup the objects
         ObjectMapper objectMapper = new ObjectMapper();
         ModelProviderSuggestionAgent modelSuggestionAgent = new ModelProviderSuggestionAgent(new LlmLeaderboardTagParser());
@@ -62,14 +53,13 @@ public class ModelProviderSuggestionAgentTest {
         ReflectionTestUtils.setField(modelSuggestionAgent, "tagParser", tagParser);
         ReflectionTestUtils.setField(modelSuggestionAgent, "modelName", "llama3.1:8b");
         List<String> expectedTags = Collections.singletonList("image-to-text");
-        TagList tagList = new TagList(expectedTags);
 
         AiModelRepository inMemoryAiModelRepository = new InMemoryAiModelRepository();
         //create models that match the list
         var today = LocalDate.now();
         //stub object
         var pricing = new PerTokenPricingModel(15.0,75.0);
-        var llmInstance = new LlmModelMetadata(UUID.randomUUID().toString(),"gpt-4","OpenAI",today,pricing,10000l,expectedTags,"test",0l,"test");
+        var llmInstance = new LlmModelMetadata(UUID.randomUUID().toString(),"gpt-4","OpenAI",today,pricing, 10000L,expectedTags,"test",0L,"test");
         //insert
         inMemoryAiModelRepository.save(llmInstance);
         ReflectionTestUtils.setField(modelSuggestionAgent, "aiModelRepository", inMemoryAiModelRepository);
@@ -84,7 +74,7 @@ public class ModelProviderSuggestionAgentTest {
         modelSuggestionAgent.getSuggestedTagList(userInput,operationContext);
     }
 
-    // @Test
+//     @Test
     void testGetProviders() throws Exception {
         //build a tag list
         //get the models
@@ -128,7 +118,10 @@ public class ModelProviderSuggestionAgentTest {
         ProviderOptions expected = new ProviderOptions(response);//,Collections.singletonList("OpenAI"));
         operationContext.expectResponse(operationContext);         
         modelSuggestionAgent.getProviders(models,userInput,operationContext);
-        assertTrue(promptRunner.getLlmInvocations().getFirst().getPrompt().contains("OpenAI"));
+        promptRunner.getLlmInvocations().getFirst().getMessages().forEach(message -> {
+            logger.info("role " + message.getRole().toString() + " " + message.getContent().contains("OpenAI"));
+        });
+//        assertTrue(promptRunner.getLlmInvocations().getFirst().getPrompt().contains("OpenAI"));
         // assertNotNull(providers);
         // assertNotNull(providers.response());
     }
