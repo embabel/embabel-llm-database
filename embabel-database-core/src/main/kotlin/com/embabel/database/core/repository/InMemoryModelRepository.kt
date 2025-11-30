@@ -82,7 +82,14 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
     }
 
     override fun findByTags(vararg tags: String): List<Model>? {
-        TODO("Not yet implemented")
+        return models.filter {
+            model -> model.tags?.any {
+                tag -> tags.contains(tag) }
+            ?: false }
+    }
+
+    override fun deleteAll() {
+        models.clear()
     }
 
 

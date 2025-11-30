@@ -24,8 +24,13 @@ import java.util.Map;
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.database.agent.*;
+import com.embabel.database.agent.domain.ModelSuggestion;
+import com.embabel.database.agent.domain.SessionContext;
+import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.util.ModelRepositoryLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,8 +39,7 @@ import org.springframework.context.ApplicationContext;
 @SpringBootTest(classes={ModelSuggestionServiceITest.class, AgentConfigurationSupport.class}, properties = {
         "spring.ai.bedrock.aws.region=us-east-1",
         "spring.ai.model.chat=ollama",
-        "aws.accessKeyId=key",
-        "aws.secretAccessKey=secret"
+        "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0"
 })
 public class ModelSuggestionServiceITest {
 
@@ -45,35 +49,34 @@ public class ModelSuggestionServiceITest {
     ModelSuggestionService modelSuggestionService;
 
     @Autowired
-    ApplicationContext applicationContext;
-
-    @Autowired
     AgentPlatform agentPlatform;
 
+    @Autowired
+    ModelRepository modelRepository;
+
+    @Autowired
+    ModelRepositoryLoader modelRepositoryLoader;
+
+    @BeforeEach
+    void before() {
+        modelRepository.deleteAll();
+        //load
+        modelRepositoryLoader.loadFromFile("./json/export.json");
+    }
 
     @Test
-    void testGetProviderSuggestions() throws Exception {
+    void testFlow() throws Exception {
         //load up the repository for testing
-        AgentInvocation<LocalDateTime> modelLoader = AgentInvocation.builder(agentPlatform).build(LocalDateTime.class);
-        modelLoader.invoke(Collections.emptyMap());
         // String userInputText = "find a model that can extract text from an image";
         // String userInputText = "I want a model that will create an image from text";      
         String userInputText = "I want a model that can create images";
         //invoke the service
-        String sessionId = modelSuggestionService.getProviderSuggestions(userInputText);
-        assertNotNull(sessionId);
-        Map<String,Object> results = null;
-        //wait for complete
-        while (true) {
-            results = modelSuggestionService.getResponse(sessionId);
-            if (results != null) {
-                break;//end loop
-            } //end if
-            //wait again
-            Thread.sleep(200);
-        } //end while
-        //get the sessionid
-        assertNotNull(results.get("result"));
+        SessionContext sessionContext = modelSuggestionService.getProviderSuggestions(userInputText);
+        assertNotNull(sessionContext);
+        //test second invocation
+        ModelSuggestion modelSuggestion = modelSuggestionService.getModelSuggestion("xAi",sessionContext.sessionid());
+        assertNotNull(modelSuggestion);
+        logger.info(modelSuggestion);
     }
 
 }

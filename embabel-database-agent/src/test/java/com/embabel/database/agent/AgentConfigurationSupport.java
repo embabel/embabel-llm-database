@@ -22,6 +22,8 @@ import com.embabel.database.agent.service.*;
 import com.embabel.database.core.repository.InMemoryModelRepository;
 import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.domain.Model;
+import com.embabel.database.core.repository.util.ModelRepositoryLoader;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -39,15 +41,6 @@ import software.amazon.awssdk.services.bedrock.BedrockClient;
 @EnableAutoConfiguration
 public class AgentConfigurationSupport {
 
-    @Bean
-    AgentManagementService agentManagementService() {
-        return new AgentManagementService();
-    }
-
-    @Bean
-    SessionManagementService sessionManagementService() {
-        return new InMemorySessionManagementService();
-    }
 
     @Bean
     Region region(@Value("${aws.region}") String region) {
@@ -90,6 +83,11 @@ public class AgentConfigurationSupport {
     @Bean
     AgentInvocation<Model> agentInvocation(AgentPlatform agentPlatform) {
         return AgentInvocation.builder(agentPlatform).build(Model.class);
+    }
+
+    @Bean
+    ModelRepositoryLoader modelRepositoryLoader(ModelRepository modelRepository, ObjectMapper objectMapper) {
+        return new ModelRepositoryLoader(modelRepository,objectMapper);
     }
 
 }

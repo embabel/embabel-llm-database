@@ -23,7 +23,7 @@ import java.time.LocalDate
 data class Model (
     val name: String,
     val id: String,
-    var tags: List<String>,
+    var tags: List<String>?,
     val knowledgeCutoff: LocalDate?,
     val releaseDate: LocalDate?,
     val parameterCount: Long,

@@ -58,8 +58,8 @@ public class ModelProviderSuggestionAgent {
     
     private static final Log logger = LogFactory.getLog(ModelProviderSuggestionAgent.class);
 
-    // @Autowired
-//    TagParser tagParser;
+    private static final String NO_PROVIDER = "no-provider";
+    private static final String DELIMITER = ",";
 
     @Value("${embabel.database.agent.suggestion.taglist-prompt}")
     String taglistPrompt;
@@ -70,9 +70,6 @@ public class ModelProviderSuggestionAgent {
     @Autowired
     ModelRepository modelRepository;
 
-//    public ModelProviderSuggestionAgent(TagParser tagParser) {
-//        this.tagParser = tagParser;
-//    }
     
     @Action
     public TagList getSuggestedTagList(UserInput userInput, OperationContext operationContext) {
@@ -96,7 +93,10 @@ public class ModelProviderSuggestionAgent {
         //build the search criteria
         String[] tags = tagList.tags().toArray(String[]::new);
         List<Model> models = modelRepository.findByTags(tags);
-        //TODO need to be able to short circuit here if there are no matches
+        if (models == null || models.isEmpty()) {
+            logger.info("No matching models for tags " + tagList.tags());
+            return null;//done
+        }
         //return
         return new ListModels(models);
     }
@@ -120,9 +120,10 @@ public class ModelProviderSuggestionAgent {
                         (existing, replacement) -> existing))
                 .values()
                 .stream()
+                .filter(providerName -> !providerName.equalsIgnoreCase(NO_PROVIDER)) //filter out placeholder names
                 .toList();
         //convert the list of providers to a comma-delimited string
-        var prompt = providersPrompt.formatted(userInput.getContent(),String.join(",",providers));
+        var prompt = providersPrompt.formatted(userInput.getContent(),String.join(DELIMITER,providers));
         logger.info(prompt);//quick dump of the prompt
         return operationContext.ai()
                 .withAutoLlm()

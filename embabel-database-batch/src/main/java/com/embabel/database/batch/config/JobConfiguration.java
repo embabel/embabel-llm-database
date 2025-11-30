@@ -29,13 +29,12 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 public class JobConfiguration {
 
-    int chunkSize = 10;
+    int chunkSize = 2;
 
     @Bean
     public Job parserAgentJob(JobRepository jobRepository, Step readModels, Step parseModel) {

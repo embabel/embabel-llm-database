@@ -17,18 +17,12 @@ package com.embabel.database.server.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.env.Environment
-import org.springframework.beans.factory.annotation.Qualifier
 
 import com.embabel.database.agent.ModelProviderSuggestionAgent
 import com.embabel.database.agent.ModelSuggestionAgent
-import com.embabel.database.agent.service.AgentManagementService;
-import com.embabel.database.agent.service.InMemorySessionManagementService;
 import com.embabel.database.agent.service.ModelSuggestionService;
-import com.embabel.database.agent.service.SessionManagementService;
 import com.embabel.database.core.repository.InMemoryModelRepository
 import com.embabel.database.core.repository.ModelRepository
-import com.fasterxml.jackson.databind.ObjectMapper
 
 @Configuration
 class DefaultConfig {
@@ -55,13 +49,4 @@ class DefaultConfig {
         return ModelSuggestionService();
     }
 
-    @Bean
-    fun agentManagementService(): AgentManagementService {
-        return AgentManagementService();
-    }
-
-    @Bean
-    fun sessionManagementService(): SessionManagementService {
-        return InMemorySessionManagementService();
-    }
 }

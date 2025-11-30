@@ -18,7 +18,7 @@ package com.embabel.database.agent.domain;
 import java.util.List;
 import java.util.Map;
 
-public record ModelList(List<Map<String,Object>> models) {
+public record ModelList(List<Map<String,String>> models) {
  
     public ModelList {
         if (models == null || models.isEmpty()) {

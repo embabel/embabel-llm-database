@@ -15,6 +15,8 @@
  */
 package com.embabel.database.server.controller;
 
+import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.util.ModelRepositoryLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -27,12 +29,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.embabel.database.agent.util.LlmLeaderboardParser;
-import com.embabel.database.agent.util.LlmLeaderboardTagParser;
-import com.embabel.database.agent.util.ModelMetadataParser;
-import com.embabel.database.agent.util.TagParser;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.InMemoryAiModelRepository;
 import com.embabel.database.server.config.DefaultConfig;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,17 +56,25 @@ public class ModelSuggestionControllerITest {
     ModelSuggestionController modelSuggestionController;
 
     @Autowired
-    AiModelRepository aiModelRepository;    
+    ModelRepository modelRepository;
+
+    @Autowired
+    ModelRepositoryLoader modelRepositoryLoader;
+
 
     @BeforeEach
     public void beforeTest() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(modelSuggestionController).build();
+        //clean
+        modelRepository.deleteAll();
+        //load
+        modelRepositoryLoader.loadFromFile("./json/export.json");
     }
+
+
 
     @Test
     void testRecommendations() throws Exception {
-        // Load the registry
-        ((InMemoryAiModelRepository) aiModelRepository).load();
 
         String prompt = "Recommend a model that can narrate a script";
         logger.info("Sending initial provider suggestion request...");

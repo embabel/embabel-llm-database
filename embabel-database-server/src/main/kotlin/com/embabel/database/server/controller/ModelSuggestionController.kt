@@ -15,6 +15,8 @@
  */
 package com.embabel.database.server.controller
 
+import com.embabel.database.agent.domain.ModelSuggestion
+import com.embabel.database.agent.domain.SessionContext
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,6 +29,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 
 import org.slf4j.LoggerFactory
 import com.embabel.database.agent.service.ModelSuggestionService
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 
 import java.util.UUID
 
@@ -41,67 +46,35 @@ class ModelSuggestionController {
     @Autowired
     lateinit var modelSuggestionService: ModelSuggestionService
 
+    @Autowired
+    lateinit var objectMapper: ObjectMapper
+
+    private val mapper: ObjectMapper = objectMapper.registerKotlinModule()
+        .registerModule(JavaTimeModule())
+
     @PostMapping("/recommend")
     fun getProviders(@RequestBody prompt: String, @RequestHeader headers: Map<String,String>): ResponseEntity<Map<String,Any?>> {
+        //check if there's a session id
         logger.info("headers " + headers);
-        //check if this one is passing in a session id
         return if (sessionKey in headers) {
-            logger.info("getting the options");
-            //this is a reply with the same session
-            val requestId: String? = headers[sessionKey]
-            val sessionId: String = modelSuggestionService.getModelOptions(prompt, requestId!!)
-            //set the session id in the body
-            val resultMap = mapOf("sessionId" to sessionId)
+            //we've already started this conversation...
+            val models : ModelSuggestion = modelSuggestionService.getModelSuggestion(prompt,headers.get(sessionKey))
+            //convert
+            val jsonModels = objectMapper.writeValueAsString(models.listModels().models())
+            val resultMap = mapOf("models" to jsonModels)
             ResponseEntity.ok()
-                .header(sessionKey,requestId)
+                .header(sessionKey,headers.get(sessionKey))
                 .body(resultMap)
         } else {
-            logger.info("getting the providers");
-            // Call the Java method to generate a new session ID and start the process
-            val sessionId: String = modelSuggestionService.getProviderSuggestions(prompt)
-            //set the session id in the body
-            val resultMap = mapOf("sessionId" to sessionId)
-            // Build and return the response entity with the session ID in the header
+            //new conversation
+            val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
+            //set the header
+            val jsonProviders = objectMapper.writeValueAsString(sessionContext.modelProviders());
+            val resultMap = mapOf("providers" to jsonProviders)
             ResponseEntity.ok()
-                .header(sessionKey, sessionId)
+                .header(sessionKey,sessionContext.sessionid())
                 .body(resultMap)
-        } //end if
-    }
-
-    @GetMapping("/recommend/{sessionId}")
-    fun getResults(
-        @PathVariable sessionId: String,
-        @RequestHeader headers: Map<String, String>
-    ): ResponseEntity<Map<String, Any?>> {
-        // Check if the header contains the same session ID
-        val headerSessionId = headers[sessionKey]
-        if (headerSessionId != null && headerSessionId != sessionId) { //TODO fix logic to cater for no header
-            return ResponseEntity.badRequest()
-                .body(mapOf(
-                    "error" to "Session ID in path does not match session ID in header"
-                ))
         }
-
-        // Call the  method to get the latest results for this session
-        val sessionResults: Map<String, Any?>? = modelSuggestionService.getResponse(sessionId)
-
-        // Prepare the result map
-        val resultMap: Map<String, Any?> = if (sessionResults != null) {
-            mapOf(
-                "sessionId" to sessionId,
-                "result" to sessionResults["result"]
-            )
-        } else {
-            mapOf(
-                "sessionId" to sessionId,
-                "result" to null
-            )
-        }
-
-        // Return results with the session ID in the header
-        return ResponseEntity.ok()
-            .header(sessionKey, sessionId)
-            .body(resultMap)
     }
 
 }

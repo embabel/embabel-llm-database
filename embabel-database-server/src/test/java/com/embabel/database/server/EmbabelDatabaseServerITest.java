@@ -16,9 +16,7 @@
 package com.embabel.database.server;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -28,6 +26,8 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import java.util.List;
 import java.util.Map;
 
+import com.embabel.database.agent.ModelParserAgent;
+import com.embabel.database.core.repository.ModelRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -43,8 +43,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-// import com.embabel.agent.mcpserver.PerGoalToolCallbackProvider;
-import com.embabel.database.core.repository.AiModelRepository;
+// import com.embabel.agent.mcpserver.PerGoalToolCallbackProvi
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -65,7 +64,7 @@ public class EmbabelDatabaseServerITest {
     ApplicationContext applicationContext;
 
     @Autowired
-    AiModelRepository aiModelRepository;
+    ModelRepository modelRepository;
 
     @BeforeAll
     public static void setup() {
@@ -107,7 +106,7 @@ public class EmbabelDatabaseServerITest {
     void testStartup() throws Exception {
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
         //check for the explicit bean
-        assertNotNull(applicationContext.getBean(AiModelRepositoryAgent.class));
+        assertNotNull(applicationContext.getBean(ModelParserAgent.class));
         //process
         String response = mockMvc.perform(get("/api/v1/platform-info/agents"))
             .andExpect(status().isOk())

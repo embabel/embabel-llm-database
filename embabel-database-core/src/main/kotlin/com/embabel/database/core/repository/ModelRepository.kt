@@ -40,4 +40,6 @@ interface ModelRepository {
     fun findAllOrganizations(): List<Organization>?
 
     fun findByTags(vararg tags: String): List<Model>?
+
+    fun deleteAll()
 }

@@ -17,9 +17,9 @@ package com.embabel.database.server.controller;
 
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.common.ai.model.ModelType;
+import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.server.config.DefaultConfig;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.LlmModelMetadata;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,19 +33,16 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.List;
 
 @SpringBootTest
 @Import(DefaultConfig.class)
-@ActiveProfiles({"ollama","no-auto-load"})
 public class AiModelRepositoryControllerITest {
     
     MockMvc mockMvc;
 
     @Autowired
-    AiModelRepository aiModelRepository;
+    ModelRepository modelRepository;
 
     @Autowired
     ModelRepositoryController aiModelRepositoryController;
@@ -59,45 +56,13 @@ public class AiModelRepositoryControllerITest {
     void testGet() throws Exception {
         mockMvc.perform(get("/api/v1/models"))
             .andExpect(status().isNotFound()); //no data
-        //add some content
-        LocalDate dateStamp = LocalDate.now();
-        String modelName = "model-0";
-        String providerName = "provider-0";
         //setup a single model
-        LlmModelMetadata singleModel = new LlmModelMetadata(UUID.randomUUID().toString(),modelName, providerName, dateStamp, null, 1l,Collections.singletonList("task"),"test",0l,"modelName");
+        Model model = new Model("name","id", List.of("tags"),null,null,1l,null,false,null,"description");
         //save
-        aiModelRepository.save(singleModel);
+        modelRepository.save(model);
         //try the mock again
         mockMvc.perform(get("/api/v1/models"))
             .andExpect(status().isOk()); //simple is ok (200)        
-    }
-
-    // Stub/mock implementation for testing
-    static class TestModelMetadata implements ModelMetadata {
-        private final String name;
-        private final String provider;
-        private final ModelType type;
-
-        public TestModelMetadata(String name, String provider, ModelType type) {
-            this.name = name;
-            this.provider = provider;
-            this.type = type;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getProvider() {
-            return provider;
-        }
-
-        @Override
-        public ModelType getType() {
-            return type;
-        }
     }
 
 }

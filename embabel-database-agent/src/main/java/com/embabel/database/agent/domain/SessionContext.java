@@ -15,14 +15,23 @@
  */
 package com.embabel.database.agent.domain;
 
-import java.util.List;
+import com.embabel.agent.core.Blackboard;
 
-public record ProviderList(List<String> providers) {
-    
-    public ProviderList {
-        if (providers == null || providers.isEmpty()) {
-            throw new IllegalArgumentException("no providers");
+/**
+ * holder for session
+ * @param sessionid
+ * @param modelProviders
+ */
+public record SessionContext(String sessionid, ModelProviders modelProviders, Blackboard blackboard, String prompt) {
+
+    public SessionContext {
+        if (sessionid == null
+                || sessionid.isEmpty()
+                || modelProviders == null
+                || blackboard == null
+                || prompt == null
+                || prompt.isEmpty()) {
+            throw new IllegalArgumentException("incorrectly constructed");
         }
     }
-    
 }
