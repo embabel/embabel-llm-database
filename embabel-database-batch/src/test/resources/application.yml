@@ -13,7 +13,7 @@ spring:
   application:
     name: embabel-llm-database-agent
   config:
-    import: optional:prompts.yml
+    import: optional:classpath:prompts.yml
 
 aws:
   region: us-east-1

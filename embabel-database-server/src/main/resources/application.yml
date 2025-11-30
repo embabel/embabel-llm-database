@@ -7,6 +7,8 @@ spring:
       base-url: http://localhost:11434
   application:
     name: embabel-database-server
+  config:
+    import: "optional:classpath:prompts.yml"
   http:
     client:
       connect-timeout: 30s
@@ -14,8 +16,8 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
-  profiles:
-    active: ollama
+#  profiles:
+#    active: ollama
 
 springdoc:
   api-docs:

@@ -20,12 +20,12 @@ import org.springframework.stereotype.Component
 import org.springframework.context.annotation.Profile
 
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner
 
 @Profile("scheduled")
 @Component
 class AgentSchedulingService(
-    private val agentExecutionService: AgentExecutionService,
-    private val agentName: String = "AiModelRepositoryAgent"
+    private val jobLauncher: JobLauncherApplicationRunner
 ) {
 
     private val logger = LoggerFactory.getLogger(AgentSchedulingService::class.java)
@@ -34,11 +34,9 @@ class AgentSchedulingService(
     @Scheduled(initialDelayString = "\${embabel.agent.scheduling.initial-delay-ms:30000}", fixedRateString = "\${embabel.agent.scheduling.fixed-rate-ms:86400000}") //Default is 24hrs in milliseconds
     fun runAgent() {
         //create the process
-        val agentProcess = agentExecutionService.createProcess(agentName)
-        //execute
-        agentExecutionService.runAgentProcessAsync(agentProcess)
+        jobLauncher.run("") //null
         //log
-        logger.info("running agent process id: " + agentProcess.id)
+        logger.info("running batch loader process id")
     }
 
 }

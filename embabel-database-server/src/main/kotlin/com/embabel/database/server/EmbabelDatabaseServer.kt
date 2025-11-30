@@ -15,16 +15,12 @@
  */
 package com.embabel.database.server
 
+import com.embabel.agent.config.annotation.EnableAgents
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.scheduling.annotation.EnableAsync
 
-import com.embabel.agent.config.annotation.EnableAgents
-import com.embabel.agent.config.annotation.EnableAgentMcpServer
-import com.fasterxml.jackson.databind.ObjectMapper
-
 @EnableAgents
-@EnableAgentMcpServer //TODO remove
 @EnableAsync
 @SpringBootApplication
 class EmbabelDatabaseServer

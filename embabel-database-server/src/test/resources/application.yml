@@ -6,3 +6,5 @@ embabel:
 spring:
   application:
     name: embabel-database-server
+  config:
+    import: "optional:classpath:prompts.yml"

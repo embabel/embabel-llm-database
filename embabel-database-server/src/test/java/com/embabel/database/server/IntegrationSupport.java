@@ -13,12 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.embabel.database.agent;
+package com.embabel.database.server;
+
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.core.AgentPlatform;
-import com.embabel.database.agent.service.*;
+import com.embabel.database.agent.service.BedrockModelParserService;
+import com.embabel.database.agent.service.LlmStatsModelParserService;
+import com.embabel.database.agent.service.ModelParserService;
 import com.embabel.database.core.repository.InMemoryModelRepository;
 import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.domain.Model;
@@ -36,11 +39,10 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrock.BedrockClient;
 
 @TestConfiguration
-@ComponentScan
+@ComponentScan(basePackages = {"com.embabel.database.agent","com.embabel.database.server"})
 @EnableAgents
 @EnableAutoConfiguration
-public class AgentConfigurationSupport {
-
+public class IntegrationSupport {
 
     @Bean
     Region region(@Value("${aws.region}") String region) {
@@ -60,25 +62,20 @@ public class AgentConfigurationSupport {
                 .build();
     }
 
-    @Bean
-    ModelRepository modelRepository() {
-        return new InMemoryModelRepository();
-    }
-
-    @Bean
-    ModelParserService llmStatsModelParserService() {
-        return new LlmStatsModelParserService();
-    }
-
-    @Bean
-    ModelParserService bedrockModelParserService() {
-        return new BedrockModelParserService();
-    }
-
-    @Bean
-    RestClient restClient() {
-        return RestClient.builder().build();
-    }
+//    @Bean
+//    ModelParserService llmStatsModelParserService() {
+//        return new LlmStatsModelParserService();
+//    }
+//
+//    @Bean
+//    ModelParserService bedrockModelParserService() {
+//        return new BedrockModelParserService();
+//    }
+//
+//    @Bean
+//    RestClient restClient() {
+//        return RestClient.builder().build();
+//    }
 
     @Bean
     AgentInvocation<Model> agentInvocation(AgentPlatform agentPlatform) {

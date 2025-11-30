@@ -59,7 +59,7 @@ public class LlmStatsModelParserService  implements ModelParserService{
     boolean testCircuit = false;
 
     @Value("${embabel.database.rate-limit:true}")
-    boolean ratelimited = true;
+    boolean ratelimited = true; //default is to rate limit requests
 
     @Override
     public void loadModels() {

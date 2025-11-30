@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Configuration
 import com.embabel.database.agent.ModelProviderSuggestionAgent
 import com.embabel.database.agent.ModelSuggestionAgent
 import com.embabel.database.agent.service.ModelSuggestionService;
+import com.embabel.database.agent.service.SessionManagementService
 import com.embabel.database.core.repository.InMemoryModelRepository
 import com.embabel.database.core.repository.ModelRepository
 
@@ -32,7 +33,6 @@ class DefaultConfig {
     fun modelRepository(): ModelRepository {
         return InMemoryModelRepository()
     }
-
 
     @Bean
     fun modelProviderSuggestionAgent(): ModelProviderSuggestionAgent {
@@ -49,4 +49,8 @@ class DefaultConfig {
         return ModelSuggestionService();
     }
 
+    @Bean
+    fun sessionManagementService(): SessionManagementService {
+        return SessionManagementService()
+    }
 }

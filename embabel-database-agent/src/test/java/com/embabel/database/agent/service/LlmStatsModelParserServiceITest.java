@@ -20,7 +20,6 @@ import com.embabel.database.core.repository.ModelRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,11 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0",
         "embabel.database.test=true"
 })
-@ActiveProfiles("no-auto-load")
 public class LlmStatsModelParserServiceITest {
 
     @Autowired
-    ModelParserService modelParserService;
+    ModelParserService llmStatsModelParserService;
 
     @Autowired
     ModelRepository modelRepository;
@@ -51,7 +49,7 @@ public class LlmStatsModelParserServiceITest {
         //baseline
         assertTrue(modelRepository.findAll().isEmpty());
         //invoke
-        modelParserService.loadModels();
+        llmStatsModelParserService.loadModels();
         //validate by checking the number of models in the repository
         assertFalse(modelRepository.findAll().isEmpty());
     }

@@ -38,6 +38,7 @@ public class BedrockModelParserService implements ModelParserService {
     private static final String VIDEO = "video";
     private static final String AUDIO = "audio";
     private static final String IMAGE = "image";
+    private static final String TAG_BREAK = "-to-";
 
     @Autowired
     BedrockClient bedrockClient;
@@ -61,11 +62,11 @@ public class BedrockModelParserService implements ModelParserService {
         //convert
         String modelId = foundationModelSummary.modelId();
         String modelName = foundationModelSummary.modelName();
-        String organizationName = foundationModelSummary.providerName(); //this is analoguous to org
+        String organizationName = foundationModelSummary.providerName(); //this is analogous to org
         //convert the modalities
         StringBuilder modalityTag = new StringBuilder();
         modalityTag.append(modalityConversion(foundationModelSummary.inputModalities()));
-        modalityTag.append("-to-");
+        modalityTag.append(TAG_BREAK);
         modalityTag.append(modalityConversion(foundationModelSummary.outputModalities()));
         List<String> modalities = List.of(modalityTag.toString());
 
@@ -97,16 +98,26 @@ public class BedrockModelParserService implements ModelParserService {
                 .findFirst();
         organization = existingOrganization.orElseGet(() -> new Organization(orgIdGenerator(organizationName),organizationName,"")); //TODO --> use an agent to clean up
         //dates
-        LocalDate knowledgeCutOffDate = LocalDate.parse("1970-01-01");
+        LocalDate knowledgeCutOffDate = LocalDate.parse("1970-01-01");  //default placeholder
         LocalDate releaseDate = knowledgeCutOffDate;
         //components of a model
         return new Model(modelName,modelId,modalities,knowledgeCutOffDate,releaseDate,0L,organization,multiModal,List.of(modelProvider),"");
     }
 
+    /**
+     * temporary id generator
+     * @param orgName
+     * @return
+     */
     String orgIdGenerator(String orgName) {
         return orgName.toLowerCase().replace(" ", "-");
     }
 
+    /**
+     * modality conversion process
+     * @param modalities
+     * @return
+     */
     String modalityConversion(List<ModelModality> modalities) {
         StringBuilder builder = new StringBuilder();
         modalities.forEach(modelModality -> {

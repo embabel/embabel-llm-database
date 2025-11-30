@@ -39,15 +39,18 @@ private const val sessionKey = "x-embabel-request-id"
 
 @RestController
 @RequestMapping("/api/v1/models")
-class ModelSuggestionController {
+class ModelSuggestionController(
+    private val modelSuggestionService: ModelSuggestionService,
+    objectMapper: ObjectMapper
+) {
 
     private val logger = LoggerFactory.getLogger(ModelSuggestionController::class.java)
 
-    @Autowired
-    lateinit var modelSuggestionService: ModelSuggestionService
-
-    @Autowired
-    lateinit var objectMapper: ObjectMapper
+//    @Autowired
+//    lateinit var modelSuggestionService: ModelSuggestionService
+//
+//    @Autowired
+//    lateinit var objectMapper: ObjectMapper
 
     private val mapper: ObjectMapper = objectMapper.registerKotlinModule()
         .registerModule(JavaTimeModule())
@@ -60,7 +63,7 @@ class ModelSuggestionController {
             //we've already started this conversation...
             val models : ModelSuggestion = modelSuggestionService.getModelSuggestion(prompt,headers.get(sessionKey))
             //convert
-            val jsonModels = objectMapper.writeValueAsString(models.listModels().models())
+            val jsonModels = mapper.writeValueAsString(models.listModels().models())
             val resultMap = mapOf("models" to jsonModels)
             ResponseEntity.ok()
                 .header(sessionKey,headers.get(sessionKey))
@@ -69,7 +72,7 @@ class ModelSuggestionController {
             //new conversation
             val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
             //set the header
-            val jsonProviders = objectMapper.writeValueAsString(sessionContext.modelProviders());
+            val jsonProviders = mapper.writeValueAsString(sessionContext.modelProviders());
             val resultMap = mapOf("providers" to jsonProviders)
             ResponseEntity.ok()
                 .header(sessionKey,sessionContext.sessionid())
