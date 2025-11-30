@@ -62,21 +62,6 @@ public class IntegrationSupport {
                 .build();
     }
 
-//    @Bean
-//    ModelParserService llmStatsModelParserService() {
-//        return new LlmStatsModelParserService();
-//    }
-//
-//    @Bean
-//    ModelParserService bedrockModelParserService() {
-//        return new BedrockModelParserService();
-//    }
-//
-//    @Bean
-//    RestClient restClient() {
-//        return RestClient.builder().build();
-//    }
-
     @Bean
     AgentInvocation<Model> agentInvocation(AgentPlatform agentPlatform) {
         return AgentInvocation.builder(agentPlatform).build(Model.class);

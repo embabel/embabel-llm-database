@@ -15,8 +15,6 @@
  */
 package com.embabel.database.server.controller;
 
-import com.embabel.common.ai.model.ModelMetadata;
-import com.embabel.common.ai.model.ModelType;
 import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.server.config.DefaultConfig;
@@ -26,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -35,9 +32,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+        "spring.ai.model.chat=ollama",
+        "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0"
+})
 @Import(DefaultConfig.class)
-public class AiModelRepositoryControllerITest {
+public class ModelRepositoryControllerITest {
     
     MockMvc mockMvc;
 
@@ -45,11 +45,11 @@ public class AiModelRepositoryControllerITest {
     ModelRepository modelRepository;
 
     @Autowired
-    ModelRepositoryController aiModelRepositoryController;
+    ModelRepositoryController modelRepositoryController;
 
     @BeforeEach
     public void beforeTest() throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(aiModelRepositoryController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(modelRepositoryController).build();
     }
 
     @Test

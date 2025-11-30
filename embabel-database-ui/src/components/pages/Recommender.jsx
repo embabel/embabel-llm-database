@@ -1,10 +1,7 @@
 import { useState, useRef } from "react";
 import { Card, Section, SectionCard, TextAlignment } from "@blueprintjs/core";
-import ReactMarkdown from 'react-markdown';
 
 import { ChatContainer, MessageList, MessageSeparator, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
-
-import ChatInput from "../forms/ChatInput";
 
 const base_url = "/api/v1/models";
 

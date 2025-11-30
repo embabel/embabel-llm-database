@@ -12,12 +12,13 @@ function SearchByTags({ onSearch, onReset }) {
         if (!modifiers.matchesPredicate) {
             return null;
         }
+
         return (
             <MenuItem
             active={modifiers.active}
-            key={item.tag}
+            key={item}
             onClick={handleClick}
-            text={item.tag}
+            text={item}
             />
         );
     };
@@ -61,7 +62,7 @@ function SearchByTags({ onSearch, onReset }) {
                         itemRenderer={itemRenderer} 
                         onItemSelect={item => setSelectedTags([...selectedTags, item])}
                         selectedItems={selectedTags}
-                        tagRenderer={tags => tags.tag}/>
+                        tagRenderer={tags => tags}/>
                 </Tooltip>                                    
                 <Button onClick={handleSearch}><Search/></Button>
                 { (onReset) ? (

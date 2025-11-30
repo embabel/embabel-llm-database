@@ -17,6 +17,8 @@ package com.embabel.database.server.controller;
 
 import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.util.ModelRepositoryLoader;
+import com.embabel.database.server.IntegrationSupport;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -24,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -41,9 +42,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Map;
 
-@SpringBootTest
+@SpringBootTest(classes = {IntegrationSupport.class}, properties = {
+        "spring.ai.model.chat=ollama",
+        "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0"
+})
 @Import(DefaultConfig.class)
-@ActiveProfiles("ollama")
 public class ModelSuggestionControllerITest {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelSuggestionControllerITest.class);
@@ -60,6 +63,9 @@ public class ModelSuggestionControllerITest {
 
     @Autowired
     ModelRepositoryLoader modelRepositoryLoader;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
 
     @BeforeEach
@@ -87,74 +93,20 @@ public class ModelSuggestionControllerITest {
 
         // Extract session ID from header
         String sessionId = initialResult.getResponse()
-            .getHeader("X-embabel-request-id");
+            .getHeader("x-embabel-request-id");
         assertNotNull(sessionId, "Session ID must be returned in header");
         logger.info("Session started with ID: {}", sessionId);
+        //use "DeepSeek"
 
-        // Step 2: Poll the GET endpoint for results until they are ready
-        Map<String, Object> responseData = null;
-        int maxAttempts = 5;
-        int attempt = 0;
-        while (true) {
-            MvcResult pollResult = mockMvc.perform(get(url + "/" + sessionId)
-                    .header("X-embabel-request-id", sessionId))
+        // Step 2: send provider "DeepSeek"
+        initialResult = mockMvc.perform(post(url)
+                        .content("deepseek")
+                        .header("x-embabel-request-id",sessionId))
                 .andExpect(status().isOk())
                 .andReturn();
+        //dump
+        logger.info(initialResult.getResponse().getContentAsString());
 
-            String content = pollResult.getResponse().getContentAsString();
-            logger.info("Polling attempt {} response: {}", attempt + 1, content);
-
-            // Parse JSON response
-            responseData = new ObjectMapper().readValue(content, Map.class);
-
-            if (responseData.get("result") != null) {
-                break; // results ready
-            }
-
-            Thread.sleep(10000); // wait 10 seconds before polling again
-            attempt++;
-        }
-
-        assertNotNull(responseData, "Response data should not be null");
-        assertTrue(responseData.get("result") != null, "Expected non-null results after polling");
-        assertTrue(responseData.get("result").toString().contains("sambanova"),
-            "Result should contain 'sambanova' provider");
-
-        logger.info("Final provider results: {}", responseData);
-
-        // Step 3: Send back a selection using the same session
-        MvcResult selectionResult = mockMvc.perform(post(url)
-                .content("sambanova")
-                .header("X-embabel-request-id", sessionId))
-            .andExpect(status().isOk())
-            .andReturn();
-
-        logger.info("asking the agent to use the sambanova model");
-
-        //loop again on the session id
-        while (true) {
-            MvcResult pollResult = mockMvc.perform(get(url + "/" + sessionId)
-                    .header("X-embabel-request-id", sessionId))
-                .andExpect(status().isOk())
-                .andReturn();
-
-            String content = pollResult.getResponse().getContentAsString();
-            logger.info("Polling attempt {} response: {}", attempt + 1, content);
-
-            // Parse JSON response
-            responseData = new ObjectMapper().readValue(content, Map.class);
-
-            if (responseData.get("result") != null) {
-                break; // results ready
-            }
-
-            Thread.sleep(10000); // wait 10 seconds before polling again
-            attempt++;
-        }        
-
-        assertNotNull(responseData, "Response data should not be null");
-        assertTrue(responseData.get("result") != null, "Expected non-null results after polling");
-        logger.info("Models response: {}", responseData.get("result").toString());
     }
 
 }

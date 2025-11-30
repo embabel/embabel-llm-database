@@ -2,10 +2,9 @@
 import { Classes, Tag } from "@blueprintjs/core";
 import { Cell, ColumnHeaderCell, Column, Table } from "@blueprintjs/table";
 
-import { formatPrice } from "../../utils/formatPrice";
+import { formatParameters } from "../../../utils/formatParameters";
 
-
-const columnNames = ["Name","Provider","Tokens","Pricing per 1m Token","Tags"];
+const columnNames = ["Name","Providers","Parameters","Tags","Description"];
 
 function renderColumnHeader(index) {
     // const name = ["Name","Provider","Tokens","Pricing per 1m Token","Tags"][index];
@@ -27,39 +26,31 @@ function renderName(name) {
 function renderCell(rowIndex, columnIndex, data) {
     const cellKey = data[rowIndex]["modelId"] + "-" + columnIndex
     //use the column index to get the right column
+    console.log(columnName);
     var columnName = "";
     if (columnIndex === 0) {
         //first column is name
         columnName = "name";
     } else if (columnIndex === 1) {
-        columnName = "provider";
+        columnName = "modelProviders";
+        //get the "modelProviders[n].provider.name"
+        const cellData = data[rowIndex] ? data[rowIndex][columnName] : ''
+        let providerNames = '';
+        if (Array.isArray(cellData) && cellData.length > 0) {
+            // Filter out undefined or falsy names and join with commas
+            providerNames = cellData.map(modelProvider => modelProvider.provider?.name)  // optional chaining to prevent errors
+                .filter(name => name !== undefined && name !== '')  // keep only defined, non-empty names
+                .join(', ');  // comma delimited string            
+        } //end if
+        return (<Cell key={cellKey}>{providerNames}</Cell>);
+
     } else if (columnIndex === 2) {
-        columnName = "size";
+        columnName = "parameterCount";
         const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
-        let displayValue;
-        displayValue = cellData.toLocaleString();
+        let displayValue = formatParameters(cellData);
         return (
             <Cell key={cellKey} style={{ textAlign: "end" }}>{displayValue}</Cell>);   
     } else if (columnIndex === 3) {
-        columnName = "pricingModel";
-        //format to contain both input and output pricing
-        const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';       
-        if (cellData === null || cellData === undefined) {
-            return (
-                <Cell key={cellKey} style={{ textAlign: "justify" }}>
-                    &nbsp;
-                </Cell> 
-            );  
-        } else {
-            const inputValue = `Input: ${formatPrice(cellData.usdPer1mInputTokens)}`
-            const outputValue = `Output: ${formatPrice(cellData.usdPer1mOutputTokens)}`
-            return (
-                <Cell key={cellKey} style={{ textAlign: "justify" }}>
-                    {inputValue}&nbsp;{outputValue}
-                </Cell>   
-            );
-        } //end if
-    } else {
         columnName = "tags";
         // process tags a little differently
         const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
@@ -74,6 +65,10 @@ function renderCell(rowIndex, columnIndex, data) {
                     <Tag>{cellData}</Tag>
                 )}
             </Cell>);
+    } else {
+        columnName = "description";
+        const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
+        return (<Cell key={cellKey}>{cellData}</Cell>);
     } //end if
     //use the column name
     const cellData = data[rowIndex] ? data[rowIndex][columnName] : '';
@@ -82,9 +77,7 @@ function renderCell(rowIndex, columnIndex, data) {
 
 function ResultsTable({ data, selectionCallback }) {
 
-    const selectedColumns = [0,1,2,3,4]
-    const columnWidths = [200,100,100,200,500];
-    const totalWidth = columnWidths.reduce((a,b) => a + b, 0);
+    const columnWidths = [200,200,100,200,500];
 
     const handleSelection = (region) => {
         if (selectionCallback) {

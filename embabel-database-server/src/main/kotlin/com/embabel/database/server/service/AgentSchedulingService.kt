@@ -34,7 +34,7 @@ class AgentSchedulingService(
     @Scheduled(initialDelayString = "\${embabel.agent.scheduling.initial-delay-ms:30000}", fixedRateString = "\${embabel.agent.scheduling.fixed-rate-ms:86400000}") //Default is 24hrs in milliseconds
     fun runAgent() {
         //create the process
-        jobLauncher.run("") //null
+//        jobLauncher.run("") //null
         //log
         logger.info("running batch loader process id")
     }

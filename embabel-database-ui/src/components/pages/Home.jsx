@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Section, SectionCard } from "@blueprintjs/core";
 
-import SearchByName from "../forms/SearchByName";
+import SearchByName from "../forms/search/SearchByName";
 
 function Home() {
 
@@ -18,7 +18,10 @@ function Home() {
     return (
         <>
             <Section style={{ height: '100vh', display: 'grid', placeItems: 'center' }}>
-                <SectionCard>
+                <SectionCard style={{height: '10%'}}>
+                    <h3>Welcome to the Embabel LLM Database</h3>
+                </SectionCard>
+                <SectionCard style={{height: '90%'}}>
                     <SearchByName onSearch={handleSearch}/>
                 </SectionCard>
             </Section>

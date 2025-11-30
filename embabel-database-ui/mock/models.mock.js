@@ -1,6 +1,7 @@
 import { defineMock } from 'vite-plugin-mock-dev-server'
 
-import models from './models';
+// import models from './models';
+import models from './models.json';
 
 export default [
     defineMock({
@@ -166,7 +167,7 @@ export default [
         method: 'GET',
         body: () => {
             return {
-                "count": models.value.length
+                "count": models.length
             }
         }
     }),
@@ -196,7 +197,7 @@ export default [
         method: 'GET',
         body: (req) => {
             const { provider } = req.query;
-            const m = models.value.filter((model) => model.provider.toLowerCase().includes(provider.toLowerCase()));
+            const m = models.filter((model) => model.provider.toLowerCase().includes(provider.toLowerCase()));
             return m ? m : { error: 'model not found'};
         }}),
     defineMock({
@@ -204,7 +205,7 @@ export default [
         method: 'GET',
         body: (req) => {
             const { name } = req.query;
-            const m = models.value.filter((model) => model.name.toLowerCase().includes(name.toLowerCase()));
+            const m = models.filter((model) => model.name.toLowerCase().includes(name.toLowerCase()));
             return m ? m : { error: 'model not found'};
         }
     }),    
@@ -213,12 +214,15 @@ export default [
         method: 'GET',
         body: (req) => { 
             const { id } = req.params
-            const m = models.value.find((model) => model.modelId === id);
-            return m ? m : { error: 'model not found'};
+            const m = models.find((model) => model.id === id);
+            return m ? m : { error: 'model not found (by id)'};
         }
     }),
     defineMock({
         url: '/api/v1/models',
         method: 'GET',
-        body: () => {return models.value;} })
+        body: () => {
+            return models;
+        }
+    })
 ];

@@ -98,7 +98,7 @@ public class EmbabelDatabaseServerITest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @SuppressWarnings("unchecked")
+
     @Test
     void testStartup() throws Exception {
         assertTrue(applicationContext.getBeanDefinitionCount() > 0);
@@ -116,7 +116,7 @@ public class EmbabelDatabaseServerITest {
         //now process and check for the expected exposures
         List<Map<String,Object>> agents = objectMapper.readValue(response,new TypeReference<List<Map<String,Object>>>(){});
         //check count --> should be 1
-        assertFalse(agents.isEmpty(), "agents count does not equal 1");
+        assertFalse(agents.isEmpty(), "agents exist");
     }
 
     @Test

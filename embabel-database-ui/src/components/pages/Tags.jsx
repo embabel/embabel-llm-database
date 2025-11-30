@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Section, SectionCard } from "@blueprintjs/core";
 
-import SearchByTags from "../forms/SearchByTags";
-import ResultsTable from "../data/ResultsTable";
+import SearchByTags from "../forms/search/SearchByTags";
+import ResultsTable from "../data/table/ResultsTable";
 
-import Model from "../data/Model";
+import Model from "../data/model/Model";
 
 const base_url = "/api/v1/models";
 

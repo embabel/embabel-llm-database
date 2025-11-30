@@ -18,6 +18,7 @@ package com.embabel.database.core.repository
 import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.domain.Organization
 import com.embabel.database.core.repository.domain.Provider
+import java.time.LocalDateTime
 
 interface ModelRepository {
 
@@ -42,4 +43,6 @@ interface ModelRepository {
     fun findByTags(vararg tags: String): List<Model>?
 
     fun deleteAll()
+
+    fun lastUpdated(): LocalDateTime
 }

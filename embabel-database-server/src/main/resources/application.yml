@@ -3,21 +3,12 @@ server:
 
 spring:
   ai:
-    ollama:
-      base-url: http://localhost:11434
+    model:
+      chat: none
   application:
     name: embabel-database-server
   config:
     import: "optional:classpath:prompts.yml"
-  http:
-    client:
-      connect-timeout: 30s
-      read-timeout: 240s #increased to cater for CPU-based ollama  
-  output:
-    ansi:
-      enabled: ALWAYS
-#  profiles:
-#    active: ollama
 
 springdoc:
   api-docs:
@@ -28,15 +19,6 @@ logging:
     console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr([%t]){magenta} %clr(%-5level) %clr(%logger{0}){cyan} %clr(-){faint} %msg%n"          
 
 embabel:
-  llm-operations:
-    prompts:
-      default-timeout: PT1M
   models:
-    defaultLlm: llama3.1:8b
-    # defaultEmbeddingModel: nomic-embed-text:latest
-
-aws:
-  region: us-east-1
-  accesKeyId: your-key-here
-  secretAccessKey: your-secret-key-here
+    defaultLlm: us.anthropic.claude-3-5-sonnet-20240620-v1:0
 

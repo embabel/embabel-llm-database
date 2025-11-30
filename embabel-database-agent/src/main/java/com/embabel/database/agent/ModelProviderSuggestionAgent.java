@@ -70,7 +70,8 @@ public class ModelProviderSuggestionAgent {
     @Autowired
     ModelRepository modelRepository;
 
-    
+
+    //this is where the LLM does the grunt work of turning an NLP request into a category
     @Action
     public TagList getSuggestedTagList(UserInput userInput, OperationContext operationContext) {
         //retrieves the tags available
@@ -123,11 +124,7 @@ public class ModelProviderSuggestionAgent {
                 .filter(providerName -> !providerName.equalsIgnoreCase(NO_PROVIDER)) //filter out placeholder names
                 .toList();
         //convert the list of providers to a comma-delimited string
-        var prompt = providersPrompt.formatted(userInput.getContent(),String.join(DELIMITER,providers));
-        logger.info(prompt);//quick dump of the prompt
-        return operationContext.ai()
-                .withAutoLlm()
-            .createObject(prompt, ModelProviders.class);
+        return new ModelProviders("Please choose your preferred provider from the following list",providers); //TODO externalize message
     }    
 
     @Condition(name="have_models")

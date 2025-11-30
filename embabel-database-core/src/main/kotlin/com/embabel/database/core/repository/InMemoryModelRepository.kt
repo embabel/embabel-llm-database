@@ -92,5 +92,9 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
         models.clear()
     }
 
+    override fun lastUpdated(): LocalDateTime {
+        return updatedTimestamp
+    }
+
 
 }

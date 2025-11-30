@@ -9,33 +9,8 @@ import AppData from './AppData';
 function MenuBlock() {
 
     const [lastUpdated, setLastUpdated] = useState("");
-    const [recordCount, setRecordCount] = useState("");
 
     const navigate = useNavigate();
-
-    const handleGoSearch = () => {
-        navigate('/search');
-    }
-
-    const handleGoTags = () => {
-        navigate('/tags');
-    }
-
-    const handleGoHome = () => {
-        navigate('/');
-    }
-
-    const handleGoProviders = () => {
-        navigate('/providers');
-    }
-
-    const handleGoAgentMaintenance = () => {
-        navigate('/agent/maintenance');
-    }
-
-    const handleGoAgentRecommender = () => {
-        navigate('/agent/recommender');
-    }    
     
     useEffect(() => {
         async function loadUpdatedDate() {
@@ -55,7 +30,6 @@ function MenuBlock() {
             try {
                 const response = await fetch("/api/v1/models/count")
                 const data = await response.json();
-                setRecordCount(data["count"]);
             } catch (error) {
                 console.error("Error loading models:",error);
             }            
@@ -73,18 +47,17 @@ function MenuBlock() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <SectionCard>
                     <Menu>
-                        <MenuItem text="Home" onClick={handleGoHome}/>
+                        <MenuItem text="Home" onClick={() => navigate('/')}/>
                         <MenuItem text="Search">
-                            <MenuItem text="By Name" onClick={handleGoSearch}/>
-                            <MenuItem text="By Tags" onClick={handleGoTags}/>
-                            <MenuItem text="By Provider" onClick={handleGoProviders}/>
+                            <MenuItem text="By Name" onClick={() => navigate('/search')}/>
+                            <MenuItem text="By Tags" onClick={() => navigate('/tags')}/>
+                            <MenuItem text="By Provider" onClick={() => navigate('/providers')}/>
                         </MenuItem>
                         <MenuItem text="Agents">
-                            <MenuItem text="Maintenance" onClick={handleGoAgentMaintenance}/>
-                            <MenuItem text="Recommender" onClick={handleGoAgentRecommender}/>
+                            <MenuItem text="Maintenance" onClick={() => navigate('/agent/maintenance')}/>
+                            <MenuItem text="Recommender" onClick={() => navigate('/agent/recommender')}/>
                         </MenuItem>
                     </Menu>
-
                 </SectionCard>
             </div>
             <SectionCard style={{ position: 'sticky', bottom: 0, zIndex: 1, background: 'inherit' }}>

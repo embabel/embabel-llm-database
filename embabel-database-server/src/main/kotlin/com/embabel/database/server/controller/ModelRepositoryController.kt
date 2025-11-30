@@ -15,25 +15,15 @@
  */
 package com.embabel.database.server.controller
 
-import com.embabel.common.ai.model.ModelMetadata
 import com.embabel.database.core.repository.ModelRepository
 import com.embabel.database.core.repository.domain.Model
-
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.beans.factory.annotation.Autowired
-
-import org.springframework.web.server.ResponseStatusException
-import org.springframework.http.HttpStatus
-import java.time.LocalDateTime
-
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDateTime
 
 @RestController
 @RequestMapping("/api/v1/models")
@@ -70,10 +60,10 @@ class ModelRepositoryController {
 //        return modelRepository.findByNameAndProvider(name,provider) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"Model not found")
 //    }
 //
-//    @GetMapping("/lastUpdated")
-//    fun getLastUpdated(): LocalDateTime {
-//        return modelRepository.lastUpdated()
-//    }
+    @GetMapping("/lastUpdated")
+    fun getLastUpdated(): LocalDateTime {
+        return modelRepository.lastUpdated()
+    }
 
     @GetMapping("/count")
     fun getCount(): Map<String,Int> {
