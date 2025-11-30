@@ -22,21 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.embabel.agent.config.annotation.EnableAgents;
-import com.embabel.agent.core.AgentPlatform;
-import com.embabel.database.agent.ModelProviderSuggestionAgent;
-import com.embabel.database.agent.ModelSuggestionAgent;
-import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
-import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
-import com.embabel.database.agent.service.ModelMetadataService;
-import com.embabel.database.agent.service.ModelSuggestionService;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
@@ -44,7 +34,6 @@ import com.embabel.database.agent.util.TagParser;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.InMemoryAiModelRepository;
 import com.embabel.database.server.config.DefaultConfig;
-import com.embabel.database.server.service.AgentExecutionService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

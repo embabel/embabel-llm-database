@@ -15,16 +15,9 @@
  */
 package com.embabel.database.agent;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.database.agent.domain.*;
@@ -33,30 +26,11 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ActiveProfiles;
 
-import com.embabel.agent.config.annotation.EnableAgents;
-import com.embabel.agent.core.Agent;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.core.AgentProcess;
-import com.embabel.agent.core.AgentProcessStatusCode;
 import com.embabel.agent.core.ProcessOptions;
 import com.embabel.agent.domain.io.UserInput;
-import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService;
-import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
-import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
-import com.embabel.database.agent.service.ModelMetadataService;
-import com.embabel.database.agent.service.ModelMetadataValidationService;
-import com.embabel.database.agent.util.LlmLeaderboardParser;
-import com.embabel.database.agent.util.LlmLeaderboardTagParser;
-import com.embabel.database.agent.util.ModelMetadataParser;
-import com.embabel.database.agent.util.TagParser;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.InMemoryAiModelRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest(classes={ModelSuggestionAgentITest.class, AgentConfigurationSupport.class}, properties = {
         "spring.ai.bedrock.aws.region=us-east-1",
@@ -93,9 +67,9 @@ public class ModelSuggestionAgentITest {
         ModelProviders modelProviders = (ModelProviders) result;
         logger.info(modelProviders.providers());
 
-        ListModelMetadata listModelMetadata = agentProcess.getProcessContext().getBlackboard().last(ListModelMetadata.class);
+        ListModels listModels = agentProcess.getProcessContext().getBlackboard().last(ListModels.class);
 
-        assertNotNull(listModelMetadata);
+        assertNotNull(listModels);
 
         ProcessOptions processOptions = ProcessOptions.builder().
                 blackboard(agentProcess.getProcessContext()
@@ -113,7 +87,7 @@ public class ModelSuggestionAgentITest {
         ModelSuggestion modelSuggestion = modelSuggestionAgentInvocation.invoke(Collections.singletonMap("userInput",userInput));
 
         logger.info("final message " + modelSuggestion.message());
-        logger.info("final suggestion " + modelSuggestion.listModelMetadata());
+        logger.info("final suggestion " + modelSuggestion.listModels());
 
 
 //        modelSuggestionCompletableFuture.thenAccept(modelSuggestion -> {

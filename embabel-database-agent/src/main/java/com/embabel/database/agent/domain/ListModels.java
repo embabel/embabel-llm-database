@@ -13,35 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.embabel.database.agent.util;
+package com.embabel.database.agent.domain;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import com.embabel.common.ai.model.ModelMetadata;
+import com.embabel.database.core.repository.domain.Model;
 
-public interface ModelMetadataParser {
+public record ListModels(List<Model> models) {
     
-    /**
-     * parse a json string to a list of ModelMetadata
-     * @param json
-     * @return
-     */
-    List<ModelMetadata> parse(String json);
-
-
-    /**
-     * override to parse from a specific location
-     * @param path
-     * @return
-     */
-    List<ModelMetadata> parse(Path path);
-
-    /**
-     * override to parse from one list structure to another
-     * @param path
-     * @return
-     */
-    List<ModelMetadata> parse(List<?> list);    
-
+    public ListModels {
+        if (models == null || models.isEmpty()) {
+            throw new IllegalArgumentException("no models passed");
+        }
+    }
 }

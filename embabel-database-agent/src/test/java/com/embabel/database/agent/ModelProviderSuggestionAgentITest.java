@@ -18,19 +18,16 @@ package com.embabel.database.agent;
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.domain.io.UserInput;
-import com.embabel.database.agent.domain.ListModelMetadata;
+import com.embabel.database.agent.domain.ListModels;
 import com.embabel.database.agent.domain.ModelProviders;
 import com.embabel.database.agent.domain.TagList;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.LlmModelMetadata;
+import com.embabel.database.core.repository.ModelRepository;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,7 +53,7 @@ public class ModelProviderSuggestionAgentITest {
     ModelProviderSuggestionAgent modelProviderSuggestionAgent;
 
     @Autowired
-    AiModelRepository aiModelRepository;
+    ModelRepository modelRepository;
 
     @Test
     void testGetProviders() throws Exception {
@@ -75,16 +72,16 @@ public class ModelProviderSuggestionAgentITest {
     @Test
     void testGetModelsByTag() throws Exception {
         TagList tagList = new TagList(List.of("text-to-image-text"));
-        ListModelMetadata listModelMetadata = modelProviderSuggestionAgent.getModelsByTag(tagList);
-        logger.info(listModelMetadata.models().size());
+        ListModels listModels = modelProviderSuggestionAgent.getModelsByTag(tagList);
+        logger.info(listModels.models().size());
 
-        int count = aiModelRepository.findByTags("text-to-image-text").size();
+        int count = modelRepository.findByTags("text-to-image-text").size();
         logger.info("direct " + count);
 
         //get all of them
         AtomicInteger atomicInteger = new AtomicInteger(0);
-        aiModelRepository.findAll().stream().forEach(modelMetadata -> {
-            if (((LlmModelMetadata) modelMetadata).getTags().contains("text-to-image-text")) {
+        modelRepository.findAll().stream().forEach(model -> {
+            if (model.getTags().contains("text-to-image-text")) {
                 //increment counter
                 atomicInteger.incrementAndGet();
             }

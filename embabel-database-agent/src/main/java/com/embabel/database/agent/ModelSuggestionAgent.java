@@ -30,8 +30,7 @@ import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.common.ai.model.ModelMetadata;
-import com.embabel.database.agent.domain.ListModelMetadata;
-import com.embabel.database.agent.domain.ModelList;
+import com.embabel.database.agent.domain.ListModels;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Agent(name="ModelSuggestionAgent", description = "Suggest models based on selected providers and previously filtered tags")
@@ -52,8 +51,8 @@ public class ModelSuggestionAgent {
         description = "Generates a list of models based on user selected provider, tags and previously filtered list"
     )
     @Action
-    public ModelSuggestion getModels(UserInput userInput, ListModelMetadata listModelMetadata, OperationContext operationContext) {
-        String models = getModelsForProvider(userInput.getContent(),listModelMetadata);
+    public ModelSuggestion getModels(UserInput userInput, ListModels listModels, OperationContext operationContext) {
+        String models = getModelsForProvider(userInput.getContent(), listModels);
         //build the prompt
         var prompt = formatPrompt.formatted(models);
         logger.info(prompt);
@@ -63,13 +62,15 @@ public class ModelSuggestionAgent {
     }
 
     // @Action
-    String getModelsForProvider(String provider, ListModelMetadata listModelMetadata) {
+    String getModelsForProvider(String provider, ListModels listModels) {
         //loop and filter by the provider
-        List<String> modelNames = listModelMetadata.models()
-                                    .stream()
-                                    .filter(model -> provider.equalsIgnoreCase(model.getProvider()))
-                                    .map(ModelMetadata::getName)
-                                    .collect(Collectors.toList());
+        List<String> modelNames = listModels.models()
+                .stream()
+                .flatMap(model -> model.getModelProviders().stream())
+                .filter(modelProvider -> provider.equalsIgnoreCase(modelProvider.getProvider().getName()))
+                .map(modelProvider -> modelProvider.getProvider().getName())
+                .distinct()
+                .collect(Collectors.toList());
         
         return String.join(",",modelNames);
     }

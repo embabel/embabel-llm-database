@@ -15,7 +15,6 @@
  */
 package com.embabel.database.agent.service;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -35,10 +34,7 @@ import com.embabel.agent.core.AgentProcessStatusCode;
 import com.embabel.agent.core.ProcessOptions;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.database.agent.domain.AgentResult;
-import com.embabel.database.agent.domain.AgentSession;
-import com.embabel.database.agent.domain.ListModelMetadata;
-
-import jakarta.annotation.PostConstruct;
+import com.embabel.database.agent.domain.ListModels;
 
 /**
  * service that coordinates agents to make model suggestions
@@ -106,7 +102,7 @@ public class ModelSuggestionService {
         //build the map
         Map<String,Object> context = new HashMap<>();
         context.put(USER_INPUT,new UserInput(request));
-        context.put(LIST_MODEL_METADATA,blackboard.get(ListModelMetadata.class.getSimpleName()));
+        context.put(LIST_MODEL_METADATA,blackboard.get(ListModels.class.getSimpleName()));
         //now invoke
         agentManagementService.run(sessionId,"ModelSuggestionAgent",context);
         //return

@@ -17,8 +17,13 @@ package com.embabel.database.agent;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.embabel.database.agent.domain.ModelProviders;
+import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.domain.Model;
+import com.embabel.database.core.repository.domain.ModelProvider;
+import com.embabel.database.core.repository.domain.Provider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +36,8 @@ import com.embabel.agent.api.annotation.Condition;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.common.ai.model.ModelMetadata;
-import com.embabel.database.agent.domain.ListModelMetadata;
+import com.embabel.database.agent.domain.ListModels;
 import com.embabel.database.agent.domain.TagList;
-import com.embabel.database.agent.util.TagParser;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.LlmModelMetadata;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * flow
@@ -58,7 +59,7 @@ public class ModelProviderSuggestionAgent {
     private static final Log logger = LogFactory.getLog(ModelProviderSuggestionAgent.class);
 
     // @Autowired
-    TagParser tagParser;
+//    TagParser tagParser;
 
     @Value("${embabel.database.agent.suggestion.taglist-prompt}")
     String taglistPrompt;
@@ -67,11 +68,11 @@ public class ModelProviderSuggestionAgent {
     String providersPrompt;
 
     @Autowired
-    AiModelRepository aiModelRepository;
+    ModelRepository modelRepository;
 
-    public ModelProviderSuggestionAgent(TagParser tagParser) {
-        this.tagParser = tagParser;
-    }
+//    public ModelProviderSuggestionAgent(TagParser tagParser) {
+//        this.tagParser = tagParser;
+//    }
     
     @Action
     public TagList getSuggestedTagList(UserInput userInput, OperationContext operationContext) {
@@ -90,14 +91,14 @@ public class ModelProviderSuggestionAgent {
 
     //retrieve models for the specified tag(s)
     @Action(pre="have_models")
-    public ListModelMetadata getModelsByTag(TagList tagList) {
+    public ListModels getModelsByTag(TagList tagList) {
         logger.info("getting models: " + tagList.toString());
         //build the search criteria
         String[] tags = tagList.tags().toArray(String[]::new);
-        List<ModelMetadata> models = aiModelRepository.findByTags(tags);
+        List<Model> models = modelRepository.findByTags(tags);
         //TODO need to be able to short circuit here if there are no matches
         //return
-        return new ListModelMetadata(models);
+        return new ListModels(models);
     }
 
     //group by providers for model(s)
@@ -105,14 +106,21 @@ public class ModelProviderSuggestionAgent {
         description="Retrieves providers list for models based on criteria and sets up response"
     )
     @Action
-    public ModelProviders getProviders(ListModelMetadata listModelMetadata, UserInput userInput, OperationContext operationContext) {
+    public ModelProviders getProviders(ListModels listModels, UserInput userInput, OperationContext operationContext) {
         logger.info("(getProviders) getting provider group");
         //group
-        List<String> providers = listModelMetadata.models()
-            .stream()
-            .map(ModelMetadata::getProvider)
-            .distinct()
-            .collect(Collectors.toList());
+        List<String> providers = listModels.models()
+                .stream()
+                .flatMap(model -> {
+                    List<ModelProvider> p = model.getModelProviders();
+                    return p != null ? p.stream() : Stream.<ModelProvider>empty();
+                })
+                .collect(Collectors.toMap(map -> map.getProvider().getId(),
+                        map -> map.getProvider().getName(),
+                        (existing, replacement) -> existing))
+                .values()
+                .stream()
+                .toList();
         //convert the list of providers to a comma-delimited string
         var prompt = providersPrompt.formatted(userInput.getContent(),String.join(",",providers));
         logger.info(prompt);//quick dump of the prompt
@@ -124,16 +132,16 @@ public class ModelProviderSuggestionAgent {
     @Condition(name="have_models")
     public boolean haveModels() {
         logger.info("(haveModels) checking for models");
-        return (aiModelRepository.count() > 0);
+        return (modelRepository.count() > 0);
     }
 
     List<String> getAvailableTags() {
         //get all the models
-        List<ModelMetadata> models = aiModelRepository.findAll();
+        List<Model> models = modelRepository.findAll();
         //filter to get a unique list of actual tags in the repository
         //return
         return models.stream()
-            .flatMap(model -> ((LlmModelMetadata) model).getTags().stream())
+            .flatMap(model -> model.getTags().stream())
             .distinct()
             .collect(Collectors.toList());
     }

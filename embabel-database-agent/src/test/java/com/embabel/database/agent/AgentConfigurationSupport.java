@@ -22,9 +22,6 @@ import com.embabel.database.agent.service.*;
 import com.embabel.database.core.repository.InMemoryModelRepository;
 import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.domain.Model;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -37,7 +34,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrock.BedrockClient;
 
 @TestConfiguration
-@ComponentScan(basePackageClasses = {com.embabel.database.agent.AiModelRepositoryAgent.class})
+@ComponentScan//(basePackageClasses = {com.embabel.database.agent.AiModelRepositoryAgent.class})
 @EnableAgents
 @EnableAutoConfiguration
 public class AgentConfigurationSupport {

@@ -17,13 +17,6 @@ package com.embabel.database.server.config
 
 import jakarta.annotation.PostConstruct
 
-import com.embabel.common.ai.model.ModelMetadata
-import com.embabel.database.agent.service.AWSBedrockModelMetadataDiscoveryService
-import com.embabel.database.agent.service.ModelMetadataDiscoveryService
-import com.embabel.database.agent.util.AWSBedrockParser
-import com.embabel.database.agent.util.AWSBedrockTagParser
-import com.embabel.database.agent.util.ModelMetadataParser
-import com.embabel.database.agent.util.TagParser
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -58,24 +51,6 @@ class AWSBedrockConfig {
                 .credentialsProvider(StaticCredentialsProvider.create(awsBasicCredentials))
                 .region(region)
                 .build();
-    }
-
-    //AWS task Parser
-    @Bean
-    fun awsBedrockTaskParser(): TagParser {
-        return AWSBedrockTagParser()
-    }
-
-    //AWS model parser
-    @Bean
-    fun awsModelMetadataParser(): ModelMetadataParser {
-        return AWSBedrockParser()
-    }
-
-    //AWS discovery service
-    @Bean
-    fun awsModelMetadataDiscoveryService(awsModelMetadataParser: ModelMetadataParser, bedrockClient: BedrockClient, region: Region): ModelMetadataDiscoveryService {
-        return AWSBedrockModelMetadataDiscoveryService(awsModelMetadataParser,bedrockClient,region)
     }
 
     @Value("\${aws.region}")

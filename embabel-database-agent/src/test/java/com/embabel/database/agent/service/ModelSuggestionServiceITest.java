@@ -30,17 +30,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 
-import com.embabel.database.agent.util.LlmLeaderboardParser;
-import com.embabel.database.agent.util.LlmLeaderboardTagParser;
-import com.embabel.database.agent.util.ModelMetadataParser;
-import com.embabel.database.agent.util.TagParser;
-import com.embabel.database.core.repository.AiModelRepository;
-import com.embabel.database.core.repository.InMemoryAiModelRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@SpringBootTest(classes={AiModelRepositoryAgentITest.class, AgentConfigurationSupport.class}, properties = {
+@SpringBootTest(classes={ModelSuggestionServiceITest.class, AgentConfigurationSupport.class}, properties = {
         "spring.ai.bedrock.aws.region=us-east-1",
         "spring.ai.model.chat=ollama",
         "aws.accessKeyId=key",

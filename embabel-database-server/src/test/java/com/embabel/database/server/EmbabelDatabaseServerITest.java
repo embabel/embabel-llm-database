@@ -25,9 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,25 +43,12 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.embabel.agent.core.Agent;
-import com.embabel.agent.core.AgentPlatform;
-import com.embabel.agent.core.AgentProcess;
-import com.embabel.agent.core.AgentProcessStatusCode;
-import com.embabel.agent.core.ProcessOptions;
-import com.embabel.agent.core.Verbosity;
 // import com.embabel.agent.mcpserver.PerGoalToolCallbackProvider;
-import com.embabel.agent.web.rest.AgentProcessStatus;
-import com.embabel.database.agent.AiModelRepositoryAgent;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-
-import io.modelcontextprotocol.client.McpClient;
-import io.modelcontextprotocol.client.McpSyncClient;
-import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
-import io.modelcontextprotocol.spec.McpSchema.ListToolsResult;
 
 @SpringBootTest
 @AutoConfigureMockMvc
