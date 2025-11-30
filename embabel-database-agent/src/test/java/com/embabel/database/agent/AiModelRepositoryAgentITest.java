@@ -15,16 +15,16 @@
  */
 package com.embabel.database.agent;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import com.embabel.agent.api.common.autonomy.AgentInvocation;
+import com.embabel.database.agent.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.AfterAll;
@@ -32,11 +32,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -53,11 +55,6 @@ import com.embabel.agent.core.AgentProcess;
 import com.embabel.agent.core.AgentProcessStatusCode;
 import com.embabel.agent.core.ProcessOptions;
 import com.embabel.agent.core.support.DefaultAgentPlatform;
-import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService;
-import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService;
-import com.embabel.database.agent.service.ModelMetadataDiscoveryService;
-import com.embabel.database.agent.service.ModelMetadataService;
-import com.embabel.database.agent.service.ModelMetadataValidationService;
 import com.embabel.database.agent.util.TagParser;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
@@ -74,8 +71,13 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrock.BedrockClient;
 
 
-@SpringBootTest(classes={AiModelRepositoryAgentITest.class,AiModelRepositoryAgentITest.TestConfig.class})
-@ActiveProfiles("ollama")
+@SpringBootTest(classes={AiModelRepositoryAgentITest.class, AgentConfigurationSupport.class}, properties = {
+        "spring.ai.bedrock.aws.region=us-east-1",
+        "spring.ai.model.chat=ollama",
+        "aws.accessKeyId=key",
+        "aws.secretAccessKey=secret"
+})
+@ActiveProfiles("no-auto-load")
 public class AiModelRepositoryAgentITest {
 
     private static final Log logger = LogFactory.getLog(AiModelRepositoryAgentITest.class);
@@ -104,103 +106,28 @@ public class AiModelRepositoryAgentITest {
         registry.add("spring.ai.ollama.base-url", () -> baseUrl);
     }
 
-    @Autowired
-    ApplicationContext applicationContext;
+    AgentInvocation<LocalDateTime> agentInvocation;
 
     @Autowired
     AiModelRepository aiModelRepository;
 
+    @Autowired
+    AgentPlatform agentPlatform;
+
     @Test
     void testAgentInvocation() throws Exception {
-        //set baseline
-        aiModelRepository.deleteAll();//clean it out
         //check
         assertTrue(aiModelRepository.findAll().isEmpty());
-        //list all the beans
-        for (String name : applicationContext.getBeanDefinitionNames()) {
-            logger.info("Bean " + name);
-        }
-        //get the agents
-        AgentPlatform agentFactory = applicationContext.getBean(AgentPlatform.class);
-        //get agents
-        Agent agent = agentFactory.agents().get(0);
-
-        
-        assertEquals(agent.getName(),"AiModelRepositoryAgent");
-        //create the process
-        AgentProcess process = agentFactory.createAgentProcess(agent, ProcessOptions.DEFAULT, Collections.emptyMap()); //structured
-        String id = process.getId();
-        logger.info("process id " + id);
-        //now let's wait for it to complete
-        process.run();//start
-        //check
-        while (process.getStatus().equals(AgentProcessStatusCode.RUNNING) || process.getStatus().equals(AgentProcessStatusCode.WAITING)) {
-            //still waiting
-            Thread.sleep(500);//wait 500ms            
-        }//end while
-        //now it should be "done"
-        assertTrue(process.getStatus().equals(AgentProcessStatusCode.COMPLETED));
-        logger.info("completed the first round");
-        logger.info(process.statusReport());
-        //lets validated
-        assertFalse(aiModelRepository.findAll().isEmpty());
-        //let's invoke the agent again
-        process = agentFactory.createAgentProcess(agent, ProcessOptions.DEFAULT, Collections.emptyMap());
-        logger.info("process id " + id);
-        process.run();//start
-        //check
-        while (process.getStatus().equals(AgentProcessStatusCode.RUNNING) || process.getStatus().equals(AgentProcessStatusCode.WAITING)) {
-            //still waiting
-            Thread.sleep(500);//wait 500ms            
-        }//end while
-        //now it should be "stuck" because can't execute the update
-        assertTrue(process.getStatus().equals(AgentProcessStatusCode.STUCK));
-        logger.info("completed the second round");
+        //setup invocation
+        agentInvocation = AgentInvocation.builder(agentPlatform).build(LocalDateTime.class);
+        //invoke to get the latest update time
+        LocalDateTime updated = agentInvocation.invoke(Collections.emptyMap());
+        assertNotNull(updated);
+        logger.info(" last run... " + updated);
+        //now try again and time should be null
+        updated = agentInvocation.invoke(Collections.emptyMap());
+        assertNull(updated);
+        logger.info("Not run a second time");
     }
 
-    @TestConfiguration
-    @EnableAgents
-    public static class TestConfig {
-
-        @Bean
-        public AiModelRepository aiModelRepository() {
-            return new InMemoryAiModelRepository();
-        }        
-
-        @Bean
-        public AiModelRepositoryAgent aiModelRepositoryAgent() {
-            return new AiModelRepositoryAgent();
-        }
-
-        @Bean
-        public ObjectMapper objectMapper() {
-            return new ObjectMapper();
-        }
-
-        @Bean
-        public ModelMetadataParser modelMetadataParser(ObjectMapper objectMapper,TagParser categoryParser) {
-            return new LlmLeaderboardParser(objectMapper,categoryParser);
-        }
-
-        @Bean
-        public ModelMetadataDiscoveryService modelMetadataDiscoveryService(ModelMetadataParser modelMetadataParser) {
-            return new LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser);
-        }
-
-        @Bean
-        public ModelMetadataService modelMetadataService() {
-            return new ModelMetadataService();
-        }
-
-        @Bean
-        public ModelMetadataValidationService modelMetadataValidationService(AiModelRepository aiModelRepository) {
-            return new AiRepositoryModelMetadataValidationService(aiModelRepository);
-        }
-
-        @Bean
-        public TagParser llmLeaderboardCategoryParser() {
-            return new LlmLeaderboardTagParser();
-        }
-
-    }
 }

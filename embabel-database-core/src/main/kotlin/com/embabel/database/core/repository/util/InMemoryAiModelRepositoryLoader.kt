@@ -21,20 +21,25 @@ import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 
 import com.embabel.database.core.repository.InMemoryAiModelRepository
+import org.slf4j.LoggerFactory
 
 /**
- * Component can be disabled by setting the profile 'no-auto-load'
+ * must set auto-load profile
  */
 @Component
 class InMemoryAiModelRepositoryLoader(
     private val environment: Environment
 ) : ApplicationListener<ContextRefreshedEvent> {
 
+    private val logger = LoggerFactory.getLogger(InMemoryAiModelRepositoryLoader::class.java)
+
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
-        val activeProfiles = environment.activeProfiles
-        if (activeProfiles.contains("no-auto-load")) {
+        val activeProfiles = environment.activeProfiles.orEmpty()
+        if ("no-auto-load" in activeProfiles) {
+            logger.debug("NOT loading...")
             return
-        }
+        } //end if
+        logger.debug("Loading models on startup from local backup");
         val repository = event.applicationContext.getBean(InMemoryAiModelRepository::class.java)
         //trigger load
         repository.load()

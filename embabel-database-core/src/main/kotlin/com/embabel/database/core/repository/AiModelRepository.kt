@@ -144,4 +144,6 @@ interface AiModelRepository {
      * @return List of ModelMetadata or `null`
      */
     fun findByProvider(provider: String): List<ModelMetadata>?
+
+
 }

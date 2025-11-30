@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 
+import com.embabel.database.agent.AgentConfigurationSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
@@ -55,8 +56,13 @@ import software.amazon.awssdk.services.bedrock.BedrockClient;
  */
 
 
-@SpringBootTest(classes={AWSBedrockModelMetadataDiscoveryServiceITest.class,AWSBedrockModelMetadataDiscoveryServiceITest.TestConfig.class})
-@ActiveProfiles("aws")
+@SpringBootTest(classes={AWSBedrockModelMetadataDiscoveryServiceITest.class, AgentConfigurationSupport.class}, properties = {
+        "spring.ai.bedrock.aws.region=us-east-1",
+        "spring.ai.model.chat=none",
+        "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0",
+        "embabel.database.test=true"
+})
+@ActiveProfiles("no-auto-load")
 public class AWSBedrockModelMetadataDiscoveryServiceITest {
 
     private static final Log logger = LogFactory.getLog(AWSBedrockModelMetadataDiscoveryServiceITest.class);
@@ -74,7 +80,7 @@ public class AWSBedrockModelMetadataDiscoveryServiceITest {
     }
 
 
-    @TestConfiguration
+//    @TestConfiguration
     public static class TestConfig {
 
         @Bean

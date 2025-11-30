@@ -41,7 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class LlmLeaderboardParser implements ModelMetadataParser {
         
-    private static Log logger = LogFactory.getLog(LlmLeaderboardParser.class);
+    private static final Log logger = LogFactory.getLog(LlmLeaderboardParser.class);
 
     private static final String ALTERNATE_DATE_FORMAT = "yyyy-M-d";
     private static final String JSON_SUFFIX = ".json";

@@ -47,7 +47,7 @@ public class LlmLeaderboardModelMetadataDiscoveryServiceITest {
         assertTrue(models.size() > 50);
     }
 
-    @TestConfiguration
+//    @TestConfiguration
     public static class TestConfig {
 
         @Bean

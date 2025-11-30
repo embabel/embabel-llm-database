@@ -24,7 +24,7 @@ import com.embabel.agent.domain.io.UserInput;
 import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.database.agent.domain.ListModelMetadata;
 
-@Agent(name="ModelSuggestionAgentCoordinator", description="Uses ModelSuggestionAgent, ModelProviderSuggestionAgent and others to coordinate Model Recommendation")
+//@Agent(name="ModelSuggestionAgentCoordinator", description="Uses ModelSuggestionAgent, ModelProviderSuggestionAgent and others to coordinate Model Recommendation")
 public class ModelSuggestionAgentCoordinator {
        
     @Condition(name="has_selected_provider")
@@ -50,4 +50,5 @@ public class ModelSuggestionAgentCoordinator {
             .stream()
             .anyMatch(model -> model.getName().equalsIgnoreCase(userInputText));
     }
+
 }

@@ -1,0 +1,171 @@
+embabel:
+  database:
+    agent:
+      suggestion:
+        taglist-prompt: |
+          You are an expert in Large Language Models.  Review the following request from the user
+          and return a list of tag names that meet the users criteria.  Respond only with suitable
+          options from the list below.
+          
+          User Request = %s
+          
+          Tag Options = %s
+        providers-prompt: |
+          You are an expert in Large Language Models.  Review the following request from the user 
+          and the list of providers and respond with a request for the user to select a single provider.  
+          Do not elaborate on the providers, just provide them as a list for the user to select from.
+          
+          User Request = %s
+          
+          Providers = %s
+        format-prompt: |
+          You are an expert in Large Language Models.  Format the following list of models into a human 
+          readable table with a request for the user to select a model.  
+
+          Models = %s
+      parser:
+        json-to-model-prompt: |
+          You are an expert JSON transformation specialist. Extract data from the following source JSON fragment into 
+          the following object.
+          
+          ** SOURCE JSON: **
+          
+          %s
+        json-to-organization-prompt: |
+          You are an expert JSON transformation specialist. Convert the following source JSON fragment extracting only
+          the Organization into the following object.
+          
+          ** SOURCE JSON: **
+          
+          %s          
+
+        json-to-providers-prompt: |
+          You are an expert JSON transformation specialist. Convert the following source JSON fragment extracting only
+          the Providers into the following object. 
+          
+          ** SOURCE JSON: **
+          
+          %s          
+
+        json-to-model-prompt-schema: |
+          You are an expert JSON transformation specialist. Convert the following source JSON fragment into 
+          a valid JSON object that strictly conforms to the provided target JSON schema.
+          
+          **SOURCE JSON:**
+           %s
+          
+          **TARGET JSON SCHEMA:**
+            {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "knowledgeCutoff": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "releaseDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "parameterCount": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "organization": {
+                  "type": ["object", "null"]
+                },
+                "multiModal": {
+                  "type": "boolean"
+                },
+                "providers": {
+                  "type": ["array", "null"],
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "id",
+                "tags",
+                "knowledgeCutoff",
+                "releaseDate",
+                "parameterCount",
+                "multiModal",
+                "description"
+              ],
+              "additionalProperties": false
+            }
+        json-to-tags-prompt: |
+          You are an expert JSON transformation specialist. From the the following source JSON fragment extracting all the sets
+          of input and output modalities. Based on these modalities, select the most appropriate tag for all fo the modalities 
+          from the provided list that best describes the transformation between input and output modalities.
+          
+          ** SOURCE JSON: **
+          
+          %s          
+          
+          Tag list:
+            1. image-to-text
+            2. image-text-to-text
+            3. text-to-image
+            4. text-to-image-text
+            5. text-to-video
+            6. video-text-to-text
+            7. audio-to-text
+            8. text-to-audio
+            9. audio-to-audio
+            10. image-text-to-video
+            11. text-to-text
+            12. audio-video-image-text-to-text
+            13. text-to-embedding
+          
+          Instructions:
+            - Analyze which modalities are used as inputs and outputs.
+            - Choose the tag that best matches the transformation between all the active input modalities (true) and the active output modalities (true).
+            - Return only the most appropriate tag name, do not provide additional explanation.          
+
+        tagging-prompt: |
+          You are given a set of input and output modalities for a task. Based on these modalities, select the most appropriate 
+          tag from the provided list that best describes the transformation between input and output modalities.
+
+          Input modalities: 
+          %s
+          
+          Output modalities: 
+          %s
+          
+          Tag list:
+            1. image-to-text
+            2. image-text-to-text
+            3. text-to-image
+            4. text-to-image-text
+            5. text-to-video
+            6. video-text-to-text
+            7. audio-to-text
+            8. text-to-audio
+            9. audio-to-audio
+            10. image-text-to-video
+            11. text-to-text
+            12. audio-video-image-text-to-text
+            13. text-to-embedding
+          
+          Instructions:
+            - Analyze which modalities are used as inputs and outputs.
+            - Choose the tag that best matches the transformation between all the active input modalities (true) and the active output modalities (true).
+            - Return only the most appropriate tag name, do not provide additional explanation.

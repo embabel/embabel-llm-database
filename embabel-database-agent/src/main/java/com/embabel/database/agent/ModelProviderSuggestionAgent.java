@@ -15,12 +15,10 @@
  */
 package com.embabel.database.agent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.embabel.database.agent.domain.ModelProviders;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,18 +31,12 @@ import com.embabel.agent.api.annotation.Condition;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.common.ai.model.ModelMetadata;
-import com.embabel.common.ai.model.PerTokenPricingModel;
-import com.embabel.common.ai.model.PricingModel;
-import com.embabel.database.agent.domain.ProviderOptions;
 import com.embabel.database.agent.domain.ListModelMetadata;
-import com.embabel.database.agent.domain.ProviderList;
 import com.embabel.database.agent.domain.TagList;
 import com.embabel.database.agent.util.TagParser;
 import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.LlmModelMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-// record TagList(List<String> tags) { }
 
 /**
  * flow
@@ -63,19 +55,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Agent(name="ModelProviderSuggestionAgent", description = "Suggest model providers based on user criteria")
 public class ModelProviderSuggestionAgent {
     
-    private static Log logger = LogFactory.getLog(ModelProviderSuggestionAgent.class);
+    private static final Log logger = LogFactory.getLog(ModelProviderSuggestionAgent.class);
 
     // @Autowired
     TagParser tagParser;
 
-    @Autowired
-    ObjectMapper objectMapper;
+    @Value("${embabel.database.agent.suggestion.taglist-prompt}")
+    String taglistPrompt;
+
+    @Value("${embabel.database.agent.suggestion.providers-prompt}")
+    String providersPrompt;
 
     @Autowired
     AiModelRepository aiModelRepository;
-
-    @Value("${embabel.models.defaultLlm:llama3.1:8b}")
-    String modelName;
 
     public ModelProviderSuggestionAgent(TagParser tagParser) {
         this.tagParser = tagParser;
@@ -86,28 +78,14 @@ public class ModelProviderSuggestionAgent {
         //retrieves the tags available
         logger.info("checking for tags");
         //uses an LLM to take the "criteria" from the user and build a tag option
-        // List<Map<String,Object>> tags = tagParser.getTasks(objectMapper,TagParser.RESOURCE_LOCATION);
-        
-
         //convert to just a list of strings     
-        // List<String> tagNames = tags.stream()
-        //     .map(map -> (String) map.get("tag"))
-        //     .collect(Collectors.toList());   
         List<String> tagNames = getAvailableTags();
-       
         //set up the prompt
-        var prompt = """
-                Review the following request from the user and return a list of tag names that meet
-                the users requested criteria. Respond only with a list of tags.
-
-                Criteria = %s
-
-                Tag Options = %s
-                """.formatted(userInput.getContent(),tagNames);
-        logger.info(prompt);//quick dump of the prompot
+        var prompt = taglistPrompt.formatted(userInput.getContent(),tagNames);
+        logger.info(prompt);//quick dump of the prompt
         return operationContext.ai()
-            .withLlm(modelName)
-            .createObject(prompt, TagList.class);
+                .withAutoLlm()
+                .createObject(prompt,TagList.class);
     }
 
     //retrieve models for the specified tag(s)
@@ -115,11 +93,8 @@ public class ModelProviderSuggestionAgent {
     public ListModelMetadata getModelsByTag(TagList tagList) {
         logger.info("getting models: " + tagList.toString());
         //build the search criteria
-        String[] tags = tagList.tags().toArray(new String[tagList.tags().size()]);
-        logger.info("tags passed " + String.join(", ",tags));
+        String[] tags = tagList.tags().toArray(String[]::new);
         List<ModelMetadata> models = aiModelRepository.findByTags(tags);
-        logger.info("models is null: " + (models == null));
-        logger.info("models is empty: " + (models != null ? models.isEmpty() : "null"));
         //TODO need to be able to short circuit here if there are no matches
         //return
         return new ListModelMetadata(models);
@@ -130,7 +105,7 @@ public class ModelProviderSuggestionAgent {
         description="Retrieves providers list for models based on criteria and sets up response"
     )
     @Action
-    public String getProviders(ListModelMetadata listModelMetadata,UserInput userInput, OperationContext operationContext) {
+    public ModelProviders getProviders(ListModelMetadata listModelMetadata, UserInput userInput, OperationContext operationContext) {
         logger.info("(getProviders) getting provider group");
         //group
         List<String> providers = listModelMetadata.models()
@@ -138,21 +113,12 @@ public class ModelProviderSuggestionAgent {
             .map(ModelMetadata::getProvider)
             .distinct()
             .collect(Collectors.toList());
-        //convert the list of provdiers to a comma-delimited string        
-        var prompt = """
-            Review the following request from the user and the list of providers and respond with a request
-            for the user to select a single provider.  Do not elaborate on the providers, just provide them
-            as a list.
-
-            Criteria = %s
-
-            Providers = %s
-        """.formatted(userInput.getContent(),String.join(",",providers));
-        //return
-        logger.info(prompt);//quick dump of the prompot
+        //convert the list of providers to a comma-delimited string
+        var prompt = providersPrompt.formatted(userInput.getContent(),String.join(",",providers));
+        logger.info(prompt);//quick dump of the prompt
         return operationContext.ai()
-            .withLlm(modelName)
-            .createObject(prompt, String.class);
+                .withAutoLlm()
+            .createObject(prompt, ModelProviders.class);
     }    
 
     @Condition(name="have_models")

@@ -18,6 +18,9 @@ package com.embabel.database.agent;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.embabel.database.agent.domain.ModelSuggestion;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -33,9 +36,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Agent(name="ModelSuggestionAgent", description = "Suggest models based on selected providers and previously filtered tags")
 public class ModelSuggestionAgent {
-    
+
+    private static final Log logger = LogFactory.getLog(ModelSuggestionAgent.class);
+
     @Autowired
     ObjectMapper objectMapper;
+
+    @Value("${embabel.database.agent.suggestion.format-prompt}")
+    String formatPrompt;
 
     @Value("${embabel.models.defaultLlm:llama3.1:8b}")
     String modelName;
@@ -44,19 +52,14 @@ public class ModelSuggestionAgent {
         description = "Generates a list of models based on user selected provider, tags and previously filtered list"
     )
     @Action
-    public String getModels(UserInput userInput, ListModelMetadata listModelMetadata, OperationContext operationContext) {
+    public ModelSuggestion getModels(UserInput userInput, ListModelMetadata listModelMetadata, OperationContext operationContext) {
         String models = getModelsForProvider(userInput.getContent(),listModelMetadata);
         //build the prompt
-        var prompt = """
-                Format the following list of models into a human readable table with a request for the user
-                to select a model.
-
-                models = %s
-                """.formatted(models);
+        var prompt = formatPrompt.formatted(models);
+        logger.info(prompt);
         return operationContext.ai()
-            .withLlm(modelName)
-            .createObject(prompt,String.class);
-            // .createObject(prompt,ModelList.class);
+                .withAutoLlm()
+                .createObject(prompt,ModelSuggestion.class);
     }
 
     // @Action

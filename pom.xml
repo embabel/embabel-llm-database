@@ -25,6 +25,7 @@
         <module>embabel-database-agent</module>
         <module>embabel-database-ui</module>
         <module>embabel-database-server</module>
+        <module>embabel-database-batch</module>
     </modules>
 
     <scm>

@@ -17,26 +17,21 @@ package com.embabel.database.agent.service;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Map;
 
+import com.embabel.agent.api.common.autonomy.AgentInvocation;
+import com.embabel.agent.core.AgentPlatform;
+import com.embabel.database.agent.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
-import com.embabel.agent.config.annotation.EnableAgentMcpServer;
-import com.embabel.agent.config.annotation.EnableAgents;
-import com.embabel.database.agent.AiModelRepositoryAgent;
-import com.embabel.database.agent.DefaultTestConfig;
-import com.embabel.database.agent.ModelProviderSuggestionAgent;
-import com.embabel.database.agent.ModelSuggestionAgent;
-import com.embabel.database.agent.ModelSuggestionAgentITest;
 import com.embabel.database.agent.util.LlmLeaderboardParser;
 import com.embabel.database.agent.util.LlmLeaderboardTagParser;
 import com.embabel.database.agent.util.ModelMetadataParser;
@@ -45,10 +40,12 @@ import com.embabel.database.core.repository.AiModelRepository;
 import com.embabel.database.core.repository.InMemoryAiModelRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootTest(classes={ModelSuggestionServiceITest.class,DefaultTestConfig.class})
-// @SpringBootTest
-// @Import(DefaultTestConfig.class)
-@ActiveProfiles("ollama")
+@SpringBootTest(classes={AiModelRepositoryAgentITest.class, AgentConfigurationSupport.class}, properties = {
+        "spring.ai.bedrock.aws.region=us-east-1",
+        "spring.ai.model.chat=ollama",
+        "aws.accessKeyId=key",
+        "aws.secretAccessKey=secret"
+})
 public class ModelSuggestionServiceITest {
 
     private static final Log logger = LogFactory.getLog(ModelSuggestionServiceITest.class);
@@ -59,13 +56,16 @@ public class ModelSuggestionServiceITest {
     @Autowired
     ApplicationContext applicationContext;
 
+    @Autowired
+    AgentPlatform agentPlatform;
+
+
     @Test
     void testGetProviderSuggestions() throws Exception {
         //load up the repository for testing
-        InMemoryAiModelRepository repository = applicationContext.getBean(InMemoryAiModelRepository.class);
-        repository.load();//invoke the load
-        //setup the query
-        // String userInputText = "find a model that can extract text from an image";  
+        AgentInvocation<LocalDateTime> modelLoader = AgentInvocation.builder(agentPlatform).build(LocalDateTime.class);
+        modelLoader.invoke(Collections.emptyMap());
+        // String userInputText = "find a model that can extract text from an image";
         // String userInputText = "I want a model that will create an image from text";      
         String userInputText = "I want a model that can create images";
         //invoke the service
@@ -85,67 +85,4 @@ public class ModelSuggestionServiceITest {
         assertNotNull(results.get("result"));
     }
 
-    // @TestConfiguration
-    // @EnableAgents
-    public static class TestConfig {
-      
-        @Bean
-        public ModelSuggestionService modelSuggestionService() {
-            return new ModelSuggestionService();
-        }
-
-        @Bean
-        public ModelProviderSuggestionAgent modelProviderSuggestionAgent(TagParser tagParser) {
-            return new ModelProviderSuggestionAgent(tagParser);
-        }
-
-        @Bean
-        public ModelSuggestionAgent modelSuggestionAgent() {
-            return new ModelSuggestionAgent();
-        }
-
-        /*
-         * Setup Below is to support the AiModelRepositoryAgent
-         */
-        @Bean
-        public AiModelRepository aiModelRepository() {
-            return new InMemoryAiModelRepository();
-        }        
-
-        @Bean
-        public AiModelRepositoryAgent aiModelRepositoryAgent() {
-            return new AiModelRepositoryAgent();
-        }
-
-        @Bean
-        public ObjectMapper objectMapper() {
-            return new ObjectMapper();
-        }
-
-        @Bean
-        public ModelMetadataParser modelMetadataParser(ObjectMapper objectMapper,TagParser categoryParser) {
-            return new LlmLeaderboardParser(objectMapper,categoryParser);
-        }
-
-        @Bean
-        public ModelMetadataDiscoveryService modelMetadataDiscoveryService(ModelMetadataParser modelMetadataParser) {
-            return new LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser);
-        }
-
-        @Bean
-        public ModelMetadataService modelMetadataService() {
-            return new ModelMetadataService();
-        }
-
-        @Bean
-        public ModelMetadataValidationService modelMetadataValidationService(AiModelRepository aiModelRepository) {
-            return new AiRepositoryModelMetadataValidationService(aiModelRepository);
-        }
-
-        @Bean
-        public TagParser llmLeaderboardCategoryParser() {
-            return new LlmLeaderboardTagParser();
-        }
-
-    }    
 }

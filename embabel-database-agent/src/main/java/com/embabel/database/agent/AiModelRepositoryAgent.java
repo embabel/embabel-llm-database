@@ -43,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Agent(name="AiModelRepositoryAgent", description = "Discovers and loads AI models from various sources")
 public class AiModelRepositoryAgent {
 
-    private static Log logger = LogFactory.getLog(AiModelRepositoryAgent.class);
+    private static final Log logger = LogFactory.getLog(AiModelRepositoryAgent.class);
 
     @Autowired
     AiModelRepository aiModelRepository;
@@ -100,7 +100,8 @@ public class AiModelRepositoryAgent {
     
     @Condition(name="have_models")
     public boolean haveModel(ListModelMetadata listModelMetadata) {
-         return !listModelMetadata.models().isEmpty(); //inverse response
+         return !listModelMetadata.models()
+                 .isEmpty(); //inverse response
     }
 }
 
