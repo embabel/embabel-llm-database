@@ -26,8 +26,9 @@ function Tags() {
     const searchModels = async (tags) => {
         try {
             const params = new URLSearchParams();
+            console.log(tags);
             tags.forEach(tag => {
-                params.append("tags",tag.tag);
+                params.append("tags",tag);
             })
             const url = `${base_url}/search/findByTags?${params.toString()}`;
             const response = await fetch(url);
@@ -44,7 +45,7 @@ function Tags() {
 
     const handleRowSelection = (region) => {
         var idx = region[0]['rows'][0];
-        var modelId = data[idx]['modelId'];
+        var modelId = data[idx]['id'];
         //retrieve model
         fetch(`${base_url}/${modelId}`)
             .then(response => {

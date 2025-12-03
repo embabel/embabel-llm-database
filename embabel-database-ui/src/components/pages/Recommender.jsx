@@ -1,7 +1,11 @@
 import { useState, useRef } from "react";
-import { Card, Section, SectionCard, TextAlignment } from "@blueprintjs/core";
+import { Button, Section, SectionCard, TextAlignment } from "@blueprintjs/core";
 
 import { ChatContainer, MessageList, MessageSeparator, Message, MessageInput, TypingIndicator } from '@chatscope/chat-ui-kit-react';
+
+import Model from "../data/model/Model";
+
+import ReactLinkify from "react-linkify";
 
 const base_url = "/api/v1/models";
 
@@ -10,6 +14,8 @@ import './Recommender.css';
 
 function Recommender() {
 
+    const [model, setModel] = useState();
+    const [models, setModels] = useState([]);
     const [messages, setMessages] = useState([]);
     const [sessionId, setSessionId] = useState("");
     const [thinking,setThinking] = useState(false);
@@ -23,7 +29,8 @@ function Recommender() {
                     message: message,
                     sender: sender,
                     direction: sender === "user" ? "outgoing" : "incoming",
-                    position: "normal"
+                    position: "normal",
+                    type: "html"
                 },
                 children: [
                     <Message.CustomContent>
@@ -37,8 +44,9 @@ function Recommender() {
         return messageObj;
     }
 
-    const handleViewMoreClick = () => {
+    const handleViewMoreClick = (id) => {
         //navigate to view more detail
+        console.log('handle loading model from here ' + id);
     }
 
     const handleMessageSend = (message) => {
@@ -52,98 +60,110 @@ function Recommender() {
         sendMessage(message);
     }
 
-    const updateMessages = (message,role) => {
-        //normalize the message object first
-        let msg = {
-            "id":crypto.randomUUID(),
-            "role":role
-        }
-        console.log(message);
-        if (message.message) {
-            msg.message = message.message;
-        } else {
-            msg.message = message;    
-        }
-        // } //end if
-        //get the existing message set
-        setMessages(prev => [...prev, msg]);
-    }
-
     const sendMessage = (message) => {
-        // Immediately show user's message
-        updateMessages({ message }, "user");
 
-        if (chatInputRef.current) {
-            chatInputRef.current.setThinkingState(true);
-        }
+        setThinking(true);
 
-        // First POST to initiate recommendation session
         fetch(`${base_url}/recommend`, {
             method: 'POST',
             headers: { 
-                'Content-Type': 'text/plain',
-                'Accept': 'application/json',
-                ...(sessionId ? { 'x-embabel-request-id': sessionId } : {})                
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            ...(sessionId ? { 'x-embabel-request-id': sessionId } : {})
             },
-            body: message
+            body: JSON.stringify({"message":message})
         })
-        .then(response => response.json())
-        .then(data => {
-            const sessionId = data.sessionId;
-            if (!sessionId) {
-                throw new Error("No sessionId returned");
+        .then(async (response) => {
+            // Read session id from response header instead of body
+            const headerSessionId = response.headers.get('x-embabel-request-id');
+            if (!headerSessionId) {
+                throw new Error("No sessionId header returned");
             }
-            setSessionId(sessionId);
+            setSessionId(headerSessionId);
+            // If you still need the JSON body for other data:
+            const data = await response.json();
+            // handle `data` as needed here
+            console.log(data);
+
+            let msg = data;
             
-            // Start polling for results
-            pollForResults(sessionId);
+            //process the message
+            if (data.providers) {
+
+                //build out the list
+                let list = data.providers
+                    .providers
+                    .map((provider) => (<li key={provider}>{provider}</li>))
+
+                let formattedMessage = (
+                    <>
+                        <span>{data.providers.message}</span>
+                        <ul>{list}</ul>
+                    </>
+                )
+
+                console.log(formattedMessage);
+
+                //this is a list of providers
+                msg = formatMessage(formattedMessage,"system");
+
+            } else if (data.models) {
+                const modelOptions = data.models.listModels.models;
+                console.log(modelOptions);
+                setModels(modelOptions);
+                //this is 'models'
+                let list = data.models
+                    .listModels
+                    .models
+                    .map((model,idx) => (
+                        <>
+                        <Button variant="minimal" key={model.id} onClick={() => handleModel(model.id)} text={model.name}/>
+                        <br/>
+                        </>
+                    ))
+
+                let formattedMessage = (
+                    <>
+                        <p>{data.models.message}</p>
+                        <br/>
+                        {list}
+                    </>
+                )
+                //this is a list of providers
+                msg = formatMessage(formattedMessage,"system");
+            }
+
+            setMessages(prev => [...prev,msg]);
+
+            setThinking(false);
         })
         .catch(error => {
             console.error("Error initiating recommendation:", error);
-            if (chatInputRef.current) {
-                chatInputRef.current.setThinkingState(false);
-            }
+            setThinking(false);
         });
     };
 
-    const pollForResults = (sessionId) => {
-        const pollInterval = 2000; // ms
-
-        const poll = () => {
-            fetch(`${base_url}/recommend/${sessionId}`, {
-                method: 'GET',
-                headers: { 
-                    'Accept': 'application/json',
-                    'x-embabel-request-id': sessionId
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result) {
-                    // Got a result, stop polling
-                    updateMessages(data.result, "system");
-                    if (chatInputRef.current) {
-                        chatInputRef.current.setThinkingState(false);
-                    }
-                } else {
-                    // Continue polling until result is ready
-                    setTimeout(poll, pollInterval);
-                }
-            })
+    const handleModel = (id) => {
+        //retrieve model
+        fetch(`${base_url}/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Model not found (404) ' + modelId);
+                    } else {
+                        throw new Error('Http error, status = ' + response.status);
+                    }//end if
+                } //end if
+                return response.json()})
+            .then(model => setModel(model))
             .catch(error => {
-                console.error("Error polling for results:", error);
-                if (chatInputRef.current) {
-                    chatInputRef.current.setThinkingState(false);
-                }
+                console.error("failed to retrieve model: " + modelId,error);
             });
-        };
-
-        poll();
-    };
+    }
 
     return (
         <Section
-            style={{ height: '100%', display: 'grid', gridTemplateRows: '20% 80%', placeItems: 'center'}}>
+            style={{ height: '100%', display: 'grid', gridTemplateRows: '20% 50% 30%', placeItems: 'center'}}>
             <SectionCard style={{ width: '100%'}}>
                 <h3>Embabel LLM Recommender</h3>
             </SectionCard>
@@ -163,6 +183,9 @@ function Recommender() {
                         attachButton={false}
                         onSend={handleMessageSend}/>
                 </ChatContainer>
+            </SectionCard>
+            <SectionCard style={{ height: '100%', width: '100%'}}>
+                <Model model={model}/>
             </SectionCard>
         </Section>
     );

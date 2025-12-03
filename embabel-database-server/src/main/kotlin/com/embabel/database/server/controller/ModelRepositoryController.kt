@@ -54,12 +54,12 @@ class ModelRepositoryController {
     fun getByName(@RequestParam("name") name: String): List<Model>? {
         return modelRepository.findByName(name)
     }
-//
-//    @GetMapping("/search/findByNameAndProvider")
-//    fun getByName(@RequestParam("name") name: String, @RequestParam("provider") provider: String): Model? {
-//        return modelRepository.findByNameAndProvider(name,provider) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"Model not found")
-//    }
-//
+
+    @GetMapping("/search/findByNameAndProvider")
+    fun getByName(@RequestParam("name") name: String, @RequestParam("provider") provider: String): Model? {
+        return modelRepository.findByNameAndProvider(name,provider) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"Model not found")
+    }
+
     @GetMapping("/lastUpdated")
     fun getLastUpdated(): LocalDateTime {
         return modelRepository.lastUpdated()
@@ -70,11 +70,11 @@ class ModelRepositoryController {
         val count = modelRepository.count()
         return mapOf("count" to count)
     }
-//
-//    @GetMapping("/search/findByNameContains")
-//    fun getNameContains(@RequestParam("contains") name: String): List<Model>? {
-//        return modelRepository.findByNameContains(name) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
-//    }
+
+    @GetMapping("/search/findByNameContains")
+    fun getNameContains(@RequestParam("contains") name: String): List<Model>? {
+        return modelRepository.findByNameContains(name) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
+    }
 
     @GetMapping("/search/findByTags")
     fun getByTags(@RequestParam("tags") tags: List<String>?): List<Model>? {
@@ -89,8 +89,8 @@ class ModelRepositoryController {
         return modelRepository.findById(modelId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No model found for ID")
     }
 
-//    @GetMapping("/search/findByProvider")
-//    fun getByProvider(@RequestParam("provider") provider: String): List<Model>? {
-//        return modelRepository.findByProvider(provider) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching models found")
-//    }
+    @GetMapping("/search/findByProvider")
+    fun getByProvider(@RequestParam("provider") provider: String): List<Model>? {
+        return modelRepository.findByProvider(provider) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching models found")
+    }
 }

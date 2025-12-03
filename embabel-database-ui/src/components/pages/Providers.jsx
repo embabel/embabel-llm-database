@@ -39,7 +39,7 @@ function Providers() {
 
     const handleRowSelection = (region) => {
         var idx = region[0]['rows'][0];
-        var modelId = data[idx]['modelId'];
+        var modelId = data[idx]['id'];
         //retrieve model
         fetch('/api/v1/models/' + modelId)
             .then(response => {

@@ -45,4 +45,10 @@ interface ModelRepository {
     fun deleteAll()
 
     fun lastUpdated(): LocalDateTime
+
+    fun findByNameAndProvider(name: String, provider: String): Model?
+
+    fun findByNameContains(name: String): List<Model>?
+
+    fun findByProvider(provider: String): List<Model>?
 }

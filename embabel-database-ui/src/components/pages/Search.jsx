@@ -47,6 +47,7 @@ function Search() {
     const handleRowSelection = (region) => {
         var idx = region[0]['rows'][0];
         var modelId = data[idx]['id'];
+
         //retrieve model
         fetch(`${base_url}/${modelId}`)
             .then(response => {

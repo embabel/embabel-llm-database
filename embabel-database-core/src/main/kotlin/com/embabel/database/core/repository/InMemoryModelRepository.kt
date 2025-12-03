@@ -16,11 +16,8 @@
 package com.embabel.database.core.repository
 
 import com.embabel.database.core.repository.domain.Model
-import com.embabel.database.core.repository.domain.ModelProvider
 import com.embabel.database.core.repository.domain.Organization
 import com.embabel.database.core.repository.domain.Provider
-import com.fasterxml.jackson.databind.ObjectMapper
-
 import java.time.LocalDateTime
 
 class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelRepository {
@@ -94,6 +91,28 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
 
     override fun lastUpdated(): LocalDateTime {
         return updatedTimestamp
+    }
+
+    override fun findByNameAndProvider(
+        name: String,
+        provider: String
+    ): Model? {
+        return models.find { model ->
+            model.name == name &&
+                    model.modelProviders?.any { it.provider.name == provider } == true
+        }
+    }
+
+    override fun findByNameContains(name: String): List<Model> {
+        return models.filter { it.name.contains(name, ignoreCase = true) }
+    }
+
+    override fun findByProvider(provider: String): List<Model> {
+        return models.filter { model ->
+            model.modelProviders?.any {
+                it.provider.name.equals(provider, ignoreCase = true)
+            } == true
+        }
     }
 
 

@@ -9,7 +9,7 @@ import './Model.css';
 function Model({ model }) {
 
     return (
-        <Card elevation={Elevation.ONE}>
+        <Card elevation={Elevation.ONE} style={{height:'100%',width:'100%'}}>
             { model ? (
                 <>
                     <table style={{width:'100%'}}>
@@ -41,39 +41,41 @@ function Model({ model }) {
                         <tbody>
                             <tr>
                             {model.modelProviders ? model.modelProviders.map((modelProvider,idx) => (
-                                    <td>
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td className="emphasis-tag" colSpan="2">
-                                                        {modelProvider.provider.name}
-                                                    </td>
-                                                </tr>        
-                                                <tr>
-                                                    <td className="emphasis-tag" colSpan="2">
-                                                        Pricing per 1m Tokens ($USD)
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td className="emphasis-tag">
-                                                        Input:
-                                                    </td>
-                                                    <td>
-                                                        {modelProvider.inputPerMillion ? formatPrice(modelProvider.inputPerMillion) : null}
-                                                    </td>
-                                                </tr>                                    
-                                                <tr>
-                                                    <td className="emphasis-tag">
-                                                        Output:
-                                                    </td>
-                                                    <td>
-                                                        {modelProvider.outputPerMillion ? formatPrice(modelProvider.outputPerMillion) : null}
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>                  
-                            )) : (<></>)}
+                                <td key={idx}>
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td className="emphasis-tag" colSpan="2">
+                                                    {modelProvider.provider.name}
+                                                </td>
+                                            </tr>        
+                                            <tr>
+                                                <td className="emphasis-tag" colSpan="2">
+                                                    Pricing per 1m Tokens ($USD)
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td className="emphasis-tag">
+                                                    Input:
+                                                </td>
+                                                <td>
+                                                    {modelProvider.inputPerMillion ? formatPrice(modelProvider.inputPerMillion) : null}
+                                                </td>
+                                            </tr>                                    
+                                            <tr>
+                                                <td className="emphasis-tag">
+                                                    Output:
+                                                </td>
+                                                <td>
+                                                    {modelProvider.outputPerMillion ? formatPrice(modelProvider.outputPerMillion) : null}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>                  
+                                )) : (
+                                <></>
+                            )}
                             </tr>
                         </tbody>
                     </table>

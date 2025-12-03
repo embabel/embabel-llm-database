@@ -26,7 +26,6 @@ function renderName(name) {
 function renderCell(rowIndex, columnIndex, data) {
     const cellKey = data[rowIndex]["modelId"] + "-" + columnIndex
     //use the column index to get the right column
-    console.log(columnName);
     var columnName = "";
     if (columnIndex === 0) {
         //first column is name
