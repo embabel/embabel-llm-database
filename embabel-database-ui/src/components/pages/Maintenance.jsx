@@ -6,6 +6,7 @@ import AppData from "../layout/AppData";
 const base_url_agents = '/api/v1/agents'
 const base_url_platform = '/api/v1/platform-info'
 const base_url_process = '/api/v1/process'
+const base_url_model = '/api/v1/models'
 
 function Maintenance() {
 
@@ -22,15 +23,16 @@ function Maintenance() {
             let notFound = false;
             try {
                 console.log("polling");
-                const response = await fetch(`${base_url_process}/${processId}`)
+                const response = await fetch(`${base_url_model}/refresh/${processId}`)
                 if (!response.ok) {
                     if (response.status === 404) {
                         notFound = true;
                     }
                     throw new Error(`http error: ${response.status}`)
                 };
-                const data = await response.json()
-                if (data.status !== 'RUNNING') {
+                const data = await response.text()
+                console.log(data);
+                if (data !== 'STARTING' || data !== 'STARTED') {
                     //done
                     setRunning(false);//stop this part
                     //refresh the data block
@@ -55,7 +57,7 @@ function Maintenance() {
     }
 
     const handleStartAgent = () => {
-        fetch(`${base_url_agents}/${agentName}`, {
+        fetch(`${base_url_model}/refresh`, {
             method: 'POST',
             headers: {
                 'Content-type':'application/json'
@@ -67,7 +69,10 @@ function Maintenance() {
             setAgentId(data[0]);//set the return name
             //start a polling systems         
             console.log(data);
-            monitorStatus(data[0]);
+            // monitorStatus(data[0]);
+            //executionid
+            const executionId = data.executionId;
+            monitorStatus(executionId);
         })
     }
 
@@ -89,9 +94,9 @@ function Maintenance() {
         .then((data) => {
             data.forEach((process) => {
                 fetch(`${base_url_process}/${process}`)
-                .then((response) => response.json())
+                .then((response) => response.text())
                 .then((processData) => {
-                    if (processData.status.includes("RUNNING")) {
+                    if (processData.includes("STARTING")) {
                         //there's one running
                         setRunning(true);
                         //exit

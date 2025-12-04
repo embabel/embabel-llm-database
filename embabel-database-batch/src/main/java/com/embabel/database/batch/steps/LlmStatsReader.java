@@ -52,6 +52,7 @@ public class LlmStatsReader implements Tasklet {
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+        logger.info("starting with... " + modelRepository.findAll().size());
         List<String> newModelIds = restClient.get()
                 .uri(modelListUrl)
                 .retrieve()

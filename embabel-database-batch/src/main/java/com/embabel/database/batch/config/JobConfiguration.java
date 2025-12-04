@@ -15,7 +15,6 @@
  */
 package com.embabel.database.batch.config;
 
-import com.embabel.database.batch.listener.ChunkDumpListener;
 import com.embabel.database.batch.steps.LlmStatsReader;
 import com.embabel.database.batch.steps.ModelProcessor;
 import com.embabel.database.batch.steps.ModelReader;
@@ -38,10 +37,9 @@ public class JobConfiguration {
 
     @Bean
     public Job parserAgentJob(JobRepository jobRepository, Step readModels, Step parseModel) {
-        return new JobBuilder("parserAgentJob",jobRepository) //TODO externalize name
+        return new JobBuilder("parserAgentJob",jobRepository)
                 .start(readModels) //get the list of new models
                 .next(parseModel) //process them
-                .listener(chunkDumpListener()) //do periodic chunks out
                 .build();
     }
 
@@ -77,12 +75,6 @@ public class JobConfiguration {
     @StepScope
     ModelWriter modelWriter() {
         return new ModelWriter();
-    }
-
-    @Bean
-    @StepScope
-    ChunkDumpListener chunkDumpListener() {
-        return new ChunkDumpListener();
     }
 
     @Bean

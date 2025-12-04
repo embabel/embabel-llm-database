@@ -15,27 +15,20 @@
  */
 package com.embabel.database.server.service
 
+import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import org.springframework.context.annotation.Profile
-
-import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.batch.JobLauncherApplicationRunner
 
 @Profile("scheduled")
 @Component
-class AgentSchedulingService(
-    private val jobLauncher: JobLauncherApplicationRunner
-) {
+class AgentSchedulingService() {
 
     private val logger = LoggerFactory.getLogger(AgentSchedulingService::class.java)
 
     //initial delay 30 seconds to allow for startup
     @Scheduled(initialDelayString = "\${embabel.agent.scheduling.initial-delay-ms:30000}", fixedRateString = "\${embabel.agent.scheduling.fixed-rate-ms:86400000}") //Default is 24hrs in milliseconds
     fun runAgent() {
-        //create the process
-//        jobLauncher.run("") //null
-        //log
         logger.info("running batch loader process id")
     }
 

@@ -15,6 +15,7 @@
  */
 package com.embabel.database.server.controller
 
+import brave.Response
 import com.embabel.database.agent.domain.ModelSuggestion
 import com.embabel.database.agent.domain.SessionContext
 import com.embabel.database.agent.service.ModelSuggestionService
@@ -22,6 +23,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.slf4j.LoggerFactory
+import org.springframework.batch.core.Job
+import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.batch.core.explore.JobExplorer
+import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -31,16 +38,13 @@ private const val sessionKey = "x-embabel-request-id"
 @RequestMapping("/api/v1/models")
 class ModelSuggestionController(
     private val modelSuggestionService: ModelSuggestionService,
-    objectMapper: ObjectMapper
+    objectMapper: ObjectMapper,
+    @Qualifier("asyncJobLauncher") private val jobLauncher: JobLauncher,
+    private val jobExplorer: JobExplorer,
+    @Qualifier("parserAgentJob") private val job: Job
 ) {
 
     private val logger = LoggerFactory.getLogger(ModelSuggestionController::class.java)
-
-//    @Autowired
-//    lateinit var modelSuggestionService: ModelSuggestionService
-//
-//    @Autowired
-//    lateinit var objectMapper: ObjectMapper
 
     private val mapper: ObjectMapper = objectMapper.registerKotlinModule()
         .registerModule(JavaTimeModule())
@@ -56,8 +60,6 @@ class ModelSuggestionController(
             //we've already started this conversation...
             val models : ModelSuggestion = modelSuggestionService.getModelSuggestion(prompt, headers[sessionKey])
             //convert
-            val jsonModels = mapper.writeValueAsString(models.listModels().models())
-//            val resultMap = mapOf("models" to jsonModels)
             val resultMap = mapOf("models" to models)
             ResponseEntity.ok()
                 .header(sessionKey, headers[sessionKey])
@@ -66,13 +68,38 @@ class ModelSuggestionController(
             //new conversation
             val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
             //set the header
-            val jsonProviders = mapper.writeValueAsString(sessionContext.modelProviders());
-//            val resultMap = mapOf("providers" to jsonProviders)
             val resultMap = mapOf("providers" to sessionContext.modelProviders())
             ResponseEntity.ok()
                 .header(sessionKey,sessionContext.sessionid())
                 .body(resultMap)
         }
     }
+
+
+    @PostMapping("/refresh")
+    fun update(): ResponseEntity<Any?> {
+        return try {
+            val params = JobParametersBuilder()
+                .addLong("run.id", System.currentTimeMillis())
+                .toJobParameters()
+
+            val execution = jobLauncher.run(job, params)
+            logger.info("Started parseAgentJob with status=${execution.status}")
+
+            ResponseEntity.accepted().body(mapOf("status" to execution.status.toString(),
+                "executionId" to execution.id.toString()))
+        } catch (ex: Exception) {
+            logger.error("Failed to start refreshJob", ex)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(mapOf("error" to "Failed to start job"))
+        }
+    }
+
+    @GetMapping("/refresh/{executionId}")
+    fun status(@PathVariable("executionId") executionId : Long): ResponseEntity<Any?> {
+        return ResponseEntity.ok()
+            .body(jobExplorer.getJobExecution(executionId)?.status.toString())
+    }
+
 
 }

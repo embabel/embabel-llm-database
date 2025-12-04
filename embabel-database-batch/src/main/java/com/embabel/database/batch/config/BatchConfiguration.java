@@ -24,6 +24,8 @@ import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.support.JdbcTransactionManager;
@@ -57,5 +59,16 @@ public class BatchConfiguration {
     public JdbcTransactionManager batchTransactionManager(DataSource dataSource) {
         return new JdbcTransactionManager(dataSource);
     }
+
+    @Bean(name = "asyncJobLauncher")
+    @Primary
+    public JobLauncher asyncJobLauncher(JobRepository jobRepository) throws Exception {
+        TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
+        jobLauncher.setJobRepository(jobRepository);
+        jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        jobLauncher.afterPropertiesSet();
+        return jobLauncher;
+    }
+
 
 }
