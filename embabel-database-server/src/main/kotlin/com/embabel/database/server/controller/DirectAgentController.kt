@@ -16,6 +16,7 @@
 package com.embabel.database.server.controller
 
 
+import com.embabel.agent.core.AgentPlatform
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity
 import org.springframework.http.HttpStatus
@@ -25,32 +26,39 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 
-import com.embabel.database.server.service.AgentExecutionService
+
+import org.slf4j.LoggerFactory
 
 @RestController
 @RequestMapping("/api/v1/agents")
 class DirectAgentController {
 
     @Autowired
-    lateinit var agentExecutionService: AgentExecutionService
+    lateinit var agentPlatform: AgentPlatform
 
-    @PostMapping("/{agentName}")
-    fun runAgent(@PathVariable agentName: String): ResponseEntity<String> {
-        //create the process
-        val agentProcess = agentExecutionService.createProcess(agentName)
-        //execute
-        agentExecutionService.runAgentProcessAsync(agentProcess)
-        //return
-        return ResponseEntity.ok(agentProcess.id)
-    }
+//    @PostMapping("/{agentName}")
+//    fun runAgent(@PathVariable agentName: String): ResponseEntity<String> {
+//        //create the process
+//        val agentProcess = agentExecutionService.createProcess(agentName)
+//        //execute
+//        agentExecutionService.runAgentProcessAsync(agentProcess)
+//        //return
+//        return ResponseEntity.ok(agentProcess.id)
+//    }
 
-    @GetMapping("/{agentName}/processes")
-    fun getProcessesForAgent(@PathVariable agentName: String): ResponseEntity<List<String>> {
-        val processIds = agentExecutionService.getProcessIds(agentName)
-        return if (processIds.isEmpty()) {
-            ResponseEntity.notFound().build()
-        } else {
-            ResponseEntity.ok(processIds)
-        }
+    @GetMapping
+    fun getAgents(): ResponseEntity<List<String>> {
+        val agentNames : List<String> = agentPlatform.agents().map { it.name }
+        return ResponseEntity.ok(agentNames)
     }
+//
+//    @GetMapping("/{agentName}/processes")
+//    fun getProcessesForAgent(@PathVariable agentName: String): ResponseEntity<List<String>> {
+//        val processIds = agentExecutionService.getProcessIds(agentName)
+//        return if (processIds.isEmpty()) {
+//            ResponseEntity.notFound().build()
+//        } else {
+//            ResponseEntity.ok(processIds)
+//        }
+//    }
 }

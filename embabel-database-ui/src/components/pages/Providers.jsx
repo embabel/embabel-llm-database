@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Section, SectionCard } from "@blueprintjs/core";
 
-import SearchByProviders from "../forms/SearchByProviders";
+import SearchByProviders from "../forms/search/SearchByProviders";
 
-import Model from "../data/Model";
-import ResultsTable from "../data/ResultsTable";
+import Model from "../data/model/Model";
+import ResultsTable from "../data/table/ResultsTable";
 
 const base_url = "/api/v1/models";
 
@@ -39,7 +39,7 @@ function Providers() {
 
     const handleRowSelection = (region) => {
         var idx = region[0]['rows'][0];
-        var modelId = data[idx]['modelId'];
+        var modelId = data[idx]['id'];
         //retrieve model
         fetch('/api/v1/models/' + modelId)
             .then(response => {

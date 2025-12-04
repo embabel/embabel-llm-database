@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.embabel.build</groupId>
         <artifactId>embabel-build-parent</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.4</version>
     </parent>
     <groupId>com.embabel.database</groupId>
     <artifactId>embabel-database-parent</artifactId>
@@ -15,7 +15,8 @@
     <description>Common dependencies shared by child modules.</description>
 
     <properties>
-        <embabel.version>0.1.0</embabel.version>
+        <embabel.version>0.1.6</embabel.version>
+        <embabel.agent.depenedencies.version>0.3.0</embabel.agent.depenedencies.version>
         <mockk.version>1.13.3</mockk.version>
     </properties>
 
@@ -24,6 +25,7 @@
         <module>embabel-database-agent</module>
         <module>embabel-database-ui</module>
         <module>embabel-database-server</module>
+        <module>embabel-database-batch</module>
     </modules>
 
     <scm>
@@ -40,7 +42,7 @@
             <dependency>
                 <groupId>com.embabel.agent</groupId>
                 <artifactId>embabel-agent-dependencies</artifactId>
-                <version>${embabel.version}</version>
+                <version>${embabel.agent.depenedencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -12,3 +12,12 @@ To run integration tests `mvn clean test -Dtest=*ITest`
 3. pull model `ollama pull llama3.1:8b`
 4. build `mvn clean install`
 5. run `java -jar embabel-database-server/target/embabel-database-server-${VERISON}.jar`
+
+
+## Berock Based Testing
+
+Set environment variables when running *ITests
+```sh
+    AWS_ACCESSKEYID=<key>
+    AWS_SECRETACCESSKEY=<key>
+```

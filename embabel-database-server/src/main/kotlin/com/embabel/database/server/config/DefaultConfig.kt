@@ -15,72 +15,44 @@
  */
 package com.embabel.database.server.config
 
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-
-import com.embabel.database.agent.AiModelRepositoryAgent
-import com.embabel.database.agent.service.AiRepositoryModelMetadataValidationService
-import com.embabel.database.agent.service.LlmLeaderboardModelMetadataDiscoveryService
-import com.embabel.database.agent.service.ModelMetadataService
-import com.embabel.database.agent.service.ModelMetadataDiscoveryService
-import com.embabel.database.agent.service.ModelMetadataValidationService
-import com.embabel.database.agent.util.LlmLeaderboardParser
-import com.embabel.database.agent.util.LlmLeaderboardTagParser
-import com.embabel.database.agent.util.ModelMetadataParser
-import com.embabel.database.agent.util.TagParser
-import com.embabel.database.core.repository.AiModelRepository
-import com.embabel.database.core.repository.InMemoryAiModelRepository
-import com.embabel.database.core.repository.util.InMemoryAiModelRepositoryLoader
+import com.embabel.agent.api.common.autonomy.AgentInvocation
+import com.embabel.agent.core.AgentPlatform
+import com.embabel.database.agent.ModelProviderSuggestionAgent
+import com.embabel.database.agent.ModelSuggestionAgent
+import com.embabel.database.agent.service.ModelSuggestionService
+import com.embabel.database.agent.service.SessionManagementService
+import com.embabel.database.core.repository.InMemoryModelRepository
+import com.embabel.database.core.repository.ModelRepository
+import com.embabel.database.core.repository.domain.Model
+import com.embabel.database.core.repository.util.ModelRepositoryLoader
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.web.client.RestClient
 
 @Configuration
+@ComponentScan(basePackages = ["com.embabel.database.server.util","com.embabel.database.batch","com.embabel.database.agent"])
 class DefaultConfig {
 
     //repository
     @Bean
-    fun aiModelRepository(): AiModelRepository {
-        return InMemoryAiModelRepository()
+    fun modelRepository(): ModelRepository {
+        return InMemoryModelRepository()
     }
 
-    //agent
     @Bean
-    fun aiModelRepositoryAgent(): AiModelRepositoryAgent {
-        return AiModelRepositoryAgent()
+    fun modelRepositoryLoader(modelRepository: ModelRepository, objectMapper: ObjectMapper): ModelRepositoryLoader {
+        return ModelRepositoryLoader(modelRepository, objectMapper)
     }
 
-    //task parser
     @Bean
-    fun taskParser(): TagParser {
-        return LlmLeaderboardTagParser()
+    fun restClient(): RestClient {
+        return RestClient.builder().build()
     }
 
-    //model parser
     @Bean
-    fun modelMetadataParser(objectMapper: ObjectMapper, taskParser: TagParser): ModelMetadataParser {
-        return LlmLeaderboardParser(objectMapper, taskParser)
-    }
-
-    //discovery service
-    @Bean
-    fun modelMetadataDiscoveryService(modelMetadataParser: ModelMetadataParser): ModelMetadataDiscoveryService {
-        return LlmLeaderboardModelMetadataDiscoveryService(modelMetadataParser)
-    }
-
-    //model loader action
-    @Bean
-    fun modelLoader(): InMemoryAiModelRepositoryLoader {
-        return InMemoryAiModelRepositoryLoader()
-    }
-
-    //instantiate coordination service
-    @Bean
-    fun modelMetadataService(): ModelMetadataService {
-        return ModelMetadataService()
-    }
-
-    //instantiate instance of single service
-    @Bean
-    fun modelMetadataValidationService(aiModelRepository: AiModelRepository): ModelMetadataValidationService {
-        return AiRepositoryModelMetadataValidationService(aiModelRepository)
+    fun agentInvocation(agentPlatform: AgentPlatform): AgentInvocation<Model> {
+        return AgentInvocation.builder(agentPlatform).build(Model::class.java)
     }
 }

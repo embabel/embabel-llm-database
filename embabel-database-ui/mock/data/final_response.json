@@ -1,0 +1,40 @@
+{
+  "models": {
+    "message": "Here are the suggested models",
+    "listModels": {
+      "models": [
+        {
+          "name": "Gemini 3 Pro",
+          "id": "gemini-3-pro-preview",
+          "tags": [
+            "audio-video-image-text-to-text"
+          ],
+          "knowledgeCutoff": "2025-01-31",
+          "releaseDate": "2025-11-18",
+          "parameterCount": 0,
+          "organization": {
+            "id": "google",
+            "name": "Google",
+            "website": "https://google.com"
+          },
+          "multiModal": true,
+          "modelProviders": [
+            {
+              "id": "google",
+              "provider": {
+                "id": "google",
+                "name": "Google",
+                "website": "https://ai.google.dev"
+              },
+              "inputPerMillion": 2.0,
+              "outputPerMillion": 12.0,
+              "tags": [],
+              "deprecated": false
+            }
+          ],
+          "description": "Gemini 3 Pro is the first model in the new Gemini 3 series. It is best for complex tasks that require broad world knowledge and advanced reasoning across modalities. Gemini 3 Pro uses dynamic thinking by default to reason through prompts, and features a 1 million-token input context window with 64k output tokens."
+        }
+      ]
+    }
+  }
+}

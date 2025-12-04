@@ -1,0 +1,9 @@
+{
+  "providers": {
+    "message": "Please choose your preferred provider from the following list",
+    "providers": [
+      "Anthropic",
+      "Google"
+    ]
+  }
+}

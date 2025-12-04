@@ -1,7 +1,10 @@
 embabel:
   models:
-    defaultLlm: llama3.1:8b
-    defaultEmbeddingModel: nomic-embed-text:latest  
+    bedrock:
+      models:
+        - name: meta.llama3-2-3b-instruct-v1:0
+    default-llm: meta.llama3-2-3b-instruct-v1:0
+
 
 spring:
   ai:
@@ -9,6 +12,12 @@ spring:
       chat: none
   application:
     name: embabel-llm-database-agent
+  config:
+    import: optional:prompts.yml
 
 aws:
   region: us-east-1
+
+
+
+#    default-llm: llama3.2:latest

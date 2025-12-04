@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Section, SectionCard } from "@blueprintjs/core";
 
-import SearchByName from "../forms/SearchByName";
+import SearchByName from "../forms/search/SearchByName";
 
-import Model from "../data/Model";
-import ResultsTable from "../data/ResultsTable";
+import Model from "../data/model/Model";
+import ResultsTable from "../data/table/ResultsTable";
 
 const base_url = "/api/v1/models";
 
@@ -46,7 +46,8 @@ function Search() {
 
     const handleRowSelection = (region) => {
         var idx = region[0]['rows'][0];
-        var modelId = data[idx]['modelId'];
+        var modelId = data[idx]['id'];
+
         //retrieve model
         fetch(`${base_url}/${modelId}`)
             .then(response => {

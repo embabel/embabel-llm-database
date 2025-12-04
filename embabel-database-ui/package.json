@@ -14,8 +14,12 @@
     "@blueprintjs/icons": "^6.1.0",
     "@blueprintjs/select": "^6.0.3",
     "@blueprintjs/table": "^6.0.3",
+    "@chatscope/chat-ui-kit-react":"^2.1.1",
+    "@chatscope/chat-ui-kit-styles":"^1.4.0",
+    "react-linkify":"^1.0.0-alpha",
     "react": "18",
     "react-dom": "18",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^7.8.2"
   },
   "devDependencies": {

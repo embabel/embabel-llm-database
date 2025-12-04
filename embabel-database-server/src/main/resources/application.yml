@@ -3,15 +3,12 @@ server:
 
 spring:
   ai:
-    ollama:
-      base-url: http://localhost:11434
+    model:
+      chat: none
   application:
-    name: embabel-database-server  
-  output:
-    ansi:
-      enabled: ALWAYS
-  profiles:
-    active: ollama
+    name: embabel-database-server
+  config:
+    import: "optional:classpath:prompts.yml"
 
 springdoc:
   api-docs:
@@ -23,11 +20,5 @@ logging:
 
 embabel:
   models:
-    defaultLlm: llama3.1:8b
-    defaultEmbeddingModel: nomic-embed-text:latest
-
-aws:
-  region: us-east-1
-  accesKeyId: your-key-here
-  secretAccessKey: your-secret-key-here
+    defaultLlm: us.anthropic.claude-3-5-sonnet-20240620-v1:0
 

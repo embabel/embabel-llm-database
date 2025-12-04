@@ -15,31 +15,28 @@
  */
 package com.embabel.database.server.controller
 
-import com.embabel.database.agent.util.TagParser
-import com.fasterxml.jackson.databind.ObjectMapper
-
+import com.embabel.database.core.repository.ModelRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.beans.factory.annotation.Autowired
-
 
 @RestController
 @RequestMapping("/api/v1/tags")
-class TagController : TagParser {
+class TagController {
 
     @Autowired
-    lateinit var objectMapper : ObjectMapper
+    lateinit var modelRepository: ModelRepository
 
     @GetMapping
-    fun getAll(): List<Map<String,Any>>? {
-        return getTasks(objectMapper, TagParser.RESOURCE_LOCATION)
-    }
-
-    //TODO refactor to remove
-    override fun getTags(attributes: Map<String, Any>): List<String> {
-        //just a stub
-        return listOf("")
+    fun getAll(): ResponseEntity<List<String>> {
+        val tags: List<String> = modelRepository.findAll()
+            .asSequence()
+            .mapNotNull { it.tags }
+            .flatten()
+            .distinct()
+            .toList();
+        return ResponseEntity.ok().body(tags)
     }
 }
