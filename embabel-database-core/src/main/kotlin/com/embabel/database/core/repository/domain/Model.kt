@@ -15,20 +15,45 @@
  */
 package com.embabel.database.core.repository.domain
 
+import jakarta.persistence.CascadeType
+import jakarta.persistence.ElementCollection
+import jakarta.persistence.Entity
+import jakarta.persistence.EntityListeners
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * model representation
  */
+@Entity
+@EntityListeners(AuditingEntityListener::class)
 data class Model (
     val name: String,
+
+    @Id
     val id: String,
+
+    @ElementCollection
     var tags: List<String>?,
     val knowledgeCutoff: LocalDate?,
     val releaseDate: LocalDate?,
     val parameterCount: Long,
+
+    @ManyToOne(cascade = [CascadeType.ALL])
     var organization: Organization?,
     val multiModal: Boolean,
+
+    @OneToMany(cascade = [CascadeType.ALL], fetch= FetchType.LAZY)
     var modelProviders: List<ModelProvider>?,
-    val description: String
+
+    val description: String,
+
+    @LastModifiedDate
+    var lastModifiedAt: LocalDateTime? = null
 )

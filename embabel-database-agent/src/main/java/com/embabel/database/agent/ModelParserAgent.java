@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Uses LLM as a Shim to build the model object
@@ -131,9 +132,9 @@ public class ModelParserAgent {
         Map<String,Object> map = objectMapper.readValue(json,new TypeReference<Map<String,Object>>(){});
         String modelId = map.get("model_id").toString();
         //query the repository
-        Model model = modelRepository.findById(modelId);
+        Optional<Model> model = modelRepository.findById(modelId);
         //check if null
-        return model == null;
+        return model.isPresent();
     }
 
 

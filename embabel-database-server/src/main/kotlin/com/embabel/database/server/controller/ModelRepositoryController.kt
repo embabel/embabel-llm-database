@@ -66,7 +66,7 @@ class ModelRepositoryController {
     }
 
     @GetMapping("/count")
-    fun getCount(): Map<String,Int> {
+    fun getCount(): Map<String,Long> {
         val count = modelRepository.count()
         return mapOf("count" to count)
     }
@@ -86,7 +86,7 @@ class ModelRepositoryController {
 
     @GetMapping("/{modelId}")
     fun getById(@PathVariable modelId: String): Model? {
-        return modelRepository.findById(modelId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No model found for ID")
+        return modelRepository.findById(modelId)?.orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No model found for ID")
     }
 
     @GetMapping("/search/findByProvider")

@@ -38,7 +38,8 @@ class ModelRepositoryLoader @Autowired constructor(
         val resourceStream: InputStream = this::class.java.classLoader.getResourceAsStream(path)
             ?: throw IllegalArgumentException("Resource not found: $path")
         val models: List<Model> = objectMapper.readValue(resourceStream)
-        modelRepository.saveAll(models)
+//        modelRepository.saveAll(models)
+        models.forEach { model -> modelRepository.save(model) }
         resourceStream.close() //tidy up
     }
 

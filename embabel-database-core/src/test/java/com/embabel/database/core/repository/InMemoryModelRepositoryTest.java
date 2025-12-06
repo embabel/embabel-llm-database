@@ -21,6 +21,7 @@ import com.embabel.database.core.repository.domain.Provider;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +35,7 @@ public class InMemoryModelRepositoryTest {
         //build a modelProvider
         ModelProvider modelProvider = new ModelProvider("id",provider,0.0,0.0,List.of("tags"),false);
         //build a model
-        Model model = new Model("test","test", List.of("strings"),LocalDate.now(), LocalDate.now(),1l,null,false,List.of(modelProvider),"blah");
+        Model model = new Model("test","test", List.of("strings"),LocalDate.now(), LocalDate.now(),1l,null,false,List.of(modelProvider),"blah", LocalDateTime.now());
         //save
         ModelRepository modelRepository = new InMemoryModelRepository();
         modelRepository.save(model);

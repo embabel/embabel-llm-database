@@ -30,6 +30,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest(properties = {
@@ -57,7 +59,7 @@ public class ModelRepositoryControllerITest {
         mockMvc.perform(get("/api/v1/models"))
             .andExpect(status().isNotFound()); //no data
         //setup a single model
-        Model model = new Model("name","id", List.of("tags"),null,null,1l,null,false,null,"description");
+        Model model = new Model("name","id", List.of("tags"),null,null,1l,null,false,null,"description", LocalDateTime.now());
         //save
         modelRepository.save(model);
         //try the mock again

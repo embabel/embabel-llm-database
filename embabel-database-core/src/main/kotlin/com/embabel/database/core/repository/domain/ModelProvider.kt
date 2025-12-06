@@ -15,11 +15,19 @@
  */
 package com.embabel.database.core.repository.domain
 
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.ManyToOne
+
 /**
  * representation of a model provider
  */
+@Entity
 data class ModelProvider (
+    @Id
     val id: String,
+    @ManyToOne(cascade = [CascadeType.ALL])
     val provider: Provider,
     val inputPerMillion: Double?,
     val outputPerMillion: Double?,

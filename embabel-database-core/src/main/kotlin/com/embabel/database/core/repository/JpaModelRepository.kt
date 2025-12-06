@@ -18,40 +18,29 @@ package com.embabel.database.core.repository
 import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.domain.Organization
 import com.embabel.database.core.repository.domain.Provider
+import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import java.time.LocalDateTime
-import java.util.Optional
 
-interface ModelRepository  {
-
-    fun save(model: Model)
-
-//    fun saveAll(models: List<Model>)
-
-    fun findById(id: String): Optional<Model>?
-
-    fun findByName(name: String): List<Model>
-
-    fun findAll(): List<Model>
-
-    fun findByMultiModal(multiModal: Boolean): List<Model>
-
-    fun findAllProviders(): List<Provider>?
-
-    fun findAllOrganizations(): List<Organization>?
-
-    fun findByTags(vararg tags: String): List<Model>?
+interface JpaModelRepository: JpaRepository<Model, String>, ModelRepository {
 
     @Query("select max(m.lastModifiedAt) from Model m")
-    fun lastUpdated(): LocalDateTime
+    override fun lastUpdated(): LocalDateTime
 
-    fun findByNameAndProvider(name: String, provider: String): Model?
+    @Query("SELECT DISTINCT mp.provider FROM Model m JOIN m.modelProviders mp")
+    override fun findAllProviders(): List<Provider>?
 
-    fun findByNameContains(name: String): List<Model>?
+    @Query("SELECT DISTINCT m.organization FROM Model m WHERE m.organization IS NOT NULL")
+    override fun findAllOrganizations(): List<Organization>?
 
-    fun findByProvider(provider: String): List<Model>?
+    @Query("SELECT DISTINCT m FROM Model m JOIN m.modelProviders mp WHERE mp.provider.name = :provider")
+    override fun findByProvider(provider: String): List<Model>?
 
-    fun count(): Long
+    @Query("SELECT m FROM Model m JOIN m.modelProviders mp WHERE m.name = :name AND mp.provider.name = :provider")
+    override fun findByNameAndProvider(name: String, provider: String): Model?
 
-    fun reset()
+    @Modifying
+    @Query("DELETE FROM Model m")
+    override fun reset()
 }

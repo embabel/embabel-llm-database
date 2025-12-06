@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.embabel.database.core.repository.domain
+package com.embabel.database.core.repository.config
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 
-/**
- * domain model for a provider
- */
-@Entity
-data class Provider (
-    @Id
-    val id: String,
-    val name: String,
-    val website: String,
-)
+@Configuration
+@EnableJpaAuditing
+open class JpaConfig {
+}
