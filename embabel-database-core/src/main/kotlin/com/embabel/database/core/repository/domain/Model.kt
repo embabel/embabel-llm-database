@@ -16,11 +16,15 @@
 package com.embabel.database.core.repository.domain
 
 import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import org.springframework.data.annotation.LastModifiedDate
@@ -49,9 +53,15 @@ data class Model (
     var organization: Organization?,
     val multiModal: Boolean,
 
-    @OneToMany(cascade = [CascadeType.ALL], fetch= FetchType.LAZY)
-    var modelProviders: List<ModelProvider>?,
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "model_model_providers",
+        joinColumns = [JoinColumn(name = "model_id")],
+        inverseJoinColumns = [JoinColumn(name = "model_providers_id")]
+    )
+    var modelProviders: MutableList<ModelProvider> = mutableListOf(),
 
+    @Column(length = 1048576)
     val description: String,
 
     @LastModifiedDate

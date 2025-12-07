@@ -21,6 +21,7 @@ import com.embabel.agent.core.AgentPlatform;
 import com.embabel.database.agent.service.*;
 import com.embabel.database.core.repository.InMemoryModelRepository;
 import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.ModelService;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.core.repository.util.ModelRepositoryLoader;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,8 +87,8 @@ public class AgentConfigurationSupport {
     }
 
     @Bean
-    ModelRepositoryLoader modelRepositoryLoader(ModelRepository modelRepository, ObjectMapper objectMapper) {
-        return new ModelRepositoryLoader(modelRepository,objectMapper);
+    ModelRepositoryLoader modelRepositoryLoader(ObjectMapper objectMapper, ModelService modelService) {
+        return new ModelRepositoryLoader(objectMapper,modelService);
     }
 
 }

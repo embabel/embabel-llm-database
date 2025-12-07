@@ -24,7 +24,7 @@ import java.util.Optional
 
 interface ModelRepository  {
 
-    fun save(model: Model)
+    fun save(model: Model): Model
 
 //    fun saveAll(models: List<Model>)
 

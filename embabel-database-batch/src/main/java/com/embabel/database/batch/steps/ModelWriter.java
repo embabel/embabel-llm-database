@@ -16,6 +16,7 @@
 package com.embabel.database.batch.steps;
 
 import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.ModelService;
 import com.embabel.database.core.repository.domain.Model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -36,6 +37,9 @@ public class ModelWriter implements ItemWriter<Model> {
     @Autowired
     ModelRepository modelRepository;
 
+    @Autowired
+    ModelService modelService;
+
 //    @Value("${embabel.database.batch.pause:true")
 //    boolean pause = true;
 
@@ -48,7 +52,7 @@ public class ModelWriter implements ItemWriter<Model> {
     @Override
     public void write(Chunk<? extends Model> chunk) throws Exception {
         chunk.getItems()
-                .forEach(c -> modelRepository.save(c));
+                .forEach(c -> modelService.saveModel(c));
 
         try {
             //write out

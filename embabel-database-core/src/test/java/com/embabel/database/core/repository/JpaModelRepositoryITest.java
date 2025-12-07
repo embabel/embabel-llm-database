@@ -20,12 +20,15 @@ import com.embabel.database.core.repository.domain.ModelProvider;
 import com.embabel.database.core.repository.domain.Organization;
 import com.embabel.database.core.repository.domain.Provider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,8 +42,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes={JpaModelRepositoryITest.class, JpaModelRepositoryITest.TestConfig.class})
 public class JpaModelRepositoryITest {
 
+    private static final Log logger = LogFactory.getLog(JpaModelRepositoryITest.class);
+
     @Autowired
     ModelRepository jpaModelRepository;
+
+    @Autowired
+    ModelService modelService;
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @BeforeEach
     void before() {
@@ -56,8 +67,8 @@ public class JpaModelRepositoryITest {
         ModelProvider modelProvider = new ModelProvider("id",provider,0.0,0.0,List.of("tags"),false);
         Model model = new Model("test","test", List.of("strings"), LocalDate.now(), LocalDate.now(),1l,null,false,List.of(modelProvider),"blah", LocalDateTime.now());
         //save
-        jpaModelRepository.save(model);
-        //test now
+        modelService.saveModel(model);
+        //check
         assertFalse(jpaModelRepository.findAll().isEmpty());
     }
 
@@ -73,11 +84,15 @@ public class JpaModelRepositoryITest {
 
         Model model = new Model("test","test", List.of("strings"), LocalDate.now(), LocalDate.now(),1l,null,false,List.of(modelProvider),"blah", localDateTime);
         //save
-        jpaModelRepository.save(model);
+//        jpaModelRepository.save(model);
+        modelService.saveModel(model);
         //test now
         assertFalse(jpaModelRepository.findAll().isEmpty());
         //test date
         LocalDateTime auditTimestamp = jpaModelRepository.lastUpdated();
+        logger.info(localDateTime);
+        logger.info(auditTimestamp);
+
         assertTrue(auditTimestamp.isAfter(localDateTime));
     }
 
@@ -89,7 +104,8 @@ public class JpaModelRepositoryITest {
         ModelProvider modelProvider = new ModelProvider("id",provider,0.0,0.0,List.of("tags"),false);
         Model model = new Model("test","test", List.of("strings"), LocalDate.now(), LocalDate.now(),1l,null,false,List.of(modelProvider),"blah", LocalDateTime.now());
         //save
-        jpaModelRepository.save(model);
+//        jpaModelRepository.save(model);
+        modelService.saveModel(model);
         //test now
         assertFalse(jpaModelRepository.findAll().isEmpty());
         //get all the providers
@@ -109,7 +125,8 @@ public class JpaModelRepositoryITest {
         Organization organization = new Organization("id","name","website");
         Model model = new Model("test","test", List.of("strings"), LocalDate.now(), LocalDate.now(),1l,organization,false,List.of(modelProvider),"blah", LocalDateTime.now());
         //save
-        jpaModelRepository.save(model);
+//        jpaModelRepository.save(model);
+        modelService.saveModel(model);
         //test now
         assertFalse(jpaModelRepository.findAll().isEmpty());
         //get all the orgs
@@ -129,7 +146,8 @@ public class JpaModelRepositoryITest {
         Organization organization = new Organization("id","name","website");
         Model model = new Model("test","test", List.of("strings"), LocalDate.now(), LocalDate.now(),1l,organization,false,List.of(modelProvider),"blah", LocalDateTime.now());
         //save
-        jpaModelRepository.save(model);
+//        jpaModelRepository.save(model);
+        modelService.saveModel(model);
         //test now
         assertFalse(jpaModelRepository.findAll().isEmpty());
 
@@ -152,7 +170,8 @@ public class JpaModelRepositoryITest {
         Organization organization = new Organization("id","name","website");
         Model model = new Model("test","test", List.of("strings"), LocalDate.now(), LocalDate.now(),1l,organization,false,List.of(modelProvider),"blah", LocalDateTime.now());
         //save
-        jpaModelRepository.save(model);
+//        jpaModelRepository.save(model);
+        modelService.saveModel(model);
         //test now
         assertFalse(jpaModelRepository.findAll().isEmpty());
         //query
@@ -165,13 +184,18 @@ public class JpaModelRepositoryITest {
     }
 
     @TestConfiguration
-    @ComponentScan(basePackages = {"com.embabel.database.core.repository"})
+    @ComponentScan(basePackages = {"com.embabel.database.core.repository","com.embabel.database.core.repository.config"})
     @EnableAutoConfiguration
     static class TestConfig {
 
         @Bean
-        public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper() {
             return new ObjectMapper();
+        }
+
+        @Bean
+        ModelService modelService(ModelRepository jpaModelRepository, ModelProviderRepository jpaModelProviderRepository, ProviderRepository jpaProviderRepository) {
+            return new ModelService(jpaModelRepository,jpaModelProviderRepository, jpaProviderRepository);
         }
 
     }

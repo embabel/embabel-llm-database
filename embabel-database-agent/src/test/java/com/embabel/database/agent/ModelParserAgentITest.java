@@ -18,6 +18,7 @@ package com.embabel.database.agent;
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.ModelService;
 import com.embabel.database.core.repository.domain.Model;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,6 +57,9 @@ public class ModelParserAgentITest {
 
     @Autowired
     ModelRepository modelRepository;
+
+    @Autowired
+    ModelService modelService;
 
     @Test
     void testModelParserAgent() throws Exception {
@@ -106,7 +110,9 @@ public class ModelParserAgentITest {
         });
 
         //save
-        modelRepository.save(model);
+//        modelRepository.save(model);
+
+        modelService.saveModel(model);
 
         //try invoking a second time
         model = agentInvocation.invoke(Collections.singletonMap("json",clean));

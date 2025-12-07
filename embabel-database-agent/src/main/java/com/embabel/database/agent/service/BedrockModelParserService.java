@@ -16,6 +16,7 @@
 package com.embabel.database.agent.service;
 
 import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.ModelService;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.core.repository.domain.ModelProvider;
 import com.embabel.database.core.repository.domain.Organization;
@@ -47,6 +48,9 @@ public class BedrockModelParserService implements ModelParserService {
     @Autowired
     ModelRepository modelRepository;
 
+    @Autowired
+    ModelService modelService;
+
     @Override
     public void loadModels() {
         //use the SDK to retrieve all the models
@@ -55,9 +59,7 @@ public class BedrockModelParserService implements ModelParserService {
             .stream()
             .filter(foundationModelSummary -> !foundationModelSummary.outputModalities().contains(ModelModality.EMBEDDING))
             .flatMap(foundationModelSummary -> Stream.of(parse(foundationModelSummary)))
-            .forEach(model -> {
-                modelRepository.save(model);
-            });
+            .forEach(model -> modelService.saveModel(model));
 
     }
 

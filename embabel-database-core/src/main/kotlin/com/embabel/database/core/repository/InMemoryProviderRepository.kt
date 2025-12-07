@@ -18,11 +18,17 @@ package com.embabel.database.core.repository
 import com.embabel.database.core.repository.domain.Provider
 import java.util.Optional
 
-interface ProviderRepository {
+class InMemoryProviderRepository(providers: List<Provider> = emptyList()) : ProviderRepository{
+    override fun save(provider: Provider) : Provider {
+        //stub
+        return Provider("id","name","website")
+    }
 
-    fun save(provider: Provider): Provider
+    override fun existsById(id: String): Boolean {
+        return true //stub
+    }
 
-    fun existsById(id: String): Boolean
-
-    fun findById(id: String) : Optional<Provider>
+    override fun findById(id: String): Optional<Provider> {
+        return Optional.empty<Provider>()
+    }
 }

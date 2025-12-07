@@ -27,10 +27,12 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
 
     private var updatedTimestamp: LocalDateTime = LocalDateTime.now()
 
-    override fun save(model: Model) {
+    override fun save(model: Model): Model {
         models.add(model)
         //update timestamp
         updatedTimestamp = LocalDateTime.now()
+
+        return model
     }
 
     override fun findById(id: String): Optional<Model>? {
