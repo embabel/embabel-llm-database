@@ -19,7 +19,7 @@ import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.database.agent.domain.ListModels;
-import com.embabel.database.agent.domain.ModelProviders;
+import com.embabel.database.agent.domain.Providers;
 import com.embabel.database.agent.domain.TagList;
 import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.util.ModelRepositoryLoader;
@@ -46,7 +46,7 @@ public class ModelProviderSuggestionAgentITest {
 
     private static final Log logger = LogFactory.getLog(ModelProviderSuggestionAgentITest.class);
 
-    AgentInvocation<ModelProviders> agentInvocation;
+    AgentInvocation<Providers> agentInvocation;
 
     @Autowired
     AgentPlatform agentPlatform;
@@ -92,10 +92,10 @@ public class ModelProviderSuggestionAgentITest {
     void testGetProviders() throws Exception {
         //send in the desired model prompt
         //get a response that should be a set of providers to choose from
-        agentInvocation = AgentInvocation.builder(agentPlatform).build(ModelProviders.class);
+        agentInvocation = AgentInvocation.builder(agentPlatform).build(Providers.class);
         //invoke
         UserInput userInput = new UserInput("I want a model that will transcribe video");
-        ModelProviders providers = agentInvocation.invoke(Collections.singletonMap("userInput",userInput));
+        Providers providers = agentInvocation.invoke(Collections.singletonMap("userInput",userInput));
         //check
         assertNotNull(providers);
         logger.info(providers.message());

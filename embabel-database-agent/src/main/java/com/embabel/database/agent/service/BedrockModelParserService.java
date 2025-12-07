@@ -111,7 +111,7 @@ public class BedrockModelParserService implements ModelParserService {
     /**
      * temporary id generator
      * @param orgName
-     * @return
+     * @return generation of id
      */
     String orgIdGenerator(String orgName) {
         return orgName.toLowerCase().replace(" ", "-");
@@ -120,7 +120,7 @@ public class BedrockModelParserService implements ModelParserService {
     /**
      * modality conversion process
      * @param modalities
-     * @return
+     * @return String representing tag
      */
     String modalityConversion(List<ModelModality> modalities) {
         StringBuilder builder = new StringBuilder();

@@ -46,7 +46,7 @@ public class ModelSuggestionService {
         //establish a session
         String sessionId = UUID.randomUUID().toString();        
         //build the invocation
-        AgentInvocation<ModelProviders> agentInvocation = AgentInvocation.builder(agentPlatform).build(ModelProviders.class);
+        AgentInvocation<Providers> agentInvocation = AgentInvocation.builder(agentPlatform).build(Providers.class);
         //run the process
         AgentProcess agentProcess = agentInvocation.run(Collections.singletonMap("userInput",new UserInput(request)));
         //wait until it's finished
@@ -63,13 +63,16 @@ public class ModelSuggestionService {
             logger.info("No suggestions");
             return null;
         } //end if
-        ModelProviders modelProviders = (ModelProviders) result;
-        SessionContext sessionContext = new SessionContext(sessionId,modelProviders,blackboard,request);
+        Providers providers = (Providers) result;
+        SessionContext sessionContext = new SessionContext(sessionId,providers,blackboard,request);
         //add to the session management
         sessionManagementService.save(sessionContext);
         //return the results
         return sessionContext;
     }
+
+    private static final String USERINPUT = "userInput";
+    private static final String PREVIOUS_PROMPT = "previousPrompt";
 
     public ModelSuggestion getModelSuggestion(String provider,String sessionId) throws Exception {
         //get the previous session
@@ -90,6 +93,6 @@ public class ModelSuggestionService {
                 .build(ModelSuggestion.class);
         //TODO clean up process for sessions
         //get the suggestion
-        return modelSuggestionAgentInvocation.invoke(Map.of("userInput",new UserInput(provider),"previousPrompt",sessionContext.prompt()));
+        return modelSuggestionAgentInvocation.invoke(Map.of(USERINPUT,new UserInput(provider),PREVIOUS_PROMPT,sessionContext.prompt()));
     }
 }

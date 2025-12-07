@@ -18,7 +18,6 @@ package com.embabel.database.agent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.embabel.database.agent.domain.ModelList;
 import com.embabel.database.agent.domain.ModelSuggestion;
@@ -33,7 +32,6 @@ import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
-import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.database.agent.domain.ListModels;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -53,6 +51,9 @@ public class ModelSuggestionAgent {
 
     @Value("${embabel.models.defaultLlm:llama3.1:8b}")
     String modelName;
+
+    @Value("${embabel.database.agent.suggestion.text:Here are the suggested models}")
+    String modelSuggestionText = "Here are the suggested models";
 
     @AchievesGoal(
         description = "Generates a list of models based on user selected provider, tags and previously filtered list. Using the selected provider and the model list, narrow by the description"
@@ -88,28 +89,25 @@ public class ModelSuggestionAgent {
         String json = objectMapper.writeValueAsString(formattedModels);
         //now we have a sublist of models, get the descriptions, tags and names and ask the LLM to filter with original request
         var prompt = filterPrompt.formatted(previousPrompt,json);
-        logger.info(prompt);
         //invoke
         ModelList modelList =  operationContext.ai()
                 .withAutoLlm()
                 .createObject(prompt, ModelList.class);
-
         //convert into a list of tables
         models = modelList.models()
                 .stream()
                 .map(map -> {
                     //use the id to retrieve from the list models
                     String modelId = map.get("modelId");
-                    Model model = listModels.models()
+                    return listModels.models()
                             .stream()
                             .filter(m -> m.getId().equalsIgnoreCase(modelId))
                             .distinct()
                             .findFirst()
                             .get();
-                    return model;
                 }).toList();
         //return the converted list
-        return new ModelSuggestion("Here are the suggested models",new ListModels(models));
+        return new ModelSuggestion(modelSuggestionText,new ListModels(models));
     }
 
 }

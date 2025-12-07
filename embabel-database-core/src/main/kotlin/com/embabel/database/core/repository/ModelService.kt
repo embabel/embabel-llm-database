@@ -58,8 +58,8 @@ class ModelService(
         }
 
         // Replace with managed instances in model
-        model.modelProviders.clear()
-        managedProviders.values.forEach { model.modelProviders.add(it) }
+        val managedProvidersList = managedProviders.values.toList()
+        model.modelProviders = ArrayList(managedProvidersList)
 
         return modelRepository.save(model)
     }

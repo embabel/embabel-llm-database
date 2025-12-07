@@ -36,6 +36,7 @@ public class LlmStatsModelParserService  implements ModelParserService{
 
     private static final String MODELS = "models";
     private static final String MODEL_ID = "model_id";
+    private static final String JSON = "json";
 
     @Autowired
     ModelRepository modelRepository;
@@ -78,7 +79,7 @@ public class LlmStatsModelParserService  implements ModelParserService{
                     return id != null ? id.toString() : null;
                 })
                 .filter(Objects::nonNull)
-                .filter(modelId -> modelRepository.findById(modelId) == null)
+                .filter(modelId -> modelRepository.findById(modelId) != null ? modelRepository.findById(modelId).isEmpty() : false)
                 .collect(Collectors.toList());
         logger.info("count of model Ids " + modelIds.size());
         //stream list to retrieve the json for each
@@ -92,7 +93,7 @@ public class LlmStatsModelParserService  implements ModelParserService{
                 //clean the json
                 json = cleanJson(json);
                 //pass to an agent for transformation
-                Model model = agentInvocation.invoke(Collections.singletonMap("json", json)); //TODO externalize
+                Model model = agentInvocation.invoke(Collections.singletonMap(JSON, json));
                 //check
                 if (model != null) {
                     modelRepository.save(model);//save
@@ -119,6 +120,11 @@ public class LlmStatsModelParserService  implements ModelParserService{
     private static final String COMPARISON_MODEL = "comparison_model";
     private static final String BENCHMARKS = "benchmarks";
 
+    /**
+     * method to clean up the json and remove additional metrics
+     * @param json
+     * @return
+     */
     String cleanJson(String json) {
         String clean = json;
         try {

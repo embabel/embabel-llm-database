@@ -67,7 +67,7 @@ class ModelSuggestionController(
             //new conversation
             val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
             //set the header
-            val resultMap = mapOf("providers" to sessionContext.modelProviders())
+            val resultMap = mapOf("providers" to sessionContext.providers())
             ResponseEntity.ok()
                 .header(sessionKey,sessionContext.sessionid())
                 .body(resultMap)

@@ -17,6 +17,10 @@ package com.embabel.database.agent.domain;
 
 import java.util.List;
 
+/**
+ * record wrapper for list of tag names
+ * @param tags
+ */
 public record TagList(List<String> tags) {
 
     public TagList {

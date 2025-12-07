@@ -17,9 +17,12 @@ package com.embabel.database.agent.domain;
 
 import java.util.List;
 
-import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.database.core.repository.domain.Model;
 
+/**
+ * record wrapper for models
+ * @param models
+ */
 public record ListModels(List<Model> models) {
     
     public ListModels {

@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.embabel.database.agent.domain.ModelProviders;
+import com.embabel.database.agent.domain.Providers;
 import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.core.repository.domain.ModelProvider;
-import com.embabel.database.core.repository.domain.Provider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.annotation.Condition;
 import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
-import com.embabel.common.ai.model.ModelMetadata;
 import com.embabel.database.agent.domain.ListModels;
 import com.embabel.database.agent.domain.TagList;
 
@@ -59,7 +57,6 @@ public class ModelProviderSuggestionAgent {
     private static final Log logger = LogFactory.getLog(ModelProviderSuggestionAgent.class);
 
     private static final String NO_PROVIDER = "no-provider";
-    private static final String DELIMITER = ",";
 
     @Value("${embabel.database.agent.suggestion.taglist-prompt}")
     String taglistPrompt;
@@ -107,7 +104,7 @@ public class ModelProviderSuggestionAgent {
         description="Retrieves providers list for models based on criteria and sets up response"
     )
     @Action
-    public ModelProviders getProviders(ListModels listModels, UserInput userInput, OperationContext operationContext) {
+    public Providers getProviders(ListModels listModels, UserInput userInput, OperationContext operationContext) {
         logger.info("(getProviders) getting provider group");
         //group
         List<String> providers = listModels.models()
@@ -124,7 +121,7 @@ public class ModelProviderSuggestionAgent {
                 .filter(providerName -> !providerName.equalsIgnoreCase(NO_PROVIDER)) //filter out placeholder names
                 .toList();
         //convert the list of providers to a comma-delimited string
-        return new ModelProviders("Please choose your preferred provider from the following list",providers); //TODO externalize message
+        return new Providers("Please choose your preferred provider from the following list",providers); //TODO externalize message
     }    
 
     @Condition(name="have_models")

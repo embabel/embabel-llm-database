@@ -17,9 +17,14 @@ package com.embabel.database.agent.domain;
 
 import java.util.List;
 
-public record ModelProviders(String message, List<String> providers) {
+/**
+ * record wrapper for Providers of models
+ * @param message
+ * @param providers
+ */
+public record Providers(String message, List<String> providers) {
 
-    public ModelProviders {
+    public Providers {
         if (message == null || message.isEmpty()
                 || providers == null || providers.isEmpty()) {
             throw new IllegalArgumentException("incorrectly constructed");

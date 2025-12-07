@@ -18,6 +18,10 @@ package com.embabel.database.agent.domain;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * record wrapper for a list of Maps representing models
+ * @param models
+ */
 public record ModelList(List<Map<String,String>> models) {
  
     public ModelList {
