@@ -134,7 +134,7 @@ public class ModelParserAgent {
         //query the repository
         Optional<Model> model = modelRepository.findById(modelId);
         //check if null
-        return model.isPresent();
+        return model == null ? false : model.isPresent();
     }
 
 

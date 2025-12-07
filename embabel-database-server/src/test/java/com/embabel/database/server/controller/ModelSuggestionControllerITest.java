@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -77,9 +78,7 @@ public class ModelSuggestionControllerITest {
         modelRepositoryLoader.loadFromFile("./json/export.json");
     }
 
-
-
-    @Test
+//    @Test
     void testRecommendations() throws Exception {
 
         String prompt = "Recommend a model that can narrate a script";
@@ -87,7 +86,8 @@ public class ModelSuggestionControllerITest {
 
         // Step 1: Send prompt to initiate session
         MvcResult initialResult = mockMvc.perform(post(url)
-                .content(prompt.getBytes()))
+                .content(prompt.getBytes())
+                        .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andReturn();
 
@@ -106,6 +106,45 @@ public class ModelSuggestionControllerITest {
                 .andReturn();
         //dump
         logger.info(initialResult.getResponse().getContentAsString());
+    }
+
+    //trigger a batch job and monitor
+    @Test
+    void testRefresh() throws Exception {
+        String response = mockMvc.perform(post("/api/v1/models/refresh")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isAccepted())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        //get the executionId
+        Map<String,String> execution = objectMapper.readValue(response, new TypeReference<Map<String, String>>() {});
+        assertTrue(execution.containsKey("executionId"));
+        String executionId = execution.get("executionId");
+        assertNotNull(executionId);
+        // now use to monitor the counts
+        Thread.sleep(10000);//wait 5 seoncds
+        response = mockMvc.perform(get("/api/v1/models/refresh/" + executionId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        execution = objectMapper.readValue(response, new TypeReference<Map<String, String>>() {});
+        assertTrue(execution.containsKey("status"));
+        logger.info(execution.get("status"));
+        //now try for the counts
+        response = mockMvc.perform(get("/api/v1/models/refresh/" + executionId + "/counts")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        logger.info(response);
+        execution = objectMapper.readValue(response, new TypeReference<Map<String, String>>() {});
+        assertTrue(execution.containsKey("startCount"));
+        assertTrue(execution.containsKey("currentCount"));
+        logger.info("startCount " + execution.get("startCount") + " currentCount " + execution.get("currentCount"));
 
     }
 

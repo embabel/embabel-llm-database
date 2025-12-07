@@ -23,9 +23,11 @@ import com.embabel.database.agent.service.ModelSuggestionService
 import com.embabel.database.agent.service.SessionManagementService
 import com.embabel.database.core.repository.InMemoryModelProviderRepository
 import com.embabel.database.core.repository.InMemoryModelRepository
+import com.embabel.database.core.repository.InMemoryProviderRepository
 import com.embabel.database.core.repository.ModelProviderRepository
 import com.embabel.database.core.repository.ModelRepository
 import com.embabel.database.core.repository.ModelService
+import com.embabel.database.core.repository.ProviderRepository
 import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.util.ModelRepositoryLoader
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -49,6 +51,11 @@ class DefaultConfig {
     @Bean
     fun modelProviderRepository(): ModelProviderRepository {
         return InMemoryModelProviderRepository()
+    }
+
+    @Bean
+    fun providerRepository(): ProviderRepository {
+        return InMemoryProviderRepository()
     }
 
     @Bean

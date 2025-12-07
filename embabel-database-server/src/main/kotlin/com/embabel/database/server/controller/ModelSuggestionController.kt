@@ -15,7 +15,6 @@
  */
 package com.embabel.database.server.controller
 
-import brave.Response
 import com.embabel.database.agent.domain.ModelSuggestion
 import com.embabel.database.agent.domain.SessionContext
 import com.embabel.database.agent.service.ModelSuggestionService
@@ -75,7 +74,6 @@ class ModelSuggestionController(
         }
     }
 
-
     @PostMapping("/refresh")
     fun update(): ResponseEntity<Any?> {
         return try {
@@ -98,7 +96,23 @@ class ModelSuggestionController(
     @GetMapping("/refresh/{executionId}")
     fun status(@PathVariable("executionId") executionId : Long): ResponseEntity<Any?> {
         return ResponseEntity.ok()
-            .body(jobExplorer.getJobExecution(executionId)?.status.toString())
+            .body(mapOf("status" to jobExplorer.getJobExecution(executionId)?.status.toString()))
+    }
+
+    @GetMapping("/refresh/{executionId}/counts")
+    fun counts(@PathVariable("executionId") executionId: Long): ResponseEntity<Any?> {
+        val currentCountMap = HashMap<String,Any?>()
+        jobExplorer.getJobExecution(executionId)?.stepExecutions?.forEach { stepExecution ->
+            if (stepExecution.executionContext.containsKey("currentCount")) {
+                logger.info("current count ${stepExecution.executionContext.get("currentCount")}")
+                currentCountMap["currentCount"] = stepExecution.executionContext.get("currentCount")
+            }
+        }
+        //add the start count
+        currentCountMap["startCount"] = jobExplorer.getJobExecution(executionId)?.executionContext?.get("startCount")
+        //return
+        return ResponseEntity.ok()
+            .body(currentCountMap)
     }
 
 

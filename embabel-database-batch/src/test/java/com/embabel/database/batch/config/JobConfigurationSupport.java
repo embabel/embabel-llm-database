@@ -19,14 +19,23 @@ import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.database.agent.service.*;
-import com.embabel.database.core.repository.InMemoryModelRepository;
-import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.*;
 import com.embabel.database.core.repository.domain.Model;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestClient;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -41,6 +50,11 @@ import software.amazon.awssdk.services.bedrock.BedrockClient;
 })
 @EnableAgents
 @EnableAutoConfiguration
+@ActiveProfiles("jpa")
+@EnableJpaRepositories(basePackages = {"com.embabel.database.core.repository"})
+@EntityScan("com.embabel.database.core.repository.domain")
+@EnableJpaAuditing
+@EnableTransactionManagement
 public class JobConfigurationSupport {
 
     @Bean
@@ -86,4 +100,14 @@ public class JobConfigurationSupport {
         return AgentInvocation.builder(agentPlatform).build(Model.class);
     }
 
+    @Bean
+    ModelService modelService(ModelRepository jpaModelRepository, ModelProviderRepository jpaModelProviderRepository, ProviderRepository jpaProviderRepository) {
+        return new ModelService(jpaModelRepository,jpaModelProviderRepository,jpaProviderRepository);
+    }
+
+    @Bean
+    @Primary
+    PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory)  {
+        return new JpaTransactionManager(entityManagerFactory); // Links to JPA EntityManagerFactory
+    }
 }

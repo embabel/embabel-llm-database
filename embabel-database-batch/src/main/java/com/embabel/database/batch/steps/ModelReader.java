@@ -21,7 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.AfterChunk;
+import org.springframework.batch.core.annotation.AfterRead;
 import org.springframework.batch.core.annotation.BeforeStep;
+import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,9 +48,24 @@ public class ModelReader implements ItemReader<String> {
     @Autowired
     ObjectMapper objectMapper;
 
+    StepExecution stepExecution;
+
     @BeforeStep
     public void beforeStep(StepExecution stepExecution) {
-        this.queue = (Queue<String>) stepExecution.getJobExecution().getExecutionContext().get("newModelList");
+        this.stepExecution = stepExecution;
+        this.queue = (Queue<String>) stepExecution.getJobExecution()
+                .getExecutionContext()
+                .get("newModelList");
+    }
+
+    @AfterChunk
+    public void afterChunk(ChunkContext chunkContext) {
+        logger.info("queue size after read " + this.queue.size());
+        //update the execution context
+        chunkContext.getStepContext()
+                .getStepExecution()
+                .getExecutionContext()
+                .put("currentCount",this.queue.size());
     }
 
     @Override
