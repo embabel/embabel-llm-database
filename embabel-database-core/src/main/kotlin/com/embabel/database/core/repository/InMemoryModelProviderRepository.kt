@@ -15,14 +15,17 @@
  */
 package com.embabel.database.core.repository
 
+import com.embabel.database.core.repository.domain.ModelProvider
 import com.embabel.database.core.repository.domain.Provider
 import java.util.Optional
 
-interface ProviderRepository {
+class InMemoryModelProviderRepository(modelProviders: List<ModelProvider> = emptyList()) : ModelProviderRepository {
 
-    fun save(provider: Provider): Provider
+    override fun save(modelProvider: ModelProvider) : ModelProvider {
+        return ModelProvider("id", Provider("id", "name", "website"),0.0,0.0,emptyList(),false)
+    }
 
-    fun existsById(id: String): Boolean
-
-    fun findById(id: String) : Optional<Provider>
+    override fun findById(id: String): Optional<ModelProvider> {
+        return Optional.empty<ModelProvider>()
+    }
 }

@@ -19,6 +19,7 @@ import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.domain.Organization
 import com.embabel.database.core.repository.domain.Provider
 import java.time.LocalDateTime
+import java.util.Optional
 
 class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelRepository {
 
@@ -26,18 +27,16 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
 
     private var updatedTimestamp: LocalDateTime = LocalDateTime.now()
 
-    override fun save(model: Model) {
+    override fun save(model: Model): Model {
         models.add(model)
         //update timestamp
         updatedTimestamp = LocalDateTime.now()
+
+        return model
     }
 
-    override fun saveAll(models: List<Model>) {
-        for (model in models) {
-            save(model)
-        }
-        //update timestamp
-        updatedTimestamp = LocalDateTime.now()
+    override fun findById(id: String): Optional<Model>? {
+        return models.firstOrNull { it.id == id }?.let { Optional.of(it) }
     }
 
     override fun findByName(name: String): List<Model> {
@@ -48,17 +47,10 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
         return models
     }
 
-    override fun findByMultiModal(): List<Model> {
-        return models.filter { it.multiModal }
+    override fun findByMultiModal(multiModal: Boolean): List<Model> {
+        return models.filter { it.multiModal == multiModal }
     }
 
-    override fun count(): Int {
-        return models.size
-    }
-
-    override fun findById(modelId: String): Model? {
-        return models.find { it.id == modelId }
-    }
 
     override fun findAllProviders(): List<Provider>? {
         //get all the models
@@ -83,10 +75,6 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
             model -> model.tags?.any {
                 tag -> tags.contains(tag) }
             ?: false }
-    }
-
-    override fun deleteAll() {
-        models.clear()
     }
 
     override fun lastUpdated(): LocalDateTime {
@@ -115,5 +103,12 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
         }
     }
 
+    override fun count(): Long {
+        return models.size.toLong()
+    }
+
+    override fun reset() {
+        models.clear()
+    }
 
 }

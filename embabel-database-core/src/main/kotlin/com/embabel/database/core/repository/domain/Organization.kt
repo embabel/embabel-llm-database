@@ -15,7 +15,12 @@
  */
 package com.embabel.database.core.repository.domain
 
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+
+@Entity
 data class Organization (
+    @Id
     val id: String,
     val name: String,
     val website: String

@@ -65,11 +65,11 @@ public class CombinedServiceITest {
         //check again
         assertFalse(modelRepository.findAll().isEmpty());
         //get count
-        int baseline = modelRepository.count();
+        long baseline = modelRepository.count();
         //invoke bedrock
         bedrockModelParserService.loadModels();
         //get second count
-        int afterCount = modelRepository.count();
+        long afterCount = modelRepository.count();
         assertTrue(afterCount > baseline);
         //dump out
         try {

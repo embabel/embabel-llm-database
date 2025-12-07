@@ -15,10 +15,15 @@
  */
 package com.embabel.database.core.repository.domain
 
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+
 /**
  * domain model for a provider
  */
+@Entity
 data class Provider (
+    @Id
     val id: String,
     val name: String,
     val website: String,

@@ -16,6 +16,7 @@
 package com.embabel.database.server.controller
 
 import com.embabel.database.core.repository.ModelRepository
+import com.embabel.database.core.repository.ModelService
 import com.embabel.database.core.repository.domain.Model
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,6 +35,8 @@ class ModelRepositoryController {
     @Autowired
     lateinit var modelRepository: ModelRepository
 
+    lateinit var modelService: ModelService
+
     @GetMapping
     fun getAll(): ResponseEntity<List<Model>> {
         val models =  modelRepository.findAll()
@@ -46,8 +49,7 @@ class ModelRepositoryController {
 
     @PostMapping
     fun save(@RequestBody model: Model): Model {
-        modelRepository.save(model)
-        return model //send the same thing back TODO add identifier
+        return modelService.saveModel(model)
     }
 
     @GetMapping("/search/findByName")
@@ -66,7 +68,7 @@ class ModelRepositoryController {
     }
 
     @GetMapping("/count")
-    fun getCount(): Map<String,Int> {
+    fun getCount(): Map<String,Long> {
         val count = modelRepository.count()
         return mapOf("count" to count)
     }
@@ -86,7 +88,7 @@ class ModelRepositoryController {
 
     @GetMapping("/{modelId}")
     fun getById(@PathVariable modelId: String): Model? {
-        return modelRepository.findById(modelId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No model found for ID")
+        return modelRepository.findById(modelId)?.orElse(null) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No model found for ID")
     }
 
     @GetMapping("/search/findByProvider")

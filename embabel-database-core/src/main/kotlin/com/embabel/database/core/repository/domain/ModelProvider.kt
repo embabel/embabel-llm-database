@@ -15,14 +15,40 @@
  */
 package com.embabel.database.core.repository.domain
 
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToMany
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
+
 /**
  * representation of a model provider
  */
+@Entity
+@Table(
+    uniqueConstraints = [
+        UniqueConstraint(columnNames = ["id", "provider_id"])
+    ]
+)
 data class ModelProvider (
+    @Id
     val id: String,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "provider_id")
     val provider: Provider,
     val inputPerMillion: Double?,
     val outputPerMillion: Double?,
     val tags: List<String>,
-    val deprecated: Boolean,
-)
+    val deprecated: Boolean
+) {
+    @ManyToMany(mappedBy = "modelProviders")
+    private val models: MutableList<Model> = mutableListOf()
+
+    override fun equals(other: Any?): Boolean = other is ModelProvider && id == other.id
+
+    override fun hashCode(): Int = id.hashCode()
+}

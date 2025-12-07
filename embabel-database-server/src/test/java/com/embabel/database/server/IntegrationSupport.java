@@ -19,11 +19,10 @@ package com.embabel.database.server;
 import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.core.AgentPlatform;
-import com.embabel.database.agent.service.BedrockModelParserService;
-import com.embabel.database.agent.service.LlmStatsModelParserService;
-import com.embabel.database.agent.service.ModelParserService;
-import com.embabel.database.core.repository.InMemoryModelRepository;
+import com.embabel.database.core.repository.ModelProviderRepository;
 import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.ModelService;
+import com.embabel.database.core.repository.ProviderRepository;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.core.repository.util.ModelRepositoryLoader;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,14 +31,13 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.client.RestClient;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrock.BedrockClient;
 
 @TestConfiguration
-@ComponentScan(basePackages = {"com.embabel.database.agent","com.embabel.database.server"})
+@ComponentScan(basePackages = {"com.embabel.database.agent","com.embabel.database.server","com.embabel.database.core.repository"})
 @EnableAgents
 @EnableAutoConfiguration
 public class IntegrationSupport {
@@ -63,13 +61,18 @@ public class IntegrationSupport {
     }
 
     @Bean
-    AgentInvocation<Model> agentInvocation(AgentPlatform agentPlatform) {
-        return AgentInvocation.builder(agentPlatform).build(Model.class);
+    ModelService modelService(ModelRepository jpaModelRepository, ModelProviderRepository jpaModelProviderRepository, ProviderRepository jpaProviderRepository) {
+        return new ModelService(jpaModelRepository,jpaModelProviderRepository,jpaProviderRepository);
     }
 
-    @Bean
-    ModelRepositoryLoader modelRepositoryLoader(ModelRepository modelRepository, ObjectMapper objectMapper) {
-        return new ModelRepositoryLoader(modelRepository,objectMapper);
-    }
+//    @Bean
+//    AgentInvocation<Model> agentInvocation(AgentPlatform agentPlatform) {
+//        return AgentInvocation.builder(agentPlatform).build(Model.class);
+//    }
+
+//    @Bean
+//    ModelRepositoryLoader modelRepositoryLoader(ModelRepository modelRepository, ObjectMapper objectMapper) {
+//        return new ModelRepositoryLoader(modelRepository,objectMapper);
+//    }
 
 }

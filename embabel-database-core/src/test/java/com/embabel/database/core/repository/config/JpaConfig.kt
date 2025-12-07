@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.embabel.database.core.repository
+package com.embabel.database.core.repository.config
 
-import com.embabel.database.core.repository.domain.Provider
-import java.util.Optional
+import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 
-interface ProviderRepository {
-
-    fun save(provider: Provider): Provider
-
-    fun existsById(id: String): Boolean
-
-    fun findById(id: String) : Optional<Provider>
+@Configuration
+@EnableJpaAuditing
+open class JpaConfig {
 }

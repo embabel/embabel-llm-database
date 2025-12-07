@@ -62,7 +62,7 @@ public class ModelProviderSuggestionAgentITest {
 
     @BeforeEach
     void before() {
-        modelRepository.deleteAll();
+        modelRepository.reset();
         //load
         modelRepositoryLoader.loadFromFile("./json/export.json");
     }

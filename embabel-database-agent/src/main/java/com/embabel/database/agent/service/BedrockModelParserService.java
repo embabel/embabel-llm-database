@@ -16,6 +16,7 @@
 package com.embabel.database.agent.service;
 
 import com.embabel.database.core.repository.ModelRepository;
+import com.embabel.database.core.repository.ModelService;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.core.repository.domain.ModelProvider;
 import com.embabel.database.core.repository.domain.Organization;
@@ -26,6 +27,7 @@ import software.amazon.awssdk.services.bedrock.model.FoundationModelSummary;
 import software.amazon.awssdk.services.bedrock.model.ModelModality;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -46,16 +48,19 @@ public class BedrockModelParserService implements ModelParserService {
     @Autowired
     ModelRepository modelRepository;
 
+    @Autowired
+    ModelService modelService;
+
     @Override
     public void loadModels() {
         //use the SDK to retrieve all the models
-        List<Model> models = bedrockClient.listFoundationModels(r -> {})
-                .modelSummaries()
-                .stream()
-                .filter(foundationModelSummary -> !foundationModelSummary.outputModalities().contains(ModelModality.EMBEDDING))
-                .flatMap(foundationModelSummary -> Stream.of(parse(foundationModelSummary)))
-                .toList();
-        modelRepository.saveAll(models);
+        bedrockClient.listFoundationModels(r -> {})
+            .modelSummaries()
+            .stream()
+            .filter(foundationModelSummary -> !foundationModelSummary.outputModalities().contains(ModelModality.EMBEDDING))
+            .flatMap(foundationModelSummary -> Stream.of(parse(foundationModelSummary)))
+            .forEach(model -> modelService.saveModel(model));
+
     }
 
     Model parse(FoundationModelSummary foundationModelSummary) {
@@ -99,9 +104,8 @@ public class BedrockModelParserService implements ModelParserService {
         organization = existingOrganization.orElseGet(() -> new Organization(orgIdGenerator(organizationName),organizationName,"")); //TODO --> use an agent to clean up
         //dates
         LocalDate knowledgeCutOffDate = LocalDate.parse("1970-01-01");  //default placeholder
-        LocalDate releaseDate = knowledgeCutOffDate;
         //components of a model
-        return new Model(modelName,modelId,modalities,knowledgeCutOffDate,releaseDate,0L,organization,multiModal,List.of(modelProvider),"");
+        return new Model(modelName,modelId,modalities,knowledgeCutOffDate,knowledgeCutOffDate,0L,organization,multiModal,List.of(modelProvider),"", LocalDateTime.now());
     }
 
     /**

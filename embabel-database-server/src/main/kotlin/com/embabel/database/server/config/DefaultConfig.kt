@@ -21,16 +21,21 @@ import com.embabel.database.agent.ModelProviderSuggestionAgent
 import com.embabel.database.agent.ModelSuggestionAgent
 import com.embabel.database.agent.service.ModelSuggestionService
 import com.embabel.database.agent.service.SessionManagementService
+import com.embabel.database.core.repository.InMemoryModelProviderRepository
 import com.embabel.database.core.repository.InMemoryModelRepository
+import com.embabel.database.core.repository.ModelProviderRepository
 import com.embabel.database.core.repository.ModelRepository
+import com.embabel.database.core.repository.ModelService
 import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.util.ModelRepositoryLoader
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.web.client.RestClient
 
+@Profile("default")
 @Configuration
 @ComponentScan(basePackages = ["com.embabel.database.server.util","com.embabel.database.batch","com.embabel.database.agent"])
 class DefaultConfig {
@@ -42,8 +47,13 @@ class DefaultConfig {
     }
 
     @Bean
-    fun modelRepositoryLoader(modelRepository: ModelRepository, objectMapper: ObjectMapper): ModelRepositoryLoader {
-        return ModelRepositoryLoader(modelRepository, objectMapper)
+    fun modelProviderRepository(): ModelProviderRepository {
+        return InMemoryModelProviderRepository()
+    }
+
+    @Bean
+    fun modelRepositoryLoader(objectMapper: ObjectMapper, modelService: ModelService): ModelRepositoryLoader {
+        return ModelRepositoryLoader(objectMapper, modelService)
     }
 
     @Bean

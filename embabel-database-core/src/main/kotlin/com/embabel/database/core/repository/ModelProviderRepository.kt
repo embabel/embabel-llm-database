@@ -15,14 +15,13 @@
  */
 package com.embabel.database.core.repository
 
-import com.embabel.database.core.repository.domain.Provider
+import com.embabel.database.core.repository.domain.ModelProvider
 import java.util.Optional
 
-interface ProviderRepository {
 
-    fun save(provider: Provider): Provider
+interface ModelProviderRepository {
 
-    fun existsById(id: String): Boolean
+    fun save(modelProvider: ModelProvider) : ModelProvider
 
-    fun findById(id: String) : Optional<Provider>
+    fun findById(id: String) : Optional<ModelProvider>
 }

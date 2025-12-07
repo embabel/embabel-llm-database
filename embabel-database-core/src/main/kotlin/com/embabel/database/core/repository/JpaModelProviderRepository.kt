@@ -15,14 +15,8 @@
  */
 package com.embabel.database.core.repository
 
-import com.embabel.database.core.repository.domain.Provider
-import java.util.Optional
+import com.embabel.database.core.repository.domain.ModelProvider
+import org.springframework.data.jpa.repository.JpaRepository
 
-interface ProviderRepository {
-
-    fun save(provider: Provider): Provider
-
-    fun existsById(id: String): Boolean
-
-    fun findById(id: String) : Optional<Provider>
+interface JpaModelProviderRepository: JpaRepository<ModelProvider,String>, ModelProviderRepository {
 }

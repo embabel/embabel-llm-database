@@ -15,30 +15,26 @@
  */
 package com.embabel.database.core.repository.util
 
-import com.embabel.database.core.repository.ModelRepository
+import com.embabel.database.core.repository.ModelService
 import com.embabel.database.core.repository.domain.Model
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.io.InputStream
 
 @Component
 class ModelRepositoryLoader @Autowired constructor(
-    private val modelRepository: ModelRepository,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val modelService: ModelService
 ) {
-
-    private val mapper: ObjectMapper = objectMapper.registerKotlinModule()
-        .registerModule(JavaTimeModule())
 
     fun loadFromFile(path: String) {
         val resourceStream: InputStream = this::class.java.classLoader.getResourceAsStream(path)
             ?: throw IllegalArgumentException("Resource not found: $path")
         val models: List<Model> = objectMapper.readValue(resourceStream)
-        modelRepository.saveAll(models)
+//        modelRepository.saveAll(models)
+        models.forEach { model -> modelService.saveModel(model) }
         resourceStream.close() //tidy up
     }
 

@@ -72,7 +72,7 @@ public class ModelSuggestionControllerITest {
     public void beforeTest() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(modelSuggestionController).build();
         //clean
-        modelRepository.deleteAll();
+        modelRepository.reset();
         //load
         modelRepositoryLoader.loadFromFile("./json/export.json");
     }

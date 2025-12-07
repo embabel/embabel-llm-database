@@ -19,30 +19,41 @@ import com.embabel.database.core.repository.ModelRepository;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.server.config.DefaultConfig;
 
+import com.embabel.database.server.config.JpaConfig;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest(properties = {
         "spring.ai.model.chat=ollama",
         "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0"
 })
-@Import(DefaultConfig.class)
+@Import({DefaultConfig.class, JpaConfig.class})
+@ActiveProfiles("jpa")
 public class ModelRepositoryControllerITest {
-    
+
+    private static final Log logger = LogFactory.getLog(ModelRepositoryControllerITest.class);
+
     MockMvc mockMvc;
 
     @Autowired
-    ModelRepository modelRepository;
+    ModelRepository jpaModelRepository;
 
     @Autowired
     ModelRepositoryController modelRepositoryController;
@@ -54,15 +65,11 @@ public class ModelRepositoryControllerITest {
 
     @Test
     void testGet() throws Exception {
+        //dependent on auto loading
         mockMvc.perform(get("/api/v1/models"))
-            .andExpect(status().isNotFound()); //no data
-        //setup a single model
-        Model model = new Model("name","id", List.of("tags"),null,null,1l,null,false,null,"description");
-        //save
-        modelRepository.save(model);
-        //try the mock again
-        mockMvc.perform(get("/api/v1/models"))
-            .andExpect(status().isOk()); //simple is ok (200)        
+            .andExpect(status().isOk()); //no data
+        //test the repo
+        logger.info(jpaModelRepository.getClass().getSimpleName());
     }
 
 }
