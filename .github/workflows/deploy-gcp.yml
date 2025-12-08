@@ -66,7 +66,7 @@ jobs:
             --command="mkdir -p /home/embabel/llm-database"
 
           # Copy JAR file
-          gcloud compute scp /embabel-database-server/target/${{ env.JAR_NAME }} \
+          gcloud compute scp ./embabel-database-server/target/${{ env.JAR_NAME }} \
             ${{ github.event.inputs.vm_instance }}:/home/embabel/llm-database/${{ env.JAR_NAME }} \
             --zone=${{ github.event.inputs.vm_zone }}
 
