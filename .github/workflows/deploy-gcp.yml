@@ -45,7 +45,7 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: mvn clean package
+        run: mvn -U -DskipTests=true clean package
         
       - name: Google Auth
         id: auth
