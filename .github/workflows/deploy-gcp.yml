@@ -66,11 +66,11 @@ jobs:
             --command="mkdir -p /home/embabel/llm-database"
 
           # Copy JAR file
-          gcloud compute scp target/${{ env.JAR_NAME }} \
-            ${{ github.event.inputs.vm_instance }}:/home/embabel/boogie-service/${{ env.JAR_NAME }} \
+          gcloud compute scp target/embabel-database-server/target/${{ env.JAR_NAME }} \
+            ${{ github.event.inputs.vm_instance }}:/home/embabel/llm-database/${{ env.JAR_NAME }} \
             --zone=${{ github.event.inputs.vm_zone }}
 
-          # Create Startup Shell Script for Boogie Service
+          # Create Startup Shell Script for LLM Database
           echo "#!/bin/bash
           export AWS_ACCESS_KEY_ID=\`gcloud secrets versions access latest --secret="AWS_ACCESS_KEY_ID"\`
           export AWS_SECRET_ACCESS_KEY=\`gcloud secrets versions access latest --secret="AWS_SECRET_ACCESS_KEY"\`
@@ -89,7 +89,7 @@ jobs:
 
           [Service]
           WorkingDirectory=/home/embabel/llm-database
-          ExecStart=/home/embabel/boogie-service/llm-database.sh
+          ExecStart=/home/embabel/llm-database/llm-database.sh
           SuccessExitStatus=143
           TimeoutStopSec=10
           Restart=on-failure
@@ -98,7 +98,7 @@ jobs:
           [Install]
           WantedBy=multi-user.target" > llm-database.service
 
-          gcloud compute scp boogie-service.service \
+          gcloud compute scp llm-database.service \
             ${{ github.event.inputs.vm_instance }}:/home/embabel/llm-database \
             --zone=${{ github.event.inputs.vm_zone }}
             
@@ -119,5 +119,5 @@ jobs:
             --zone=${{ github.event.inputs.vm_zone }} \
             --command="sudo systemctl status llm-database"
             
-      - name: Boogie Service External URL
-        run: echo http://`gcloud compute instances describe ${{ env.APP_NAME }} --zone=${{ github.event.inputs.vm_zone }} --format='get(networkInterfaces[0].accessConfigs[0].natIP)'`
+      - name: LLM Database External URL
+        run: echo http://`gcloud compute instances describe ${{ env.APP_NAME }} --zone=${{ github.event.inputs.vm_zone }} --format='get(networkInterfaces[0].accessConfigs[0].natIP)'`:8000
