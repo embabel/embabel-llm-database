@@ -75,7 +75,7 @@ jobs:
           export AWS_ACCESS_KEY_ID=\`gcloud secrets versions access latest --secret="AWS_ACCESS_KEY_ID"\`
           export AWS_SECRET_ACCESS_KEY=\`gcloud secrets versions access latest --secret="AWS_SECRET_ACCESS_KEY"\`
           export AWS_REGION=us-east-2
-          /usr/bin/java -jar /home/embabel/llm-database/embabel-database-server.jar --spring.profiles.active=jpa" > llm-database.sh
+          /usr/bin/java -jar /home/embabel/llm-database/embabel-database-server-0.1.0-SNAPSHOT.jar --spring.profiles.active=jpa" > llm-database.sh
 
           gcloud compute scp llm-database.sh \
             ${{ github.event.inputs.vm_instance }}:/home/embabel/llm-database \
