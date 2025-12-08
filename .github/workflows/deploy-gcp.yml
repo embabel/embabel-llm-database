@@ -1,0 +1,123 @@
+name: LLM Database GCP VM Deployment
+
+on:
+  workflow_dispatch:  # Enables manual triggering
+    inputs:
+      environment:
+        description: 'Deploy Environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      vm_instance:
+        description: 'VM Instance Name'
+        required: true
+        default: 'boogie-service'
+        type: string
+      vm_zone:
+        description: 'VM Zone'
+        required: true
+        default: 'us-east1-b'
+        type: string
+
+env:
+  PROJECT_ID: embabel-dev
+  SERVICE_ACCOUNT: embabel-ci-build@embabel-dev.iam.gserviceaccount.com
+  APP_NAME: embabel-llm-database
+  JAR_NAME: embabel-database-server-0.1.0-SNAPSHOT.jar
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn clean package
+        
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{secrets.GCP_SERVICE_ACCOUNT_CREDENTIALS}}
+          service_account: embabel-ci-build@embabel-dev.iam.gserviceaccount.com
+      
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to VM
+        run: |
+          # Create deploy directory
+          gcloud compute ssh ${{ github.event.inputs.vm_instance }} \
+            --zone=${{ github.event.inputs.vm_zone }} \
+            --command="mkdir -p /home/embabel/llm-database"
+
+          # Copy JAR file
+          gcloud compute scp target/${{ env.JAR_NAME }} \
+            ${{ github.event.inputs.vm_instance }}:/home/embabel/boogie-service/${{ env.JAR_NAME }} \
+            --zone=${{ github.event.inputs.vm_zone }}
+
+          # Create Startup Shell Script for Boogie Service
+          echo "#!/bin/bash
+          export AWS_ACCESS_KEY_ID=\`gcloud secrets versions access latest --secret="AWS_ACCESS_KEY_ID"\`
+          export AWS_SECRET_ACCESS_KEY=\`gcloud secrets versions access latest --secret="AWS_SECRET_ACCESS_KEY"\`
+          export AWS_REGION=us-east-2
+          /usr/bin/java -jar /home/embabel/llm-database/embabel-database-server.jar --spring.profiles.active=jpa" > llm-database.sh
+
+          gcloud compute scp llm-database.sh \
+            ${{ github.event.inputs.vm_instance }}:/home/embabel/llm-database \
+            --zone=${{ github.event.inputs.vm_zone }}
+          
+
+          # Copy service file if it doesn't exist
+          echo "[Unit]
+          Description=Embabel LLM Database
+          After=network.target
+
+          [Service]
+          WorkingDirectory=/home/embabel/llm-database
+          ExecStart=/home/embabel/boogie-service/llm-database.sh
+          SuccessExitStatus=143
+          TimeoutStopSec=10
+          Restart=on-failure
+          RestartSec=5
+
+          [Install]
+          WantedBy=multi-user.target" > llm-database.service
+
+          gcloud compute scp boogie-service.service \
+            ${{ github.event.inputs.vm_instance }}:/home/embabel/llm-database \
+            --zone=${{ github.event.inputs.vm_zone }}
+            
+          # Setup and start service
+          gcloud compute ssh ${{ github.event.inputs.vm_instance }} \
+            --zone=${{ github.event.inputs.vm_zone }} \
+            --command="sudo chmod +x /home/embabel/llm-database/llm-database.sh && \
+                      sudo cp /home/embabel/llm-database/llm-database.service /etc/systemd/system/ && \
+                      sudo systemctl daemon-reload && \
+                      sudo systemctl restart llm-database && \
+                      sudo systemctl enable llm-database"
+
+      - name: Verify Deployment
+        run: |
+          echo "Waiting for application to start..."
+          sleep 30
+          gcloud compute ssh ${{ github.event.inputs.vm_instance }} \
+            --zone=${{ github.event.inputs.vm_zone }} \
+            --command="sudo systemctl status llm-database"
+            
+      - name: Boogie Service External URL
+        run: echo http://`gcloud compute instances describe ${{ env.APP_NAME }} --zone=${{ github.event.inputs.vm_zone }} --format='get(networkInterfaces[0].accessConfigs[0].natIP)'`
