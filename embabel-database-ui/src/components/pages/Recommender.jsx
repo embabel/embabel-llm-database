@@ -77,7 +77,13 @@ function Recommender() {
             // Read session id from response header instead of body
             const headerSessionId = response.headers.get('x-embabel-request-id');
             if (!headerSessionId) {
-                throw new Error("No sessionId header returned");
+                // throw new Error("No sessionId header returned");
+                console.error("No sessionId header returned");
+                let shortMsg = formatMessage((<span>I'm not sure I understand... Please try again.</span>),"system");
+                setMessages(prev => [...prev,shortMsg]);
+
+                setThinking(false);
+                return //done here                
             }
             setSessionId(headerSessionId);
             // If you still need the JSON body for other data:
@@ -90,17 +96,28 @@ function Recommender() {
             //process the message
             if (data.providers) {
 
-                //build out the list
-                let list = data.providers
-                    .providers
-                    .map((provider) => (<li key={provider}>{provider}</li>))
+                let formattedMessage = "";
 
-                let formattedMessage = (
-                    <>
-                        <span>{data.providers.message}</span>
-                        <ul>{list}</ul>
-                    </>
-                )
+                //validate 
+                if (data.providers.providers) {
+                    //build out the list
+                    let list = data.providers
+                        .providers
+                        .map((provider) => (<li key={provider}>{provider}</li>))
+
+                    formattedMessage = (
+                        <>
+                            <span>{data.providers.message}</span>
+                            <ul>{list}</ul>
+                        </>
+                    )
+                } else {
+                    formattedMessage = (
+                        <>
+                            <span>I'm not sure I understand... Please try again.</span>
+                        </>
+                    )
+                } //end if
 
                 console.log(formattedMessage);
 

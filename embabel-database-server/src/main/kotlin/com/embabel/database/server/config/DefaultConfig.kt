@@ -17,15 +17,7 @@ package com.embabel.database.server.config
 
 import com.embabel.agent.api.common.autonomy.AgentInvocation
 import com.embabel.agent.core.AgentPlatform
-import com.embabel.database.agent.ModelProviderSuggestionAgent
-import com.embabel.database.agent.ModelSuggestionAgent
-import com.embabel.database.agent.service.ModelSuggestionService
-import com.embabel.database.agent.service.SessionManagementService
-import com.embabel.database.core.repository.InMemoryModelProviderRepository
-import com.embabel.database.core.repository.InMemoryModelRepository
-import com.embabel.database.core.repository.ModelProviderRepository
-import com.embabel.database.core.repository.ModelRepository
-import com.embabel.database.core.repository.ModelService
+import com.embabel.database.core.repository.*
 import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.util.ModelRepositoryLoader
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -52,6 +44,11 @@ class DefaultConfig {
     }
 
     @Bean
+    fun providerRepository(): ProviderRepository {
+        return InMemoryProviderRepository()
+    }
+
+    @Bean
     fun modelRepositoryLoader(objectMapper: ObjectMapper, modelService: ModelService): ModelRepositoryLoader {
         return ModelRepositoryLoader(objectMapper, modelService)
     }
@@ -64,5 +61,10 @@ class DefaultConfig {
     @Bean
     fun agentInvocation(agentPlatform: AgentPlatform): AgentInvocation<Model> {
         return AgentInvocation.builder(agentPlatform).build(Model::class.java)
+    }
+
+    @Bean
+    fun modelService(modelRepository: ModelRepository, modelProviderRepository: JpaModelProviderRepository, providerRepository: JpaProviderRepository): ModelService {
+        return ModelService(modelRepository,modelProviderRepository, providerRepository)
     }
 }

@@ -15,6 +15,9 @@
  */
 package com.embabel.database.agent.service;
 
+/**
+ * common interface for parser beans
+ */
 public interface ModelParserService {
 
     void loadModels();

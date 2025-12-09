@@ -77,12 +77,16 @@ public class LlmStatsReader implements Tasklet {
         } //end if
         logger.info("New model ids " + newModelIds.size());
         //convert to a queue
-
         //set into the context
         contribution.getStepExecution()
                 .getJobExecution()
                 .getExecutionContext()
                 .put("newModelList",new LinkedList<>(newModelIds));
+        //add starting stats
+        contribution.getStepExecution()
+                .getJobExecution()
+                .getExecutionContext()
+                .put("startCount",newModelIds.size());
         //done
         return RepeatStatus.FINISHED;
     }

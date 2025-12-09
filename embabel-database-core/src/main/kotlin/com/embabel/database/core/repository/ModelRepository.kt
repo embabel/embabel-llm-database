@@ -18,15 +18,12 @@ package com.embabel.database.core.repository
 import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.domain.Organization
 import com.embabel.database.core.repository.domain.Provider
-import org.springframework.data.jpa.repository.Query
 import java.time.LocalDateTime
-import java.util.Optional
+import java.util.*
 
 interface ModelRepository  {
 
     fun save(model: Model): Model
-
-//    fun saveAll(models: List<Model>)
 
     fun findById(id: String): Optional<Model>?
 
@@ -40,9 +37,9 @@ interface ModelRepository  {
 
     fun findAllOrganizations(): List<Organization>?
 
-    fun findByTags(vararg tags: String): List<Model>?
+    fun findByTags(tags: List<String>): List<Model>?
 
-    @Query("select max(m.lastModifiedAt) from Model m")
+//    @Query("select max(m.lastModifiedAt) from Model m")
     fun lastUpdated(): LocalDateTime
 
     fun findByNameAndProvider(name: String, provider: String): Model?
@@ -54,4 +51,6 @@ interface ModelRepository  {
     fun count(): Long
 
     fun reset()
+
+    fun findAllDistinctTags(): List<String>
 }

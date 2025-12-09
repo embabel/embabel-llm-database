@@ -20,14 +20,14 @@ import com.embabel.agent.core.Blackboard;
 /**
  * holder for session
  * @param sessionid
- * @param modelProviders
+ * @param providers
  */
-public record SessionContext(String sessionid, ModelProviders modelProviders, Blackboard blackboard, String prompt) {
+public record SessionContext(String sessionid, Providers providers, Blackboard blackboard, String prompt) {
 
     public SessionContext {
         if (sessionid == null
                 || sessionid.isEmpty()
-                || modelProviders == null
+                || providers == null
                 || blackboard == null
                 || prompt == null
                 || prompt.isEmpty()) {

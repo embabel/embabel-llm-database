@@ -15,18 +15,7 @@
  */
 package com.embabel.database.core.repository.domain
 
-import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
-import jakarta.persistence.Entity
-import jakarta.persistence.EntityListeners
-import jakarta.persistence.FetchType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.JoinTable
-import jakarta.persistence.ManyToMany
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
+import jakarta.persistence.*
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDate
@@ -43,7 +32,7 @@ data class Model (
     @Id
     val id: String,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     var tags: List<String>?,
     val knowledgeCutoff: LocalDate?,
     val releaseDate: LocalDate?,
@@ -66,4 +55,48 @@ data class Model (
 
     @LastModifiedDate
     var lastModifiedAt: LocalDateTime? = null
-)
+) {
+
+    /**
+     * Creates a deep copy of this Model instance.
+     */
+    fun deepCopy(): Model {
+        // Deep copy of the organization if present
+        val copiedOrganization = this.organization?.let {
+            Organization(
+                id = it.id,
+                name = it.name,
+                website = it.website
+            )
+        }
+
+        // Deep copy of model providers
+        val copiedModelProviders = this.modelProviders.map { provider ->
+            val copiedProvider = Provider(
+                id = provider.provider.id,
+                name = provider.provider.name,
+                website = provider.provider.website
+            )
+
+            ModelProvider(
+                id = provider.id,
+                provider = copiedProvider,
+                inputPerMillion = provider.inputPerMillion,
+                outputPerMillion = provider.outputPerMillion,
+                tags = provider.tags.toList(), // clone list
+                deprecated = provider.deprecated
+            )
+        }.toMutableList()
+
+        // Deep copy of tags list
+        val copiedTags = this.tags?.toList()
+
+        // Return a fully copied Model
+        return this.copy(
+            tags = copiedTags,
+            organization = copiedOrganization,
+            modelProviders = copiedModelProviders,
+            lastModifiedAt = this.lastModifiedAt?.let { it } // safe reference copy
+        )
+    }
+}

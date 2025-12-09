@@ -83,7 +83,8 @@ class ModelRepositoryController {
         if (tags.isNullOrEmpty()) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST,"No tags passed")
         } //end if
-        return modelRepository.findByTags(*tags.toTypedArray()) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
+//        return modelRepository.findByTags(*tags.toTypedArray()) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
+        return modelRepository.findByTags(tags) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND,"No matching model found")
     }
 
     @GetMapping("/{modelId}")

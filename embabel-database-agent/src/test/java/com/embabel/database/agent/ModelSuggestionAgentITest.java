@@ -68,7 +68,7 @@ public class ModelSuggestionAgentITest {
         UserInput userInput = new UserInput(userInputText);
 
         //get the invocation
-        AgentInvocation<ModelProviders> modelProvidersAgentInvocation = AgentInvocation.builder(agentPlatform).build(ModelProviders.class);
+        AgentInvocation<Providers> modelProvidersAgentInvocation = AgentInvocation.builder(agentPlatform).build(Providers.class);
         //invoke
         AgentProcess agentProcess = modelProvidersAgentInvocation.run(Collections.singletonMap("userInput",userInput));
         while (!agentProcess.getFinished()) {
@@ -78,7 +78,7 @@ public class ModelSuggestionAgentITest {
 
         Object result = agentProcess.lastResult();
         assertNotNull(result);
-        ModelProviders modelProviders = (ModelProviders) result;
+        Providers modelProviders = (Providers) result;
         logger.info(modelProviders.providers());
 
         ListModels listModels = agentProcess.getProcessContext().getBlackboard().last(ListModels.class);

@@ -49,6 +49,7 @@ public class JobConfiguration {
                 .reader(modelReader())
                 .processor(modelProcessor())
                 .writer(modelWriter())
+                .listener(modelReader())
                 .build();
     }
 

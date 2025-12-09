@@ -19,7 +19,10 @@ import com.embabel.database.core.repository.domain.Model
 import com.embabel.database.core.repository.domain.Organization
 import com.embabel.database.core.repository.domain.Provider
 import java.time.LocalDateTime
+import java.util.Objects
 import java.util.Optional
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
 class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelRepository {
 
@@ -70,7 +73,7 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
         return uniqueOrganizations;
     }
 
-    override fun findByTags(vararg tags: String): List<Model>? {
+    override fun findByTags(tags: List<String>): List<Model> {
         return models.filter {
             model -> model.tags?.any {
                 tag -> tags.contains(tag) }
@@ -109,6 +112,14 @@ class InMemoryModelRepository(models: List<Model> = emptyList()) : ModelReposito
 
     override fun reset() {
         models.clear()
+    }
+
+    override fun findAllDistinctTags(): List<String> {
+        return models.stream()
+            .flatMap { model -> model.tags?.stream() ?: Stream.empty() }
+            .filter(Objects::nonNull)
+            .distinct()
+            .collect(Collectors.toList())
     }
 
 }

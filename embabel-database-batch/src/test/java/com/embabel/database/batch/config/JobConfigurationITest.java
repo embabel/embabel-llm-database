@@ -27,7 +27,6 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "spring.ai.model.chat=ollama",
         "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0"
 })
-@ActiveProfiles("no-auto-load")
 public class JobConfigurationITest {
 
     private static final Log logger = LogFactory.getLog(JobConfigurationITest.class);
@@ -68,13 +66,18 @@ public class JobConfigurationITest {
         //poll
         while (jobExecution.getStatus().isRunning()) {
             //wait
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             jobExecution = jobExplorer.getJobExecution(jobExecutionid);
-        }
+            jobExecution.getStepExecutions().forEach(stepExecution -> {
+                if (stepExecution.getExecutionContext().containsKey("currentCount")) {
+                    logger.info("current count " + stepExecution.getExecutionContext().get("currentCount"));
+                }
+            });
+            logger.info("post check");
+        } //end while
         //complete
         //check
         assertFalse(modelRepository.findAll().isEmpty());
-
     }
 
 }

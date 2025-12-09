@@ -15,7 +15,6 @@
  */
 package com.embabel.database.server.controller
 
-import brave.Response
 import com.embabel.database.agent.domain.ModelSuggestion
 import com.embabel.database.agent.domain.SessionContext
 import com.embabel.database.agent.service.ModelSuggestionService
@@ -66,15 +65,25 @@ class ModelSuggestionController(
                 .body(resultMap)
         } else {
             //new conversation
-            val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
+//            val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
+            val sessionContext: SessionContext? = modelSuggestionService.getProviderSuggestions(prompt)
             //set the header
-            val resultMap = mapOf("providers" to sessionContext.modelProviders())
+//            val resultMap = mapOf("providers" to sessionContext.providers())
+            val resultMap = if (sessionContext != null) {
+                mapOf("providers" to sessionContext.providers())
+            } else {
+                mapOf("providers" to emptyList<Any>())
+            }
+
+            logger.info(resultMap.toString());
+
+            val sessionId = sessionContext?.sessionid() ?: ""
             ResponseEntity.ok()
-                .header(sessionKey,sessionContext.sessionid())
+                .header(sessionKey, sessionId)
                 .body(resultMap)
+
         }
     }
-
 
     @PostMapping("/refresh")
     fun update(): ResponseEntity<Any?> {
@@ -98,7 +107,23 @@ class ModelSuggestionController(
     @GetMapping("/refresh/{executionId}")
     fun status(@PathVariable("executionId") executionId : Long): ResponseEntity<Any?> {
         return ResponseEntity.ok()
-            .body(jobExplorer.getJobExecution(executionId)?.status.toString())
+            .body(mapOf("status" to jobExplorer.getJobExecution(executionId)?.status.toString()))
+    }
+
+    @GetMapping("/refresh/{executionId}/counts")
+    fun counts(@PathVariable("executionId") executionId: Long): ResponseEntity<Any?> {
+        val currentCountMap = HashMap<String,Any?>()
+        jobExplorer.getJobExecution(executionId)?.stepExecutions?.forEach { stepExecution ->
+            if (stepExecution.executionContext.containsKey("currentCount")) {
+                logger.info("current count ${stepExecution.executionContext.get("currentCount")}")
+                currentCountMap["currentCount"] = stepExecution.executionContext.get("currentCount")
+            }
+        }
+        //add the start count
+        currentCountMap["startCount"] = jobExplorer.getJobExecution(executionId)?.executionContext?.get("startCount")
+        //return
+        return ResponseEntity.ok()
+            .body(currentCountMap)
     }
 
 

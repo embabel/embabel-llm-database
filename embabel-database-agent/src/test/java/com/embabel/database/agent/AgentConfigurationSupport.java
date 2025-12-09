@@ -19,9 +19,7 @@ import com.embabel.agent.api.common.autonomy.AgentInvocation;
 import com.embabel.agent.config.annotation.EnableAgents;
 import com.embabel.agent.core.AgentPlatform;
 import com.embabel.database.agent.service.*;
-import com.embabel.database.core.repository.InMemoryModelRepository;
-import com.embabel.database.core.repository.ModelRepository;
-import com.embabel.database.core.repository.ModelService;
+import com.embabel.database.core.repository.*;
 import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.core.repository.util.ModelRepositoryLoader;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,6 +65,16 @@ public class AgentConfigurationSupport {
     }
 
     @Bean
+    ModelProviderRepository modelProviderRepository() {
+        return new InMemoryModelProviderRepository();
+    }
+
+    @Bean
+    ProviderRepository providerRepository() {
+        return new InMemoryProviderRepository();
+    }
+
+    @Bean
     ModelParserService llmStatsModelParserService() {
         return new LlmStatsModelParserService();
     }
@@ -91,4 +99,8 @@ public class AgentConfigurationSupport {
         return new ModelRepositoryLoader(objectMapper,modelService);
     }
 
+    @Bean
+    ModelService modelService(ModelRepository modelRepository, ModelProviderRepository modelProviderRepository, ProviderRepository providerRepository) {
+        return new ModelService(modelRepository,modelProviderRepository,providerRepository);
+    }
 }

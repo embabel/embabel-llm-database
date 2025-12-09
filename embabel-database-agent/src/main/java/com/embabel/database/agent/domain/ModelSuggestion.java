@@ -15,6 +15,11 @@
  */
 package com.embabel.database.agent.domain;
 
+/**
+ * record wrapper that contains both the message and the model list to be passed to the caller
+ * @param message
+ * @param listModels
+ */
 public record ModelSuggestion(String message, ListModels listModels) {
 
     public ModelSuggestion {

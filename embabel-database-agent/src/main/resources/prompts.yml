@@ -2,6 +2,13 @@ embabel:
   database:
     agent:
       suggestion:
+        relevance-prompt: |
+          You are an expert in Large Language Models.  Review the following request from the user
+          and assess if it is relevant to Large Language Models or determining which is the most 
+          suitable for use.  Respond only with 'true' or 'false' as to the user request being
+          relevant to Large Language Models or Generative AI.
+          
+          User Request = %s
         taglist-prompt: |
           You are an expert in Large Language Models.  Review the following request from the user
           and return a list of tag names that meet the users criteria.  Respond only with suitable
@@ -10,19 +17,6 @@ embabel:
           User Request = %s
           
           Tag Options = %s
-        providers-prompt: |
-          You are an expert in Large Language Models.  Review the following request from the user 
-          and the list of providers and respond with a request for the user to select a single provider.  
-          Do not elaborate on the providers, just provide them as a list for the user to select from.
-          
-          User Request = %s
-          
-          Providers = %s
-        format-prompt: |
-          You are an expert in Large Language Models.  Format the following list of models into a human 
-          readable table with a request for the user to select a model.  
-
-          Models = %s
         filter-prompt: |
           You are an expert in Large Language Models.  Review the following request from the user
           along with the models and their descriptions below.  Respond with a list of models from 

@@ -19,6 +19,10 @@ import com.embabel.database.core.repository.domain.ModelProvider;
 
 import java.util.List;
 
+/**
+ * record to wrap a list of ModelProviders
+ * @param modelProviders
+ */
 public record ListModelProvider(List<ModelProvider> modelProviders) {
 
     public ListModelProvider {
