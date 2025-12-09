@@ -65,12 +65,23 @@ class ModelSuggestionController(
                 .body(resultMap)
         } else {
             //new conversation
-            val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
+//            val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
+            val sessionContext: SessionContext? = modelSuggestionService.getProviderSuggestions(prompt)
             //set the header
-            val resultMap = mapOf("providers" to sessionContext.providers())
+//            val resultMap = mapOf("providers" to sessionContext.providers())
+            val resultMap = if (sessionContext != null) {
+                mapOf("providers" to sessionContext.providers())
+            } else {
+                mapOf("providers" to emptyList<Any>())
+            }
+
+            logger.info(resultMap.toString());
+
+            val sessionId = sessionContext?.sessionid() ?: ""
             ResponseEntity.ok()
-                .header(sessionKey,sessionContext.sessionid())
+                .header(sessionKey, sessionId)
                 .body(resultMap)
+
         }
     }
 

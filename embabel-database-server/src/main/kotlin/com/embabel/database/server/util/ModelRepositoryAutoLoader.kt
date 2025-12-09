@@ -15,7 +15,9 @@
  */
 package com.embabel.database.server.util
 
+import com.embabel.database.core.repository.ModelRepository
 import com.embabel.database.core.repository.util.ModelRepositoryLoader
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.getBean
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
@@ -25,10 +27,14 @@ import org.springframework.stereotype.Component
 @Component
 class ModelRepositoryAutoLoader : ApplicationListener<ContextRefreshedEvent> {
 
+    private val logger = LoggerFactory.getLogger(ModelRepositoryAutoLoader::class.java)
+
     override fun onApplicationEvent(event: ContextRefreshedEvent) {
         //get the loader
         val modelRepositoryLoader : ModelRepositoryLoader = event.applicationContext.getBean<ModelRepositoryLoader>()
         //invoke
         modelRepositoryLoader.loadFromFile("./data/export.json")
+        //log
+        logger.info("finished loading into " + event.applicationContext.getBean(ModelRepository::class.java).javaClass.simpleName);
     }
 }

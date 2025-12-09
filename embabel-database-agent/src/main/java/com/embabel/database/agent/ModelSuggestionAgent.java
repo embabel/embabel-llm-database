@@ -43,9 +43,6 @@ public class ModelSuggestionAgent {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Value("${embabel.database.agent.suggestion.format-prompt}")
-    String formatPrompt;
-
     @Value("${embabel.database.agent.suggestion.filter-prompt}")
     String filterPrompt;
 

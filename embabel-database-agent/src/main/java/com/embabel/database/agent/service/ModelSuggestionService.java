@@ -50,10 +50,16 @@ public class ModelSuggestionService {
         //run the process
         AgentProcess agentProcess = agentInvocation.run(Collections.singletonMap("userInput",new UserInput(request)));
         //wait until it's finished
-        while (!agentProcess.getFinished()) {
-            //TODO check if 'stuck'
+        while (!agentProcess.getFinished()
+                && !agentProcess.getStatus().name().equalsIgnoreCase("STUCK")) {
+            logger.info(agentProcess.getStatus().name());
             Thread.sleep(500);//TODO externalize
         } //end while
+        if (agentProcess.getStatus().name().equalsIgnoreCase("STUCK")) {
+            //prematurely stopped
+            logger.warn("stuck");
+            return null;
+        } //end if
         //store the process for later blackboard retrieval
         Blackboard blackboard = agentProcess.getProcessContext()
                 .getBlackboard();

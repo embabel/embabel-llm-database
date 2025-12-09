@@ -62,4 +62,9 @@ class DefaultConfig {
     fun agentInvocation(agentPlatform: AgentPlatform): AgentInvocation<Model> {
         return AgentInvocation.builder(agentPlatform).build(Model::class.java)
     }
+
+    @Bean
+    fun modelService(modelRepository: ModelRepository, modelProviderRepository: JpaModelProviderRepository, providerRepository: JpaProviderRepository): ModelService {
+        return ModelService(modelRepository,modelProviderRepository, providerRepository)
+    }
 }

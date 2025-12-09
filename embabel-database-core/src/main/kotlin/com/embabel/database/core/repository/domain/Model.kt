@@ -32,7 +32,7 @@ data class Model (
     @Id
     val id: String,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     var tags: List<String>?,
     val knowledgeCutoff: LocalDate?,
     val releaseDate: LocalDate?,
@@ -55,4 +55,48 @@ data class Model (
 
     @LastModifiedDate
     var lastModifiedAt: LocalDateTime? = null
-)
+) {
+
+    /**
+     * Creates a deep copy of this Model instance.
+     */
+    fun deepCopy(): Model {
+        // Deep copy of the organization if present
+        val copiedOrganization = this.organization?.let {
+            Organization(
+                id = it.id,
+                name = it.name,
+                website = it.website
+            )
+        }
+
+        // Deep copy of model providers
+        val copiedModelProviders = this.modelProviders.map { provider ->
+            val copiedProvider = Provider(
+                id = provider.provider.id,
+                name = provider.provider.name,
+                website = provider.provider.website
+            )
+
+            ModelProvider(
+                id = provider.id,
+                provider = copiedProvider,
+                inputPerMillion = provider.inputPerMillion,
+                outputPerMillion = provider.outputPerMillion,
+                tags = provider.tags.toList(), // clone list
+                deprecated = provider.deprecated
+            )
+        }.toMutableList()
+
+        // Deep copy of tags list
+        val copiedTags = this.tags?.toList()
+
+        // Return a fully copied Model
+        return this.copy(
+            tags = copiedTags,
+            organization = copiedOrganization,
+            modelProviders = copiedModelProviders,
+            lastModifiedAt = this.lastModifiedAt?.let { it } // safe reference copy
+        )
+    }
+}

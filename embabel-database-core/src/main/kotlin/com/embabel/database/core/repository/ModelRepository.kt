@@ -37,7 +37,7 @@ interface ModelRepository  {
 
     fun findAllOrganizations(): List<Organization>?
 
-    fun findByTags(vararg tags: String): List<Model>?
+    fun findByTags(tags: List<String>): List<Model>?
 
 //    @Query("select max(m.lastModifiedAt) from Model m")
     fun lastUpdated(): LocalDateTime
@@ -51,4 +51,6 @@ interface ModelRepository  {
     fun count(): Long
 
     fun reset()
+
+    fun findAllDistinctTags(): List<String>
 }

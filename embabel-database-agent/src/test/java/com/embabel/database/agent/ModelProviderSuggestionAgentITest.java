@@ -34,13 +34,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes={ModelProviderSuggestionAgentITest.class, AgentConfigurationSupport.class}, properties = {
         "spring.ai.bedrock.aws.region=us-east-1",
         "spring.ai.model.chat=ollama",
-        "embabel.models.default-llm=us.anthropic.claude-3-5-sonnet-20240620-v1:0"
+        "embabel.models.default-llm=us.anthropic.claude-opus-4-20250514-v1:0"
 })
 public class ModelProviderSuggestionAgentITest {
 
@@ -74,11 +73,11 @@ public class ModelProviderSuggestionAgentITest {
         int size = modelRepository.findAll().size();
         //tag
         String tag = "text-to-text";
-        int resultSize = modelRepository.findByTags(tag).size();
+        int resultSize = modelRepository.findByTags(List.of(tag)).size();
         //check
         assertTrue(resultSize < size);
         //check multi tag options
-        resultSize = modelRepository.findByTags(tag,"image-to-text").size();
+        resultSize = modelRepository.findByTags(List.of(tag,"image-to-text")).size();
         assertTrue(resultSize > 0);
         assertTrue(resultSize < size);
         modelRepository.findAll()
@@ -110,7 +109,7 @@ public class ModelProviderSuggestionAgentITest {
         ListModels listModels = modelProviderSuggestionAgent.getModelsByTag(tagList);
         logger.info(listModels.models().size());
 
-        int count = modelRepository.findByTags(tag).size();
+        int count = modelRepository.findByTags(List.of(tag)).size();
         logger.info("direct " + count);
 
         //get all of them
@@ -123,5 +122,17 @@ public class ModelProviderSuggestionAgentITest {
         });
 
         logger.info("found " + atomicInteger.get());
+    }
+
+    @Test
+    void testRelevancy() throws Exception {
+        String prompt = "why is the sky blue?";
+
+        agentInvocation = AgentInvocation.builder(agentPlatform).build(Providers.class);
+        //invoke
+        UserInput userInput = new UserInput(prompt);
+        Providers providers = agentInvocation.invoke(Collections.singletonMap("userInput",userInput));
+        //test
+        assertNull(providers);
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.embabel.database.agent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ import com.embabel.agent.api.common.OperationContext;
 import com.embabel.agent.domain.io.UserInput;
 import com.embabel.database.agent.domain.ListModels;
 import com.embabel.database.agent.domain.TagList;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * flow
@@ -61,15 +63,14 @@ public class ModelProviderSuggestionAgent {
     @Value("${embabel.database.agent.suggestion.taglist-prompt}")
     String taglistPrompt;
 
-    @Value("${embabel.database.agent.suggestion.providers-prompt}")
-    String providersPrompt;
+    @Value("${embabel.database.agent.suggestion.relevance-prompt}")
+    String relevantPrompt;
 
     @Autowired
     ModelRepository modelRepository;
 
-
     //this is where the LLM does the grunt work of turning an NLP request into a category
-    @Action
+    @Action(pre="is_relevant")
     public TagList getSuggestedTagList(UserInput userInput, OperationContext operationContext) {
         //retrieves the tags available
         logger.info("checking for tags");
@@ -86,17 +87,24 @@ public class ModelProviderSuggestionAgent {
 
     //retrieve models for the specified tag(s)
     @Action(pre="have_models")
+    @Transactional(readOnly = true)
     public ListModels getModelsByTag(TagList tagList) {
         logger.info("getting models: " + tagList.toString());
         //build the search criteria
-        String[] tags = tagList.tags().toArray(String[]::new);
+        List<String> tags = new ArrayList<>(tagList.tags());
         List<Model> models = modelRepository.findByTags(tags);
         if (models == null || models.isEmpty()) {
             logger.info("No matching models for tags " + tagList.tags());
             return null;//done
         }
-        //return
-        return new ListModels(models);
+
+        // deep copy
+        List<Model> copiedModels = models.stream()
+                .map(Model::deepCopy)
+                .collect(Collectors.toList());
+
+        // return a new ListModels containing deep-copied objects
+        return new ListModels(copiedModels);
     }
 
     //group by providers for model(s)
@@ -111,7 +119,7 @@ public class ModelProviderSuggestionAgent {
                 .stream()
                 .flatMap(model -> {
                     List<ModelProvider> p = model.getModelProviders();
-                    return p != null ? p.stream() : Stream.<ModelProvider>empty();
+                    return p.stream();
                 })
                 .collect(Collectors.toMap(map -> map.getProvider().getId(),
                         map -> map.getProvider().getName(),
@@ -130,15 +138,33 @@ public class ModelProviderSuggestionAgent {
         return (modelRepository.count() > 0);
     }
 
-    List<String> getAvailableTags() {
-        //get all the models
-        List<Model> models = modelRepository.findAll();
-        //filter to get a unique list of actual tags in the repository
-        //return
-        return models.stream()
-            .flatMap(model -> model.getTags().stream())
-            .distinct()
-            .collect(Collectors.toList());
+    @Condition(name="is_relevant")
+    public boolean isRelevant(UserInput userInput, OperationContext operationContext) {
+        if (operationContext.getProcessContext().getBlackboard().get("isRelevant") != null) {
+            logger.info("using the context cache " + operationContext.getProcessContext().getBlackboard().get("isRelevant"));
+            return (boolean) operationContext.getProcessContext().getBlackboard().get("isRelevant");
+        } //end if
+        var prompt = relevantPrompt.formatted(userInput.getContent());
+        String result = operationContext
+                .ai()
+                .withAutoLlm()
+                .createObject(prompt, String.class);
+        boolean relevant = Boolean.parseBoolean(result);
+        logger.info("is relevant " + result);
+        //set the results for next time
+        operationContext.getProcessContext()
+                .getBlackboard()
+                .set("isRelevant", relevant);
+        return relevant;
     }
+
+    @Transactional(readOnly = true)
+    List<String> getAvailableTags() {
+        //return
+        return modelRepository.findAllDistinctTags();
+    }
+
+
+
 
 }

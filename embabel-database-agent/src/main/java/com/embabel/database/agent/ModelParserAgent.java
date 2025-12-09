@@ -98,9 +98,6 @@ public class ModelParserAgent {
         //there is a provider --> proceed
         var prompt = extractProviders.formatted(json);
         logger.info(prompt);
-
-        List<Class<? extends ModelProvider>> providerClasses = List.of(ModelProvider.class);
-
         return operationContext.ai()
                 .withAutoLlm()
                 .createObject(prompt,ListModelProvider.class);
@@ -152,7 +149,6 @@ public class ModelParserAgent {
             catch (Exception e) {
                 logger.error("error parsing providers",e);
             }
-
         }//end if
         return false;//not there
     }

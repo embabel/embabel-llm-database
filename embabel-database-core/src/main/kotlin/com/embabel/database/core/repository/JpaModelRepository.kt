@@ -21,6 +21,7 @@ import com.embabel.database.core.repository.domain.Provider
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 import java.time.LocalDateTime
 
 interface JpaModelRepository: JpaRepository<Model, String>, ModelRepository {
@@ -43,4 +44,13 @@ interface JpaModelRepository: JpaRepository<Model, String>, ModelRepository {
     @Modifying
     @Query("DELETE FROM Model m")
     override fun reset()
+
+    @Query("SELECT DISTINCT t FROM Model m JOIN m.tags t")
+    override fun findAllDistinctTags(): List<String>
+
+//    @Query("SELECT DISTINCT m FROM Model m WHERE :tags MEMBER OF m.tags")
+//    override fun findByTags(@Param("tags") tags: Array<out String>): List<Model>
+
+    @Query("SELECT DISTINCT m FROM Model m JOIN m.tags t WHERE t IN :tags")
+    override fun findByTags(@Param("tags") tags: List<String>): List<Model>
 }
