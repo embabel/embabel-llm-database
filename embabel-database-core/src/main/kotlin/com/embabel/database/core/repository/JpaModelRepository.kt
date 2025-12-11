@@ -53,4 +53,7 @@ interface JpaModelRepository: JpaRepository<Model, String>, ModelRepository {
 
     @Query("SELECT DISTINCT m FROM Model m JOIN m.tags t WHERE t IN :tags")
     override fun findByTags(@Param("tags") tags: List<String>): List<Model>
+
+    @Query("SELECT m FROM Model m WHERE LOWER(m.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    override fun findByNameContains(@Param("name") name: String): List<Model>?
 }
