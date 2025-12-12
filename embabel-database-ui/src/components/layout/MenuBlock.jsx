@@ -6,6 +6,8 @@ import { version } from '../../../package.json';
 
 import AppData from './AppData';
 
+import Tags from './Tags';
+
 function MenuBlock() {
 
     const [lastUpdated, setLastUpdated] = useState("");
@@ -58,6 +60,9 @@ function MenuBlock() {
                             <MenuItem text="Recommender" onClick={() => navigate('/agent/recommender')}/>
                         </MenuItem>
                     </Menu>
+                </SectionCard>
+                <SectionCard>
+                    <Tags/>
                 </SectionCard>
             </div>
             <SectionCard style={{ position: 'sticky', bottom: 0, zIndex: 1, background: 'inherit' }}>
