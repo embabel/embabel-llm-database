@@ -18,7 +18,6 @@ package com.embabel.database.server.controller
 import com.embabel.database.core.repository.ModelRepository
 import com.embabel.database.core.repository.ModelService
 import com.embabel.database.core.repository.domain.Model
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,8 +28,6 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/api/v1/models")
 class ModelRepositoryController {
-
-    private val logger = LoggerFactory.getLogger(ModelRepositoryController::class.java)
 
     @Autowired
     lateinit var modelRepository: ModelRepository

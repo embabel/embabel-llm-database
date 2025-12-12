@@ -29,32 +29,24 @@ The Database is loaded from the Project [Llm LeaderBoard](https://github.com/Jon
 
 ### Embabel Database Core
 
-[Embabel Database Core](./embabel-database-core/) comprises of the core repository definition including models and initial In-Memory implementation
+[Embabel Database Core](./embabel-database-core/) comprises of the core repository definition including models and initial In-Memory and JPA implementations  
 
 ### Embabel Database Agent
 
-[Embabel Database Agent](./embabel-database-agent/) comprises of the repository maintenance agent implemented in Java.  This agent is responsible for retrieveing and updating the repositories from the [Llm LeaderBoard](https://github.com/JonathanChavezTamales/llm-leaderboard/) using a Git and parsing process.  
+[Embabel Database Agent](./embabel-database-agent/) comprises of the repository maintenance and recommendation agent implemented in Java.  This agent is responsible for retrieving and updating the repositories from the [Llm Stats](https://llm-stats.com/) using an API and parsing process.
+In addition, the Recommendation Agent supports a "chat" process to help identify models that support a users use case.  
+
+### Embabel Database Batch
+
+[Embabel Database Batch]('./embabel-database-batch) is a Spring Batch process used to refresh the repository.  The Batch Job can be scheduled or triggered manually using the 'maintenance' endpoints.
 
 ### Embabel Database Server
 
-[Embabel Database Server](./embabel-database-server/) is a Spring Rest standlone server that supports running the repository and exposing it via REST endpoints.
+[Embabel Database Server](./embabel-database-server/) is a Spring Rest standalone server that supports running the repository and exposing it via REST endpoints.
 
-`GET /api/v1/models` returns an array of JSON objects representing a `ModelMetadata` object
-`GET /api/v1/models/{model id}` returns a specific model
-`GET /api/v1/models/search/findByName?name={model name}` returns a list of matching `ModelMetadata` including providers and costs for each matching model
-`GET /api/v1/models/search/findByNameContains?contains={model name}` returns a list of matching `ModelMetadata` where the name contians the 'name' passed
-`GET /api/v1/models/search/findByNameAndProvider?name={model name}&provider={provider name}` returns a list of matching `ModelMetadata` 
-`GET /api/v1/models/search/findByTags?tags={tag name}` returns a list of matching `ModelMetadata` 
-`GET /api/v1/models/search/findByProvider?provider={provider name}` returns a list of matching `ModelMetadata` 
-`GET /api/v1/models/count` returns the number of models in the repository
-`GET /api/v1/models/lastUpdate` returns a timestamp for when the repository was last refreshed
-`GET /api/v1/tags` returns a list of tag objects that models are mapped to
-`GET /api/v1/agents/{agentName}/processes` returns a list of process names from memory for a specific agent name
+### Embabel Database UI
 
-Repository maintenance is via an Agent approach.  The server provides an MCP Server compliant toolset as well as a direct, manual mechanism to trigger the Agent.  The Agent will validate if the repository needs refreshing.
-`POST /api/v1/agents/{agentName}` manually triggers the repository maintenance agent  (e.g. `POST /api/v1/agents/A1ModelRepositoryAgent`)
-
-
+[Embabel Database UI](./embabel-database-ui/) is a React-Vite frontend that leverages the BluePrintJS UX library.
 
 ## Testing
 
@@ -71,6 +63,10 @@ Repository maintenance is via an Agent approach.  The server provides an MCP Ser
 ## License
 
 This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
+## Contributors
+
+[![Embabel contributors](https://contrib.rocks/image?repo=embabel/embabel-llm-database)](https://github.com/embabel/embabel-llm-database/graphs/contributors)
 
 ---
 

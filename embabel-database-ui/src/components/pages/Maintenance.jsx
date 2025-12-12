@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Section, SectionCard } from "@blueprintjs/core";
+import { Alert, Button, Section, SectionCard } from "@blueprintjs/core";
 
 import AppData from "../layout/AppData";
 
@@ -14,6 +14,7 @@ function Maintenance() {
     const [agentId,setAgentId] = useState("");
     const [agents,setAgents] = useState([]);
     const [agentName,setAgentName] = useState("");
+    const [show,setShow] = useState(false);
 
     const monitorStatus = (processId) => {
         let timeoutId;
@@ -76,6 +77,10 @@ function Maintenance() {
         })
     }
 
+    const handlePopOver = () => {
+        setShow(show === true ? false : true);
+    }
+
     const loadAgentName = (agents) => {
         agents.forEach((agent) => {
             if (agent.provider.includes("com.embabel.database.agent") 
@@ -125,7 +130,7 @@ function Maintenance() {
                 <SectionCard>
                     <AppData/>                    
                     <br/>
-                    <Button icon="refresh" text="Refresh Database" onClick={handleStartAgent}/>
+                    <Button icon="refresh" text="Refresh Database" onClick={handlePopOver}/>
                     <br/>
                     { (running) ? (<>
                         <br/>
@@ -135,6 +140,7 @@ function Maintenance() {
                         <p>&nbsp;</p></>)}                   
                 </SectionCard>
             </Section>
+            <Alert canEscapeKeyCancel={true} isOpen={show} onClose={() => setShow(show === true ? false : true)}>Sorry - this isn't enabled publicly yet.</Alert>
         </>
     );
 }
