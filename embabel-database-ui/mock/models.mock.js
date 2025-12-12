@@ -91,9 +91,10 @@ export default [
         method: 'GET',
         body: (req) => {
             const { tags } = req.query;
+            console.log(tags);
             const tagArray = Array.isArray(tags) ? tags : [tags];
             const lowerTags = tagArray.map((t) => t.toLowerCase());
-            const m = models.value.filter((model) => {
+            const m = models.filter((model) => {
                 if (!Array.isArray(model.tags)) return false;//quick out
                 return model.tags.some((tag) => lowerTags.includes(tag.toLowerCase()));
             });
