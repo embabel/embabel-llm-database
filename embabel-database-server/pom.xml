@@ -58,7 +58,6 @@
         </dependency>
         <!-- ================ Observability ================ -->
 
-
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-ollama</artifactId>

@@ -27,9 +27,11 @@ import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.explore.JobExplorer
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.UUID
 
 private const val sessionKey = "x-embabel-request-id"
 
@@ -47,6 +49,12 @@ class ModelSuggestionController(
 
     private val mapper: ObjectMapper = objectMapper.registerKotlinModule()
         .registerModule(JavaTimeModule())
+
+    private val expectedAuthId: String = UUID.randomUUID().toString()
+
+    init {
+        logger.info("Generated x-embabel-auth-id for this instance: $expectedAuthId")
+    }
 
     @PostMapping("/recommend")
     fun getProviders(@RequestBody payload: Map<String,String>, @RequestHeader headers: Map<String,String>): ResponseEntity<Map<String,Any?>> {
@@ -86,7 +94,20 @@ class ModelSuggestionController(
     }
 
     @PostMapping("/refresh")
-    fun update(): ResponseEntity<Any?> {
+    fun update(@RequestHeader(value = "x-embabel-auth-id") authId: String?): ResponseEntity<Any?> {
+        if (authId.isNullOrBlank()) {
+            return ResponseEntity
+                .badRequest()
+                .body(mapOf("error" to "Missing required header: x-embabel-auth-id"))
+        }
+
+        if (authId != expectedAuthId) {
+            logger.warn("Invalid x-embabel-auth-id provided: $authId")
+            return ResponseEntity
+                .badRequest()
+                .body(mapOf("error" to "Invalid authentication header"))
+        }
+
         return try {
             val params = JobParametersBuilder()
                 .addLong("run.id", System.currentTimeMillis())
