@@ -27,13 +27,10 @@ import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.explore.JobExplorer
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.UUID
-
-private const val sessionKey = "x-embabel-request-id"
 
 @RestController
 @RequestMapping("/api/v1/models")
@@ -51,6 +48,9 @@ class ModelSuggestionController(
         .registerModule(JavaTimeModule())
 
     private val expectedAuthId: String = UUID.randomUUID().toString()
+
+    private val sessionKey = "x-embabel-request-id"
+
 
     init {
         logger.info("Generated x-embabel-auth-id for this instance: $expectedAuthId")
@@ -73,16 +73,13 @@ class ModelSuggestionController(
                 .body(resultMap)
         } else {
             //new conversation
-//            val sessionContext : SessionContext = modelSuggestionService.getProviderSuggestions(prompt)
             val sessionContext: SessionContext? = modelSuggestionService.getProviderSuggestions(prompt)
             //set the header
-//            val resultMap = mapOf("providers" to sessionContext.providers())
             val resultMap = if (sessionContext != null) {
                 mapOf("providers" to sessionContext.providers())
             } else {
                 mapOf("providers" to emptyList<Any>())
             }
-
             logger.info(resultMap.toString());
 
             val sessionId = sessionContext?.sessionid() ?: ""
@@ -146,6 +143,4 @@ class ModelSuggestionController(
         return ResponseEntity.ok()
             .body(currentCountMap)
     }
-
-
 }

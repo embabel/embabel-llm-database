@@ -16,20 +16,38 @@
 package com.embabel.database.server.service
 
 import org.slf4j.LoggerFactory
+import org.springframework.batch.core.Job
+import org.springframework.batch.core.JobParametersBuilder
+import org.springframework.batch.core.explore.JobExplorer
+import org.springframework.batch.core.launch.JobLauncher
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Profile("scheduled")
 @Component
-class AgentSchedulingService() {
+class ModelRefresh(
+    @Qualifier("asyncJobLauncher") private val jobLauncher: JobLauncher,
+    private val jobExplorer: JobExplorer,
+    @Qualifier("parserAgentJob") private val job: Job
+) {
 
-    private val logger = LoggerFactory.getLogger(AgentSchedulingService::class.java)
+    private val logger = LoggerFactory.getLogger(ModelRefresh::class.java)
 
     //initial delay 30 seconds to allow for startup
     @Scheduled(initialDelayString = "\${embabel.agent.scheduling.initial-delay-ms:30000}", fixedRateString = "\${embabel.agent.scheduling.fixed-rate-ms:86400000}") //Default is 24hrs in milliseconds
-    fun runAgent() {
+    fun refreshModels() {
         logger.info("running batch loader process id")
-    }
+        try {
+            val params = JobParametersBuilder()
+                .addLong("run.id", System.currentTimeMillis())
+                .toJobParameters()
 
+            val execution = jobLauncher.run(job, params)
+            logger.info("Started parseAgentJob with status=${execution.status}")
+        } catch (ex: Exception) {
+            logger.error("Failed to start refreshJob", ex)
+        }
+    }
 }
