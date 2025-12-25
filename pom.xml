@@ -15,9 +15,10 @@
     <description>Common dependencies shared by child modules.</description>
 
     <properties>
-        <embabel.version>0.1.6</embabel.version>
+        <embabel.version>0.1.7</embabel.version>
         <embabel.agent.depenedencies.version>0.3.0</embabel.agent.depenedencies.version>
         <mockk.version>1.13.3</mockk.version>
+        <spring.ai.version>1.1.2</spring.ai.version>
     </properties>
 
     <modules>
