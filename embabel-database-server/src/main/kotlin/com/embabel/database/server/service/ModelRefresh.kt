@@ -30,7 +30,8 @@ import org.springframework.stereotype.Component
 class ModelRefresh(
     @Qualifier("asyncJobLauncher") private val jobLauncher: JobLauncher,
     private val jobExplorer: JobExplorer,
-    @Qualifier("parserAgentJob") private val job: Job
+    @Qualifier("parserAgentJob") private val job: Job,
+    @Qualifier("bedrockJob") private val bedrockJob: Job,
 ) {
 
     private val logger = LoggerFactory.getLogger(ModelRefresh::class.java)

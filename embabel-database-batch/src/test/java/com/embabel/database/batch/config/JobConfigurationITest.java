@@ -47,7 +47,10 @@ public class JobConfigurationITest {
     JobExplorer jobExplorer;
 
     @Autowired
-    Job job;
+    Job parserAgentJob;
+
+    @Autowired
+    Job bedrockJob;
 
     @Autowired
     ModelRepository modelRepository;
@@ -55,13 +58,38 @@ public class JobConfigurationITest {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Test
-    void testJobRun() throws Exception {
+//    @Test
+    void testJobParserAgentJobRun() throws Exception {
         //check model Repo before
         assertTrue(modelRepository.findAll().isEmpty());
 
         JobParameters jobParameters = new JobParameters();//none to set
-        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        JobExecution jobExecution = jobLauncher.run(parserAgentJob, jobParameters);
+        long jobExecutionid = jobExecution.getId();
+        //poll
+        while (jobExecution.getStatus().isRunning()) {
+            //wait
+            Thread.sleep(1000);
+            jobExecution = jobExplorer.getJobExecution(jobExecutionid);
+            jobExecution.getStepExecutions().forEach(stepExecution -> {
+                if (stepExecution.getExecutionContext().containsKey("currentCount")) {
+                    logger.info("current count " + stepExecution.getExecutionContext().get("currentCount"));
+                }
+            });
+            logger.info("post check");
+        } //end while
+        //complete
+        //check
+        assertFalse(modelRepository.findAll().isEmpty());
+    }
+
+    @Test
+    void testJobBedrockJobJobRun() throws Exception {
+        //check model Repo before
+        assertTrue(modelRepository.findAll().isEmpty());
+
+        JobParameters jobParameters = new JobParameters();//none to set
+        JobExecution jobExecution = jobLauncher.run(bedrockJob, jobParameters);
         long jobExecutionid = jobExecution.getId();
         //poll
         while (jobExecution.getStatus().isRunning()) {
