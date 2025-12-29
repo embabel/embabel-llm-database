@@ -16,7 +16,8 @@
 package com.embabel.database.core.repository
 
 import com.embabel.database.core.repository.domain.Model
-import org.springframework.stereotype.Service
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.springframework.transaction.annotation.Transactional
 
 
@@ -27,23 +28,7 @@ class ModelService(
     private val providerRepository: ProviderRepository
 ) {
 
-//    fun saveModel(model: Model): Model {
-//        // Ensure all providers exist before saving ModelProviders
-//        model.modelProviders.forEach { modelProvider ->
-//            modelProvider.provider.let { provider ->
-//                if (!providerRepository.existsById(provider.id)) {
-//                    providerRepository.save(provider.copy()) // Create missing provider
-//                }
-//            }
-//        }
-//
-//        // Save ModelProviders (providers now guaranteed to exist)
-//        model.modelProviders.forEach { provider ->
-//            modelProviderRepository.save(provider)
-//        }
-//
-//        return modelRepository.save(model)
-//    }
+    private val logger: Log = LogFactory.getLog(ModelService::class.java)
 
     fun saveModel(model: Model): Model {
         // Load or create managed Providers first

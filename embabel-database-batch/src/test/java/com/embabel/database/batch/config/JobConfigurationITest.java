@@ -16,7 +16,6 @@
 package com.embabel.database.batch.config;
 
 import com.embabel.database.core.repository.ModelRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.api.Test;
@@ -47,21 +46,21 @@ public class JobConfigurationITest {
     JobExplorer jobExplorer;
 
     @Autowired
-    Job job;
+    Job parserAgentJob;
+
+    @Autowired
+    Job bedrockJob;
 
     @Autowired
     ModelRepository modelRepository;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
     @Test
-    void testJobRun() throws Exception {
+    void testJobParserAgentJobRun() throws Exception {
         //check model Repo before
         assertTrue(modelRepository.findAll().isEmpty());
 
         JobParameters jobParameters = new JobParameters();//none to set
-        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        JobExecution jobExecution = jobLauncher.run(parserAgentJob, jobParameters);
         long jobExecutionid = jobExecution.getId();
         //poll
         while (jobExecution.getStatus().isRunning()) {
@@ -80,4 +79,20 @@ public class JobConfigurationITest {
         assertFalse(modelRepository.findAll().isEmpty());
     }
 
+    @Test
+    void testJobBedrockJobJobRun() throws Exception {
+        //check model Repo before
+        assertTrue(modelRepository.findAll().isEmpty());
+
+        JobParameters jobParameters = new JobParameters();//none to set
+        JobExecution jobExecution = jobLauncher.run(bedrockJob, jobParameters);
+        //poll
+        while (jobExecution.getStatus().isRunning()) {
+            //wait
+            Thread.sleep(1000);
+        } //end while
+        //complete
+        //check
+        assertFalse(modelRepository.findAll().isEmpty());
+    }
 }

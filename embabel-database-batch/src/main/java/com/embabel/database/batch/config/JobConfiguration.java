@@ -15,10 +15,7 @@
  */
 package com.embabel.database.batch.config;
 
-import com.embabel.database.batch.steps.LlmStatsReader;
-import com.embabel.database.batch.steps.ModelProcessor;
-import com.embabel.database.batch.steps.ModelReader;
-import com.embabel.database.batch.steps.ModelWriter;
+import com.embabel.database.batch.steps.*;
 import com.embabel.database.core.repository.domain.Model;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -44,6 +41,20 @@ public class JobConfiguration {
     }
 
     @Bean
+    public Job bedrockJob(JobRepository jobRepository, Step bedrockReaderStep) {
+        return new JobBuilder("bedrockJob",jobRepository)
+                .start(bedrockReaderStep)
+                .build();
+    }
+
+    @Bean
+    Step bedrockReaderStep(JobRepository jobRepository,PlatformTransactionManager platformTransactionManager) {
+        return new StepBuilder("processBedrockModels",jobRepository)
+                .tasklet(bedrockReader(),platformTransactionManager)
+                .build();
+    }
+
+    @Bean
     Step parseModel(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
         return new StepBuilder("processNewModel",jobRepository).<String, Model>chunk(chunkSize,platformTransactionManager)
                 .reader(modelReader())
@@ -58,6 +69,12 @@ public class JobConfiguration {
         return new StepBuilder("readModels", jobRepository)
                 .tasklet(llmStatsReader(),platformTransactionManager)
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    BedrockReader bedrockReader() {
+        return new BedrockReader();
     }
 
     @Bean

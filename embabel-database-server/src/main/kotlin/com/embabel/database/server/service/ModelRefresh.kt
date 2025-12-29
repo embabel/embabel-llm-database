@@ -30,7 +30,8 @@ import org.springframework.stereotype.Component
 class ModelRefresh(
     @Qualifier("asyncJobLauncher") private val jobLauncher: JobLauncher,
     private val jobExplorer: JobExplorer,
-    @Qualifier("parserAgentJob") private val job: Job
+    @Qualifier("parserAgentJob") private val parserAgentJob: Job,
+    @Qualifier("bedrockJob") private val bedrockJob: Job,
 ) {
 
     private val logger = LoggerFactory.getLogger(ModelRefresh::class.java)
@@ -44,8 +45,11 @@ class ModelRefresh(
                 .addLong("run.id", System.currentTimeMillis())
                 .toJobParameters()
 
-            val execution = jobLauncher.run(job, params)
+            val execution = jobLauncher.run(parserAgentJob, params)
             logger.info("Started parseAgentJob with status=${execution.status}")
+            //start the bedrock job
+            val bedrockJobExecution = jobLauncher.run(bedrockJob,params);
+            logger.info("Started bedrockJob with status=${bedrockJobExecution.status}")
         } catch (ex: Exception) {
             logger.error("Failed to start refreshJob", ex)
         }

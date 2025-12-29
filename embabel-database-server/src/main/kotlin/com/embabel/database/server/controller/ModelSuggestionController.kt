@@ -39,7 +39,8 @@ class ModelSuggestionController(
     objectMapper: ObjectMapper,
     @Qualifier("asyncJobLauncher") private val jobLauncher: JobLauncher,
     private val jobExplorer: JobExplorer,
-    @Qualifier("parserAgentJob") private val job: Job
+    @Qualifier("parserAgentJob") private val parserAgentJob: Job,
+    @Qualifier("bedrockJob") private val bedrockJob: Job
 ) {
 
     private val logger = LoggerFactory.getLogger(ModelSuggestionController::class.java)
@@ -110,8 +111,41 @@ class ModelSuggestionController(
                 .addLong("run.id", System.currentTimeMillis())
                 .toJobParameters()
 
-            val execution = jobLauncher.run(job, params)
+            val execution = jobLauncher.run(parserAgentJob, params)
             logger.info("Started parseAgentJob with status=${execution.status}")
+
+            ResponseEntity.accepted().body(mapOf("status" to execution.status.toString(),
+                "executionId" to execution.id.toString()))
+        } catch (ex: Exception) {
+            logger.error("Failed to start refreshJob", ex)
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(mapOf("error" to "Failed to start job"))
+        }
+    }
+
+
+    @PostMapping("/refresh/job/bedrock")
+    fun updateBedrockModels(@RequestHeader(value = "x-embabel-auth-id") authId: String?): ResponseEntity<Any?> {
+        if (authId.isNullOrBlank()) {
+            return ResponseEntity
+                .badRequest()
+                .body(mapOf("error" to "Missing required header: x-embabel-auth-id"))
+        }
+
+        if (authId != expectedAuthId) {
+            logger.warn("Invalid x-embabel-auth-id provided: $authId")
+            return ResponseEntity
+                .badRequest()
+                .body(mapOf("error" to "Invalid authentication header"))
+        }
+
+        return try {
+            val params = JobParametersBuilder()
+                .addLong("run.id", System.currentTimeMillis())
+                .toJobParameters()
+
+            val execution = jobLauncher.run(bedrockJob, params)
+            logger.info("Started bedrockJob with status=${execution.status}")
 
             ResponseEntity.accepted().body(mapOf("status" to execution.status.toString(),
                 "executionId" to execution.id.toString()))

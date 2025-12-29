@@ -21,6 +21,8 @@ import com.embabel.database.core.repository.domain.Model;
 import com.embabel.database.core.repository.domain.ModelProvider;
 import com.embabel.database.core.repository.domain.Organization;
 import com.embabel.database.core.repository.domain.Provider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import software.amazon.awssdk.services.bedrock.BedrockClient;
 import software.amazon.awssdk.services.bedrock.model.FoundationModelSummary;
